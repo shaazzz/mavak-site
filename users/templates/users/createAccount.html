@@ -3,25 +3,24 @@
 {% block content %}
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-4 col-md-offset-4">
-      <div class="login-panel panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">ثبت نام</h3>
-        </div>
-        <div class="panel-body">
-          <p>
-            اگر دانش آموز پایه نهم به دهم هستید که می خواهید در آزمون ماواک شرکت کنید
-            در این جا ثبت نام کنید.
-          </p>
+  <div class="card" style="margin-bottom: 20px">
+    <div class="card-header">ثبت نام
+    </div>
+    <div class="card-body">
+      <p>
+        اگر دانش آموز پایه نهم به دهم هستید که می خواهید در آزمون ماواک شرکت کنید
+        در این جا ثبت نام کنید.
+      </p>
+      <div class="row">
+        <div class="col-md-12">
           <form id="loginForm" action="/users/createAccount/" method="post">
             {% csrf_token %}
             <fieldset>
               <div class="form-group">
-                <input class="form-control" placeholder="نام" name="nam" type="text" value="" required="">
-              </div>
-              <div class="form-group">
-                <input class="form-control" placeholder="نام خانوادگی" name="famil" type="text" value="" required="">
+                <div class="input-group">
+                  <input type="text" name="nam" placeholder="نام" class="form-control">
+                  <input type="text" name="famil" placeholder="نام خانوادگی" class="form-control">
+                </div>
               </div>
               <div class="form-group">
                 <input class="form-control" placeholder="کد ملی" name="kodemelli" type="text" required="">
@@ -30,8 +29,21 @@
                 <input class="form-control" placeholder="استان" name="ostan" type="text" required="">
               </div>
               <div class="form-group">
+                  <input class="form-control" placeholder="ایمیل" name="email" type="text" required="">
+                </div>
+              <div class="form-group">
                 <input class="form-control" placeholder="رمز عبور" name="password" type="password" required="">
               </div>
+              {% if error == "duplicate" %}
+              <div class="alert alert-danger" role="alert">
+                فردی قبلا با کدملی شما ثبت نام کرده است. اگر این فرد شما نیستید، با ما تماس بگیرید.
+              </div>
+              {% endif %}
+              {% if error == "bad" %}
+              <div class="alert alert-danger" role="alert">
+                اطلاعات شما با واقعیت مطابقت ندارد.
+              </div>
+              {% endif %}
               <button type="submit" class="btn btn-success btn-block">ثبت نام</button>
             </fieldset>
           </form>

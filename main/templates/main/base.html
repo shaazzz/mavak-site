@@ -20,7 +20,7 @@
     }
 
     body {
-      padding-top: 66px;
+      padding-top: 70px;
       direction: rtl !important;
     }
   </style>
@@ -53,7 +53,15 @@
             ورود
           </a>
         </li>
-
+        {% if user.is_authenticated %}
+          {% if user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link active" href="/admin/">
+              پنل ادمین
+            </a>
+          </li>      
+          {% endif %}
+        {% endif %}
       </ul>
     </div>
   </nav>
