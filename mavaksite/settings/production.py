@@ -1,4 +1,4 @@
 from .development import *
 
 DEBUG = False
-ALLOWED_HOSTS = ['mavak.shaazzz.ir', 'mavak.vcap.me']
+ALLOWED_HOSTS = ['127.0.0.1']
