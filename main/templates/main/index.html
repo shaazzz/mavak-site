@@ -3,18 +3,7 @@
 {% block content %}
 
 <div class="container">
-    <h1>
-        ماواک
-    </h1>
-    <h2>
-        مدرسه استعداد یابی و آموزش المپیاد کامپیوتر
-    </h2>
-    <p>
-        تاریخ آزمون ماواک: ۱۰ مرداد ۱۳۹۹
-    </p>
-    <p>
-        <a href="/users/createAccount/">ثبت نام کنید</a>
-    </p>
+    {{ content | safe }}
 </div>
 
 {% endblock %}
