@@ -24,6 +24,7 @@ def createAccount(req):
     kodemelli = req.POST['kodemelli'].translate(translation_table)
     ostan = req.POST['ostan']
     dore = req.POST['dore']
+    shomare = req.POST['shomare']
     password = req.POST['password']
     email = req.POST['email']
     if not is_valid_iran_code(kodemelli):
@@ -37,7 +38,7 @@ def createAccount(req):
         user.last_name = famil
         user.save()
         dlogin(req, user)
-        Student.objects.create(user= user, ostan= ostan, dore= dore)
+        Student.objects.create(user= user, ostan= ostan, dore= dore, shomare= shomare)
         return redirect('/users/me')
     except:
         return render(req, 'users/createAccount.html', {
