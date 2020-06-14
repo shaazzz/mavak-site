@@ -1,0 +1,56 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<div class="container">
+  <div class="card" style="margin-bottom: 20px">
+    <div class="card-header">
+      ثبت نام مدارس و مراکز سمپاد
+    </div>
+    <div class="card-body">
+      <p>
+        برای ثبت نام مدارس و مراکز سمپاد از طریق این فرم اقدام کنید.
+      </p>
+      <div class="row">
+        <div class="col-md-12">
+          <form id="loginForm" action="/users/createAccount/school/" method="post">
+            {% csrf_token %}
+            <fieldset>
+              <div class="form-group">
+                <div class="input-group">
+                  <input type="text" name="nam" placeholder="نام رابط" class="form-control">
+                  <input type="text" name="famil" placeholder="نام خانوادگی رابط" class="form-control">
+                </div>
+              </div>
+              <div class="form-group">
+                <input class="form-control" placeholder="عنوان(مثال: راهنمایی شهید قدوسی قائم شهر)" name="title" type="text" required="">
+              </div>
+              <div class="form-group">
+                <input class="form-control" placeholder="استان" name="ostan" type="text" required="">
+              </div>
+              <div class="form-group">
+              <select class="custom-select form-control" name="goone">
+                <option selected value="D">دبیرستان (متوسطه دوره دوم)</option>
+                <option value="R">راهنمایی (متوسطه دوره اول)</option>
+                <option value="S">مرکز سمپاد</option>
+              </select>
+              </div>
+              <div class="form-group">
+                <input class="form-control" placeholder="شماره موبایل (مثال 09123456789)" name="shomare" type="text" required="">
+              </div>
+              <div class="form-group">
+                <input class="form-control" placeholder="ایمیل" name="email" type="text" required="">
+              </div>
+              <div class="form-group">
+                <input class="form-control" placeholder="رمز عبور" name="password" type="password" required="">
+              </div>
+              <button type="submit" class="btn btn-success btn-block">عضویت</button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

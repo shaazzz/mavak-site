@@ -8,12 +8,12 @@
     </div>
     <div class="card-body">
       <p>
-        اگر دانش آموز پایه نهم به دهم هستید که می خواهید در آزمون ماواک شرکت کنید
+        اگر دانش آموز پایه هشتم به نهم یا نهم به دهم هستید که می خواهید در آزمون ماواک شرکت کنید
         در این جا ثبت نام کنید.
       </p>
       <div class="row">
         <div class="col-md-12">
-          <form id="loginForm" action="/users/createAccount/" method="post">
+          <form id="loginForm" action="/users/createAccount/student/" method="post">
             {% csrf_token %}
             <fieldset>
               <div class="form-group">
@@ -35,7 +35,7 @@
               </select>
               </div>
               <div class="form-group">
-                <input class="form-control" placeholder="شماره تماس (مثال 09123456789)" name="shomare" type="text" required="">
+                <input class="form-control" placeholder="شماره موبایل (مثال 09123456789)" name="shomare" type="text" required="">
               </div>
               <div class="form-group">
                 <input class="form-control" placeholder="ایمیل" name="email" type="text" required="">

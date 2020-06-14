@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as dlogin
 from django.contrib.auth.models import User
 import re
-from .models import Student
+from .models import Student, Org
+from django.db.models import Max
 
 def is_valid_iran_code(input):
     if not re.search(r'^\d{10}$', input):
@@ -16,9 +17,9 @@ persiandigit='۱۲۳۴۵۶۷۸۹۰١٢٣٤٥٦٧٨٩٠'
 englishdigit='12345678901234567890'
 translation_table = str.maketrans(persiandigit, englishdigit)
 
-def createAccount(req):
+def createAccountStudent(req):
     if (req.method == 'GET'):
-        return render(req, 'users/createAccount.html')
+        return render(req, 'users/createAccountStudent.html')
     nam = req.POST['nam']
     famil = req.POST['famil']
     kodemelli = req.POST['kodemelli'].translate(translation_table)
@@ -28,7 +29,7 @@ def createAccount(req):
     password = req.POST['password']
     email = req.POST['email']
     if not is_valid_iran_code(kodemelli):
-        return render(req, 'users/createAccount.html', {
+        return render(req, 'users/createAccountStudent.html', {
             'error': 'bad',
         })
 
@@ -45,9 +46,36 @@ def createAccount(req):
             'error': 'duplicate',
         })
 
+
+def createAccountSchool(req):
+    if (req.method == 'GET'):
+        return render(req, 'users/createAccountSchool.html')
+    nam = req.POST['nam']
+    famil = req.POST['famil']
+    title = req.POST['title']
+    ostan = req.POST['ostan']
+    goone = req.POST['goone']
+    shomare = req.POST['shomare'].translate(translation_table)
+    password = req.POST['password']
+    email = req.POST['email']
+    username = goone + str(Org.objects.all().aggregate(Max('id'))['id__max'])
+    user = User.objects.create_user(username, email, password)
+    user.first_name = nam
+    user.last_name = famil
+    user.save()
+    dlogin(req, user)
+    Org.objects.create(user= user, ostan= ostan, goone= goone, shomare= shomare, title= title)
+    return redirect('/users/me')
+    
+
 def me(req):
     if not req.user.is_authenticated:
         return redirect('/users/login')
+    if Org.objects.filter(user= req.user).exists():
+        return render(req, 'users/meOrg.html', {
+            'user': req.user,
+            'org': Org.objects.get(user= req.user),
+        })
     return render(req, 'users/me.html', {
         'user': req.user,
     })
