@@ -15,7 +15,7 @@
             const header = document.createElement('div');
             header.className = 'card-header';
             const headerTitle = document.createElement('span');
-            headerTitle.innerText = 'کامنت';
+            headerTitle.innerText = c.sender;
             header.appendChild(headerTitle);
             const responseButton = document.createElement('a');
             responseButton.href=`/comments/new/?root={{comment.root}}&parent=`+c.id;
