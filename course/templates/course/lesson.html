@@ -5,6 +5,7 @@
 <div class="container">
     <h1>{{ title }}</h1>
     {{ content | safe }}
+    {% include "comment/base.html" %}
 </div>
 
 {% endblock %}

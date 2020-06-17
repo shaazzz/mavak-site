@@ -1,0 +1,36 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h1>سوال بپرسید</h1>
+    <div class="card">
+        <div class="card-header">
+            کامنت
+        </div>
+        <div class="card-body">
+            {{ parent.text }}
+            <div class="card">
+                <div class="card-header">
+                    پاسخ شما
+                </div>
+                <div class="card-body">
+
+                    <form id="loginForm" action="/comments/new/" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="root" value="{{root}}">
+                        <input type="hidden" name="parent" value="{{parent.id}}">
+                        <fieldset>
+                            <label for="exampleFormControlTextarea1">متن خود را در اینجا بنویسید</label>
+                            <textarea name="text" class="form-control" id="exampleFormControlTextarea1"
+                                rows="3"></textarea>
+                        </fieldset>
+                        <button type="submit" class="btn btn-success btn-block">ثبت</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

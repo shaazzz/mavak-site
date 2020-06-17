@@ -1,0 +1,51 @@
+<div>
+    {% if user.is_authenticated %}
+    <a href="/comments/new?root={{comment.root}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">سوال بپرسید</a>
+    {% else %}
+    <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">برای سوال پرسیدن ابتدا وارد شوید</a>
+    {% endif %}
+    <div style="height:10px;"></div>
+    <div id="comment_root"></div>
+    <script>
+        const x = JSON.parse({{ comment.json | safe }});
+        const div = document.getElementById('comment_root');
+        const buildDiv = (c) => {
+            const r = document.createElement('div');
+            r.className = 'card';
+            const header = document.createElement('div');
+            header.className = 'card-header';
+            const headerTitle = document.createElement('span');
+            headerTitle.innerText = 'کامنت';
+            header.appendChild(headerTitle);
+            const responseButton = document.createElement('a');
+            responseButton.href=`/comments/new/?root={{comment.root}}&parent=`+c.id;
+            responseButton.innerText = 'پاسخ دهید';
+            responseButton.style = 'float: left';
+            header.appendChild(responseButton);
+            r.appendChild(header);
+            const body = document.createElement('div');
+            body.className = 'card-body';
+            r.appendChild(body);
+            const content = document.createElement('p');
+            content.innerText = c.text;
+            body.appendChild(content);
+            if (c.children) {
+                const myChild = document.createElement('div');
+                rec(myChild, c.children);
+                body.appendChild(myChild);
+            }
+            return r;
+        };
+        const rec = (ele, ch) => {
+            ch.forEach(c => {
+                ele.appendChild(buildDiv(c));
+            });
+        };
+        rec(div, x);
+    </script>
+    <style>
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</div>
