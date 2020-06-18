@@ -5,7 +5,7 @@ def json_of_comment(c):
     ch = Comment.objects.filter(parent=c)
     return {
         'text': c.text,
-        'sender_name': c.sender.first_name,
+        'sender_name': c.sender.first_name+' '+c.sender.last_name,
         'id': str(c.id),
         'children': json_of_query(ch),
     }
