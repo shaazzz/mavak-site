@@ -42,7 +42,7 @@ def createAccountStudent(req):
         Student.objects.create(user= user, ostan= ostan, dore= dore, shomare= shomare)
         return redirect('/users/me')
     except:
-        return render(req, 'users/createAccount.html', {
+        return render(req, 'users/createAccountStudent.html', {
             'error': 'duplicate',
         })
 
