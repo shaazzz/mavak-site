@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login as dlogin
 from django.contrib.auth.models import User
 import re
 from .models import Student, Org
-from django.db.models import Max
+from django.db.models import Max, Count
 
 def is_valid_iran_code(input):
     if not re.search(r'^\d{10}$', input):
@@ -78,6 +78,13 @@ def me(req):
         })
     return render(req, 'users/me.html', {
         'user': req.user,
+    })
+
+def log(req):
+    if not req.user.is_staff:
+        return render(req, 'users/login.html')
+    return render(req, 'users/log.html', {
+        "data": Student.objects.values('ostan').annotate(count= Count('id')),
     })
 
 def login(req):

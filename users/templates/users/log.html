@@ -1,0 +1,24 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<table>
+  <thead>
+    <td>استان</td>
+    <td>تعداد</td>
+  </thead>
+  <tbody>
+    {% for x in data %}
+      <tr>
+        <td>
+          {{ x.ostan }}
+        </td>
+        <td>
+          {{ x.count }}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
