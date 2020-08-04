@@ -17,6 +17,6 @@ def lessonView(req, name, lesson):
     return render(req, "course/lesson.html", {
         'title': l.title,
         'content': markdown(l.text),
-        'comment': json_of_root('/courses/'+name+'/'+lesson),
+        'comment': json_of_root('/courses/'+name+'/'+lesson, req.user),
     })
 

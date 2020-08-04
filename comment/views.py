@@ -17,16 +17,20 @@ def newView(req):
                 'parent': get_object_or_404(Comment, id= req.GET['parent'])
             })
     if req.POST.get('parent', '###') == '###':
+        pri = req.POST.get('private', 'off')
         Comment.objects.create(
             root= req.POST['root'],
             text= req.POST['text'],
+            private= pri == "on",
             sender= req.user,
         )
     else:
+        parent = get_object_or_404(Comment, id=req.POST['parent'])
         Comment.objects.create(
             root= req.POST['root'],
             text= req.POST['text'],
-            parent= get_object_or_404(Comment, id=req.POST['parent']),
+            parent= parent,
+            private= parent.private,
             sender= req.user,
         )
     return redirect(req.POST['root'])
