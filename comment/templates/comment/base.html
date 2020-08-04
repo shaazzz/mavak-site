@@ -1,6 +1,6 @@
 <div>
     {% if user.is_authenticated %}
-    <a href="/comments/new?root={{comment.root}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">سوال بپرسید</a>
+    <a href="/comments/new?root={{comment.root}}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">نظر دهید</a>
     {% else %}
     <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">برای سوال پرسیدن ابتدا وارد شوید</a>
     {% endif %}
