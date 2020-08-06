@@ -1,0 +1,27 @@
+{% extends "main/base.html" %}
+{% load l10n %}
+
+{% block content %}
+
+<div class="container">
+    <h1>{{ quiz.title }}</h1>
+    <p>
+      آزمون هنوز شروع نشده است. زمان برگزاری آزمون
+      <span id="azmoon"></span>
+      است. اکنون
+      <span id="now"></span>
+      است.
+    </p>
+    <script>
+      const options = {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        hour: 'numeric', minute: 'numeric', second: 'numeric',
+      };
+      const azmoon = new Date('{{ quiz.start|date:"Y-m-d H:i:s" }}');
+      document.getElementById('azmoon').innerText = azmoon.toLocaleString('fa-IR', options);
+      const now = new Date('{{ current|date:"Y-m-d H:i:s" }}');
+      document.getElementById('now').innerText = now.toLocaleString('fa-IR', options);
+    </script>
+</div>
+
+{% endblock %}
