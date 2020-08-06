@@ -1,0 +1,85 @@
+{% extends "main/base.html" %}
+{% load l10n %}
+
+{% block content %}
+
+<div class="container">
+  <h1>{{ quiz.title }}</h1>
+  <p>
+    در بازه های زمانی کوتاه، پاسخ های خود را از طریق دکمه ذخیره پاسخ ها
+    ذخیره کنید.
+  </p>
+  <div id="problems"></div>
+  <script>
+    const navbar = document.querySelector('#navbarResponsive ul');
+    navbar.removeChild(navbar.firstChild);
+    navbar.removeChild(navbar.firstChild);
+    const timediv = document.createElement('li');
+    timediv.className = 'nav-link active';
+    const azmoon = new Date('{{ quiz.end|date:"Y-m-d H:i:s" }}');
+    const lag = new Date() - new Date('{{ current|date:"Y-m-d H:i:s" }}');
+    const calcTime = () => {
+      const ms = azmoon - new Date() + lag;
+      const s = Math.floor(ms/1000);
+      const m = Math.floor(ms/60);
+      const h = Math.floor(ms/60);
+      return `زمان باقیمانده: ${(new Date(ms)).toLocaleTimeString('fa-IR')}`;
+    };
+    timediv.innerText = calcTime();
+    navbar.appendChild(timediv);
+    const saveButton = document.createElement('li');
+    saveButton.className = 'nav-link active';
+    saveButton.innerText = 'ذخیره پاسخ ها';
+    saveButton.onclick = () => {
+      alert('not yet');
+    };
+    navbar.appendChild(saveButton);
+    setInterval(()=>{
+      timediv.innerText = calcTime();
+    }, 1000);
+    const problems = JSON.parse({{ problems|safe }});
+    console.log(problems);
+    const div = document.getElementById('problems');
+    problems.forEach((p) => {
+      const pdiv = document.createElement('div');
+      const header = document.createElement('h2');
+      header.innerText = `سوال ${p.order} (${p.mxgrade} امتیاز)`;
+      pdiv.appendChild(header);
+      const text = document.createElement('p');
+      if (p.typ === 'text') {
+        text.innerText = p.text;
+      } else {
+        const oc = Number(p.typ.slice(1));
+        const matn = p.text.split("\n").slice(0, -oc).join("\n");
+        text.innerText = matn;
+      }
+      pdiv.appendChild(text);
+      const odiv = document.createElement('div');
+      odiv.className = 'form-group';
+      if (p.typ !== 'text') {
+        const oc = Number(p.typ.slice(1));
+        p.text.split("\n").slice(-oc).forEach((op, i)=>{
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.id = `ans${p.order}_${i+1}`;
+          radio.name = 'ansname'+p.order;
+          const label = document.createElement('label');
+          label.for = radio.id;
+          label.innerText = op;
+          odiv.appendChild(radio);
+          odiv.appendChild(label);
+          odiv.appendChild(document.createElement('br'));
+        });
+      } else {
+        const el = document.createElement('textarea');
+        el.className = 'form-control';
+        el.id = 'ans' + p.order;
+        odiv.appendChild(el);
+      }
+      pdiv.appendChild(odiv);
+      div.appendChild(pdiv);
+    });
+  </script>
+</div>
+
+{% endblock %}
