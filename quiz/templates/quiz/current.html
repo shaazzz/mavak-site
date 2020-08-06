@@ -47,11 +47,11 @@
       pdiv.appendChild(header);
       const text = document.createElement('p');
       if (p.typ === 'text') {
-        text.innerText = p.text;
+        text.innerHTML = p.text;
       } else {
         const oc = Number(p.typ.slice(1));
         const matn = p.text.split("\n").slice(0, -oc).join("\n");
-        text.innerText = matn;
+        text.innerHTML = matn;
       }
       pdiv.appendChild(text);
       const odiv = document.createElement('div');
