@@ -87,6 +87,13 @@ def log(req):
         "data": Student.objects.values('ostan').annotate(count= Count('id')),
     })
 
+def shomare(req):
+    if not req.user.is_staff:
+        return render(req, 'users/login.html')
+    return render(req, "users/shomare.html", {
+        "users": Student.objects.all(),
+    })
+
 def login(req):
     if (req.method == 'GET'):
         return render(req, 'users/login.html')
