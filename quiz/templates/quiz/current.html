@@ -11,6 +11,20 @@
   </p>
   <div id="problems"></div>
   <script>
+    function getCookie(cname) {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
     const navbar = document.querySelector('#navbarResponsive ul');
     navbar.removeChild(navbar.firstChild);
     navbar.removeChild(navbar.firstChild);
@@ -20,24 +34,82 @@
     const lag = new Date() - new Date('{{ current|date:"Y-m-d H:i:s" }}');
     const calcTime = () => {
       const ms = azmoon - new Date() + lag;
-      const s = Math.floor(ms/1000);
-      const m = Math.floor(ms/60);
-      const h = Math.floor(ms/60);
-      return `زمان باقیمانده: ${(new Date(ms)).toLocaleTimeString('fa-IR')}`;
+      const s = Math.floor(ms / 1000);
+      const m = Math.floor(s / 60);
+      const h = Math.floor(m / 60);
+      if (h === 0) {
+        if (m === 0) {
+          return `زمان باقیمانده: ${s%60} ثانیه`;
+        }
+        return `زمان باقیمانده: ${m%60} دقیقه ${s%60} ثانیه`;
+      }
+      return `زمان باقیمانده: ${h} ساعت ${m%60} دقیقه ${s%60} ثانیه`;
     };
     timediv.innerText = calcTime();
     navbar.appendChild(timediv);
     const saveButton = document.createElement('li');
     saveButton.className = 'nav-link active';
     saveButton.innerText = 'ذخیره پاسخ ها';
-    saveButton.onclick = () => {
-      alert('not yet');
+    saveButton.onclick = async () => {
+      if (saveButton.innerText === 'در حال ذخیره سازی...') return;
+      saveButton.innerText = 'در حال ذخیره سازی...'
+      const answer = [];
+      problems.forEach((p) => {
+        if (p.typ === 'text') {
+          answer.push({
+            order: p.order,
+            text: document.getElementById('ans' + p.order).value,
+          });
+        } else {
+          const radios = document.getElementsByName('ansname' + p.order);
+          for (var i = 0, length = radios.length; i < length; i++) {
+            if (radios[i].checked) {
+              answer.push({
+                order: p.order,
+                text: radios[i].value,
+              });
+              break;
+            }
+          }
+        }
+      });
+      console.log(answer);
+      try {
+        let data = new FormData();
+        data.append('answers', JSON.stringify(answer));
+        // add form input from hidden input elsewhere on the page
+        data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        const fr = await fetch("submit/", {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: data,
+        });
+        const res = await fr.json();
+        if (!res.ok) {
+          if (res.reason === 'anonymous') {
+            alert('شما خارج شده اید. لطفا پاسخ هایی که ذخیره نکرده اید را روی دستگاهتان ذخیره کنید و صفحه را ریلود کنید');
+          } else if (res.reason === 'finished') {
+            alert('آزمون به پایان رسیده است');
+          } else {
+            alert('درخواست شما شکست خورد. پاسخ ها را روی دستگاه ذخیره کنید و صفحه را ریلود کنید');
+          }
+        } else {
+          alert('با موفقیت ثبت شد');
+        }
+      } catch (e) {
+        alert('مشکلی به وجود آمد\nاینترنت خود را چک کنید و پاسخ هایی که ذخیره نکرده اید را روی دستگاه ذخیره کنید\nاگر این وضعیت ادامه داشت با ما تماس بگیرید');
+        console.log(e);
+      }
+      saveButton.innerText = 'ذخیره پاسخ ها';
     };
     navbar.appendChild(saveButton);
-    setInterval(()=>{
+    setInterval(() => {
       timediv.innerText = calcTime();
     }, 1000);
-    const problems = JSON.parse({{ problems|safe }});
+    const problems = JSON.parse({{ problems| safe }});
     console.log(problems);
     const div = document.getElementById('problems');
     problems.forEach((p) => {
@@ -58,11 +130,15 @@
       odiv.className = 'form-group';
       if (p.typ !== 'text') {
         const oc = Number(p.typ.slice(1));
-        p.text.split("\n").slice(-oc).forEach((op, i)=>{
+        p.text.split("\n").slice(-oc).forEach((op, i) => {
           const radio = document.createElement('input');
           radio.type = 'radio';
-          radio.id = `ans${p.order}_${i+1}`;
-          radio.name = 'ansname'+p.order;
+          radio.id = `ans${p.order}_${i + 1}`;
+          radio.name = 'ansname' + p.order;
+          radio.value = i+1;
+          if (p.answer === radio.value) {
+            radio.checked = true;
+          }
           const label = document.createElement('label');
           label.for = radio.id;
           label.innerText = op;
@@ -74,6 +150,7 @@
         const el = document.createElement('textarea');
         el.className = 'form-control';
         el.id = 'ans' + p.order;
+        el.value = p.answer; 
         odiv.appendChild(el);
       }
       pdiv.appendChild(odiv);
