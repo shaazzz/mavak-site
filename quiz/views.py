@@ -4,6 +4,7 @@ from users.models import Student
 from django.utils import timezone
 from django.http import JsonResponse
 from json import dumps, loads
+from django.db.models import Sum
 
 def get_answer(qu, stu):
     qs = Answer.objects.filter(question= qu, student= stu)
@@ -35,6 +36,14 @@ def submitView(req, name):
         ques = get_object_or_404(Question, quiz= q, order= x['order'])
         Answer.objects.create(question= ques, student= stu, text= x['text'], grade= -1, grademsg= "تصحیح نشده")
     return JsonResponse({ 'ok': True })
+
+def scoreBoardView(req, name):
+    if not req.user.is_staff:
+        return redirect("/users/login")
+    stu = Answer.objects.values("student").annotate(nomre= Sum("grade"))
+    return render(req, "quiz/scoreboard.html", {
+        'students': stu,
+    })
 
 def quizView(req, name):
     q = get_object_or_404(Quiz, name= name)

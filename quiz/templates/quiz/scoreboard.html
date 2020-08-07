@@ -1,0 +1,23 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h1>{{ quiz.title }}</h1>
+    <table>
+      <thead>
+        <th>کد ملی</th>
+        <th>نمره</th>
+      </thead>
+      <tbody>
+        {% for s in students %}
+          <tr>
+            <td>{{ s.student }}</td>
+            <td>{{ s.nomre }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+{% endblock %}
