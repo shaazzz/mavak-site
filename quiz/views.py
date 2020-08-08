@@ -32,14 +32,12 @@ def checkedView(req, name, user):
     yaroo = get_object_or_404(Student, user__username= user)
     q = get_object_or_404(Quiz, name= name)
     ans = loads(req.POST['answers'])
-    print(ans)
     for x in ans:
         ano = get_object_or_404(
             Answer, question__quiz= q, student= yaroo, question__order= x['order']
         )
         ano.grade = x['grade']
         ano.grademsg = x['grademsg']
-        print(ano)
         ano.save()
     return JsonResponse({ 'ok': True })
 
