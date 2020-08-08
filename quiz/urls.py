@@ -7,4 +7,6 @@ urlpatterns = [
   path('<name>/', views.quizView, name='quizView'),
   path('<name>/submit/', views.submitView, name='submitView'),
   path('<name>/scoreboard/', views.scoreBoardView, name='scoreBoardView'),
+  path('<name>/check/<user>/', views.checkView, name='checkView'),
+  path('<name>/check/<user>/checked/', views.checkedView, name='checkedView'),
 ]

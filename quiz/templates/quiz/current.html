@@ -6,17 +6,27 @@
 <div class="container">
   <h1>{{ quiz.title }}</h1>
   <p>
+    {% if mode == "current" %}
     در بازه های زمانی کوتاه، پاسخ های خود را از طریق دکمه ذخیره پاسخ ها
     ذخیره کنید.
     حتما پنج دقیقه قبل از اتمام آزمون پاسخ هایتان را ذخیره کنید که در صورت
     بروز مشکل یا شلوغ شدن سایت، پاسخ هایتان ذخیره شده باشد.
+    {% endif %}
+    {% if mode == "check" %}
+    مصحح عزیز خوش آمدید. برای هر سوال در کادر اول نمره و در کادر دوم پیامی به
+    دانش آموز بنویسید. اگر پیام خاصی ندارید، صرفا نون تصحیح نشده را پاک کنید و
+    آن را به تصحیح شده تبدیل کنید. به هیچ وجه کل کادر را پاک نکنید! اگر کادر
+    خالی باشد نمره شما ثبت نمی شود. اگر کادر از ابتدا خالی بود به این معنی است
+    که دانش آموز به سوال پاسخ نداده است و باید کادر را همان طور که هست خالی بگذارید.
+    {% endif %}
   </p>
   <div id="problems"></div>
   <script>
+    const mode = '{{ mode }}';
     function getCookie(cname) {
       var name = cname + "=";
       var ca = document.cookie.split(';');
-      for(var i = 0; i < ca.length; i++) {
+      for (var i = 0; i < ca.length; i++) {
         var c = ca[i];
         while (c.charAt(0) == ' ') {
           c = c.substring(1);
@@ -30,58 +40,13 @@
     const navbar = document.querySelector('#navbarResponsive ul');
     navbar.removeChild(navbar.firstChild);
     navbar.removeChild(navbar.firstChild);
-    const timediv = document.createElement('li');
-    timediv.className = 'nav-link active';
-    const azmoon = new Date('{{ quiz.end|date:"Y-m-d H:i:s" }}');
-    const lag = new Date() - new Date('{{ current|date:"Y-m-d H:i:s" }}');
-    const calcTime = () => {
-      const ms = azmoon - new Date() + lag;
-      const s = Math.floor(ms / 1000);
-      const m = Math.floor(s / 60);
-      const h = Math.floor(m / 60);
-      if (h === 0) {
-        if (m === 0) {
-          return `زمان باقیمانده: ${s%60} ثانیه`;
-        }
-        return `زمان باقیمانده: ${m%60} دقیقه ${s%60} ثانیه`;
-      }
-      return `زمان باقیمانده: ${h} ساعت ${m%60} دقیقه ${s%60} ثانیه`;
-    };
-    timediv.innerText = calcTime();
-    navbar.appendChild(timediv);
-    const saveButton = document.createElement('li');
-    saveButton.className = 'nav-link active';
-    saveButton.innerText = 'ذخیره پاسخ ها';
-    saveButton.onclick = async () => {
-      if (saveButton.innerText === 'در حال ذخیره سازی...') return;
-      saveButton.innerText = 'در حال ذخیره سازی...'
-      const answer = [];
-      problems.forEach((p) => {
-        if (p.typ === 'text') {
-          answer.push({
-            order: p.order,
-            text: document.getElementById('ans' + p.order).value,
-          });
-        } else {
-          const radios = document.getElementsByName('ansname' + p.order);
-          for (var i = 0, length = radios.length; i < length; i++) {
-            if (radios[i].checked) {
-              answer.push({
-                order: p.order,
-                text: radios[i].value,
-              });
-              break;
-            }
-          }
-        }
-      });
-      console.log(answer);
+    const sendData = async (url, dat) => {
       try {
         let data = new FormData();
-        data.append('answers', JSON.stringify(answer));
+        data.append('answers', JSON.stringify(dat));
         // add form input from hidden input elsewhere on the page
         data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-        const fr = await fetch("submit/", {
+        const fr = await fetch(url, {
           method: 'POST',
           credentials: 'same-origin',
           headers: {
@@ -105,12 +70,90 @@
         alert('مشکلی به وجود آمد\nاینترنت خود را چک کنید و پاسخ هایی که ذخیره نکرده اید را روی دستگاه ذخیره کنید\nاگر این وضعیت ادامه داشت با ما تماس بگیرید');
         console.log(e);
       }
-      saveButton.innerText = 'ذخیره پاسخ ها';
     };
-    navbar.appendChild(saveButton);
-    setInterval(() => {
+    if (mode === 'current') {
+      const timediv = document.createElement('li');
+      timediv.className = 'nav-link active';
+      const azmoon = new Date('{{ quiz.end|date:"Y-m-d H:i:s" }}');
+      const lag = new Date() - new Date('{{ current|date:"Y-m-d H:i:s" }}');
+      const calcTime = () => {
+        const ms = azmoon - new Date() + lag;
+        const s = Math.floor(ms / 1000);
+        const m = Math.floor(s / 60);
+        const h = Math.floor(m / 60);
+        if (h === 0) {
+          if (m === 0) {
+            return `زمان باقیمانده: ${s % 60} ثانیه`;
+          }
+          return `زمان باقیمانده: ${m % 60} دقیقه ${s % 60} ثانیه`;
+        }
+        return `زمان باقیمانده: ${h} ساعت ${m % 60} دقیقه ${s % 60} ثانیه`;
+      };
       timediv.innerText = calcTime();
-    }, 1000);
+      navbar.appendChild(timediv);
+      setInterval(() => {
+        timediv.innerText = calcTime();
+      }, 1000);
+      const saveButton = document.createElement('li');
+      saveButton.className = 'nav-link active';
+      saveButton.innerText = 'ذخیره پاسخ ها';
+      saveButton.onclick = async () => {
+        if (saveButton.innerText === 'در حال ذخیره سازی...') return;
+        saveButton.innerText = 'در حال ذخیره سازی...'
+        const answer = [];
+        problems.forEach((p) => {
+          if (p.typ === 'text') {
+            answer.push({
+              order: p.order,
+              text: document.getElementById('ans' + p.order).value,
+            });
+          } else {
+            const radios = document.getElementsByName('ansname' + p.order);
+            for (var i = 0, length = radios.length; i < length; i++) {
+              if (radios[i].checked) {
+                answer.push({
+                  order: p.order,
+                  text: radios[i].value,
+                });
+                break;
+              }
+            }
+          }
+        });
+        console.log(answer);
+        await sendData("submit/", answer);
+        saveButton.innerText = 'ذخیره پاسخ ها';
+      };
+      navbar.appendChild(saveButton);
+    }
+    if (mode === 'check') {
+      const gotoScoreboard = document.createElement('li');
+      gotoScoreboard.className = 'nav-item';
+      gotoScoreboard.innerHTML = '<a class="nav-link active" href="../../scoreboard/">بازگشت به جدول امتیازات</a>';
+      navbar.appendChild(gotoScoreboard);
+      const saveButton = document.createElement('li');
+      saveButton.className = 'nav-link active';
+      saveButton.innerText = 'ذخیره نمره ها';
+      saveButton.onclick = async () => {
+        if (saveButton.innerText === 'در حال ذخیره سازی...') return;
+        saveButton.innerText = 'در حال ذخیره سازی...'
+        const answer = [];
+        problems.forEach((p) => {
+          const g  = document.getElementById('grade' +  p.order).value;
+          const gm = document.getElementById('grademsg'+p.order).value;
+          if (gm === '') return;
+          answer.push({
+            order: p.order,
+            grade: g === '' ? -1 : Number(g),
+            grademsg: gm,
+          })
+        });
+        console.log(answer);
+        await sendData("checked/", answer);
+        saveButton.innerText = 'ذخیره نمره ها';
+      };
+      navbar.appendChild(saveButton);
+    }
     const problems = JSON.parse({{ problems| safe }});
     console.log(problems);
     const div = document.getElementById('problems');
@@ -137,9 +180,12 @@
           radio.type = 'radio';
           radio.id = `ans${p.order}_${i + 1}`;
           radio.name = 'ansname' + p.order;
-          radio.value = i+1;
-          if (p.answer === radio.value) {
+          radio.value = i + 1;
+          if (p.answer.text === radio.value) {
             radio.checked = true;
+          }
+          if (mode !== 'current') {
+            radio.disabled = true;
           }
           const label = document.createElement('label');
           label.for = radio.id;
@@ -152,10 +198,30 @@
         const el = document.createElement('textarea');
         el.className = 'form-control';
         el.id = 'ans' + p.order;
-        el.value = p.answer; 
+        el.value = p.answer.text;
+        if (mode !== 'current') {
+          el.disabled = true;
+        }
         odiv.appendChild(el);
       }
       pdiv.appendChild(odiv);
+      if (mode === 'check') {
+        const cdiv = document.createElement('div');
+        cdiv.className = 'form-group';
+        const elg = document.createElement('input');
+        elg.className = 'form-control';
+        elg.type = 'text';
+        elg.id = 'grade' + p.order;
+        elg.value = (p.answer.grade !== -1) ? p.answer.grade : '';
+        cdiv.appendChild(elg);
+        const elm = document.createElement('input');
+        elm.className = 'form-control';
+        elm.type = 'text';
+        elm.id = 'grademsg' + p.order;
+        elm.value = p.answer.grademsg;
+        cdiv.appendChild(elm);
+        pdiv.appendChild(cdiv);
+      }
       div.appendChild(pdiv);
     });
   </script>

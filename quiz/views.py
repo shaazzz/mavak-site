@@ -4,13 +4,18 @@ from users.models import Student
 from django.utils import timezone
 from django.http import JsonResponse
 from json import dumps, loads
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 def get_answer(qu, stu):
     qs = Answer.objects.filter(question= qu, student= stu)
     if not qs.exists():
-        return ""
-    return qs.first().text
+        return { 'text': "" }
+    ans = qs.first()
+    return {
+        'text': ans.text,
+        'grade': ans.grade,
+        'grademsg': ans.grademsg,
+    }
 
 def json_of_problems(qs, stu):
     return dumps(dumps([{
@@ -20,6 +25,23 @@ def json_of_problems(qs, stu):
         'typ': x.typ,
         'answer': get_answer(x, stu),
     } for x in qs ]))
+
+def checkedView(req, name, user):
+    if (not req.user.is_staff):
+        return JsonResponse({ 'ok': False, 'reason': 'anonymous' })
+    yaroo = get_object_or_404(Student, user__username= user)
+    q = get_object_or_404(Quiz, name= name)
+    ans = loads(req.POST['answers'])
+    print(ans)
+    for x in ans:
+        ano = get_object_or_404(
+            Answer, question__quiz= q, student= yaroo, question__order= x['order']
+        )
+        ano.grade = x['grade']
+        ano.grademsg = x['grademsg']
+        print(ano)
+        ano.save()
+    return JsonResponse({ 'ok': True })
 
 def submitView(req, name):
     q = get_object_or_404(Quiz, name= name)
@@ -38,11 +60,26 @@ def submitView(req, name):
     return JsonResponse({ 'ok': True })
 
 def scoreBoardView(req, name):
+    q = get_object_or_404(Quiz, name= name)
     if not req.user.is_staff:
         return redirect("/users/login")
-    stu = Answer.objects.values("student").annotate(nomre= Sum("grade"))
+    stu = Student.objects.annotate(
+        nomre= Sum("answer__grade", filter= Q(answer__question__quiz= q))
+    )
     return render(req, "quiz/scoreboard.html", {
         'students': stu,
+    })
+
+def checkView(req, name, user):
+    if (not req.user.is_staff):
+        return redirect("/users/login")
+    yaroo = get_object_or_404(Student, user__username= user)
+    q = get_object_or_404(Quiz, name= name)
+    return render(req, "quiz/current.html", {
+        'mode': 'check',
+        'quiz': q,
+        'current': timezone.now(),
+        'problems': json_of_problems(Question.objects.filter(quiz= q), yaroo),
     })
 
 def quizView(req, name):
@@ -60,6 +97,7 @@ def quizView(req, name):
         })
     stu = get_object_or_404(Student, user= req.user)
     return render(req, "quiz/current.html", {
+        'mode': 'current',
         'quiz': q,
         'current': timezone.now(),
         'problems': json_of_problems(Question.objects.filter(quiz= q), stu),
