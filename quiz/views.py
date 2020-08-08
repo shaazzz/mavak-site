@@ -9,7 +9,11 @@ from django.db.models import Sum, Q
 def get_answer(qu, stu):
     qs = Answer.objects.filter(question= qu, student= stu)
     if not qs.exists():
-        return { 'text': "" }
+        return {
+            'text': "",
+            'grade': 'پاسخی داده نشده است. به این قسمت دست نزنید.',
+            'grademsg': '',
+        }
     ans = qs.first()
     return {
         'text': ans.text,
