@@ -67,7 +67,7 @@ def scoreBoardView(req, name):
         return redirect("/users/login")
     stu = Student.objects.annotate(
         nomre= Sum("answer__grade", filter= Q(answer__question__quiz= q))
-    )
+    ).filter(~Q(nomre= None))
     return render(req, "quiz/scoreboard.html", {
         'students': stu,
     })

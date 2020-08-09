@@ -6,13 +6,15 @@
     <h1>{{ quiz.title }}</h1>
     <table>
       <thead>
-        <th>کد ملی</th>
+        <th>شماره</th>
+        <th>نام</th>
         <th>استان</th>
         <th>نمره</th>
       </thead>
       <tbody>
         {% for s in students %}
           <tr>
+            <td>{{ forloop.counter }}</td>
             <td>
               <a href="../check/{{ s.user }}/">{{ s.user.get_full_name }}</a></td>
             <td>{{ s.ostan }}</td>
