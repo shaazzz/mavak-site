@@ -99,6 +99,8 @@ def shomareEnglish(req):
         return render(req, 'users/login.html')
     for stu in Student.objects.all():
         stu.shomare = stu.shomare.translate(translation_table)
+        stu.save()
+    return redirect("/users/shomare")
 
 def login(req):
     if (req.method == 'GET'):
