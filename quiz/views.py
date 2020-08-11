@@ -72,6 +72,17 @@ def scoreBoardView(req, name):
         'students': stu,
     })
 
+def bulkCheckView(req, name):
+    if (not req.user.is_staff):
+        return redirect("/users/login")
+    if req.method == 'GET':
+        return render(req, "quiz/bulkcheck.html")
+    n = req.POST['order']
+    qu = get_object_or_404(Question, quiz__name= name, order= n)
+    Answer.objects.filter(question= qu).update(grade= 0, grademsg= "تصحیح خودکار")
+    Answer.objects.filter(question= qu, text= req.POST['answer']).update(grade= qu.mxgrade)
+    return redirect("../scoreboard/")
+
 def checkView(req, name, user):
     if (not req.user.is_staff):
         return redirect("/users/login")

@@ -9,4 +9,5 @@ urlpatterns = [
   path('<name>/scoreboard/', views.scoreBoardView, name='scoreBoardView'),
   path('<name>/check/<user>/', views.checkView, name='checkView'),
   path('<name>/check/<user>/checked/', views.checkedView, name='checkedView'),
+  path('<name>/bulkcheck/', views.bulkCheckView, name='bulkCheckView'),
 ]
