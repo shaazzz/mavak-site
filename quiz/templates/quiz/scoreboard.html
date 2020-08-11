@@ -6,12 +6,10 @@
     <h1>{{ quiz.title }}</h1>
     <table style="width: 100%; text-align: center;">
       <thead>
-        <td>شماره     </td>
+        <td>رتبه      </td>
         <td>نام       </td>
         <td>استان     </td>
         <td>نمره      </td>
-        <td>رتبه کل   </td>
-        <td>رتبه استان</td>
         <td>شماره     </td>
       </thead>
       <tbody>
@@ -22,8 +20,6 @@
               <a href="../check/{{ s.user }}/">{{ s.user.get_full_name }}</a></td>
             <td>{{ s.ostan }}</td>
             <td>{{ s.nomre }}</td>
-            <td>{{ s.rotbekol }}</td>
-            <td>{{ s.rotbeostan }}</td>
             <td>{{ s.shomare }}</td>
           </tr>
         {% endfor %}

@@ -68,11 +68,7 @@ def scoreBoardView(req, name):
         return redirect("/users/login")
     stu = Student.objects.annotate(
         nomre= Sum("answer__grade", filter= Q(answer__question__quiz= q))
-    ).filter(~Q(nomre= None)).annotate(
-        rotbekol=Window(expression=Rank(),order_by= F('nomre').desc())
-    ).annotate(
-        rotbeostan= Window(expression=Rank(),partition_by= F('ostan'),order_by= F('nomre').desc())
-    )
+    ).filter(~Q(nomre= None)).order_by("-nomre")
     return render(req, "quiz/scoreboard.html", {
         'students': stu,
     })
