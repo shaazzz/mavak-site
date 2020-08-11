@@ -4,12 +4,15 @@
 
 <div class="container">
     <h1>{{ quiz.title }}</h1>
-    <table>
+    <table style="width: 100%; text-align: center;">
       <thead>
-        <th>شماره</th>
-        <th>نام</th>
-        <th>استان</th>
-        <th>نمره</th>
+        <td>شماره     </td>
+        <td>نام       </td>
+        <td>استان     </td>
+        <td>نمره      </td>
+        <td>رتبه کل   </td>
+        <td>رتبه استان</td>
+        <td>شماره     </td>
       </thead>
       <tbody>
         {% for s in students %}
@@ -19,6 +22,9 @@
               <a href="../check/{{ s.user }}/">{{ s.user.get_full_name }}</a></td>
             <td>{{ s.ostan }}</td>
             <td>{{ s.nomre }}</td>
+            <td>{{ s.rotbekol }}</td>
+            <td>{{ s.rotbeostan }}</td>
+            <td>{{ s.shomare }}</td>
           </tr>
         {% endfor %}
       </tbody>

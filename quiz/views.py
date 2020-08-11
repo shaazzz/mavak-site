@@ -4,7 +4,8 @@ from users.models import Student
 from django.utils import timezone
 from django.http import JsonResponse
 from json import dumps, loads
-from django.db.models import Sum, Q
+from django.db.models import Sum, Q, Window, F
+from django.db.models.functions import Rank
 
 def get_answer(qu, stu):
     qs = Answer.objects.filter(question= qu, student= stu)
@@ -67,7 +68,11 @@ def scoreBoardView(req, name):
         return redirect("/users/login")
     stu = Student.objects.annotate(
         nomre= Sum("answer__grade", filter= Q(answer__question__quiz= q))
-    ).filter(~Q(nomre= None))
+    ).filter(~Q(nomre= None)).annotate(
+        rotbekol=Window(expression=Rank(),order_by= F('nomre').desc())
+    ).annotate(
+        rotbeostan= Window(expression=Rank(),partition_by= F('ostan'),order_by= F('nomre').desc())
+    )
     return render(req, "quiz/scoreboard.html", {
         'students': stu,
     })
