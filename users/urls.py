@@ -10,4 +10,5 @@ urlpatterns = [
   path('login/', views.login, name='login'),
   path('log/', views.log, name='log'),
   path('shomare/', views.shomare, name='shomare'),
+  path('shomare/english/', views.shomareEnglish, name='shomareEnglish'),
 ]

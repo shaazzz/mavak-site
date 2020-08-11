@@ -25,7 +25,7 @@ def createAccountStudent(req):
     kodemelli = req.POST['kodemelli'].translate(translation_table)
     ostan = req.POST['ostan']
     dore = req.POST['dore']
-    shomare = req.POST['shomare']
+    shomare = req.POST['shomare'].translate(translation_table)
     password = req.POST['password']
     email = req.POST['email']
     if not is_valid_iran_code(kodemelli):
@@ -93,6 +93,12 @@ def shomare(req):
     return render(req, "users/shomare.html", {
         "users": Student.objects.all(),
     })
+
+def shomareEnglish(req):
+    if not req.user.is_staff:
+        return render(req, 'users/login.html')
+    for stu in Student.objects.all():
+        stu.shomare = stu.shomare.translate(translation_table)
 
 def login(req):
     if (req.method == 'GET'):
