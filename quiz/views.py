@@ -12,7 +12,7 @@ def get_answer(qu, stu):
     if not qs.exists():
         return {
             'text': "",
-            'grade': 'پاسخی داده نشده است. به این قسمت دست نزنید.',
+            'grade': 0,
             'grademsg': '',
         }
     ans = qs.first()
@@ -105,11 +105,14 @@ def quizView(req, name):
             'quiz': q,
             'current': timezone.now(),
         })
-    if q.end < timezone.now():
-        return render(req, "quiz/finished.html", {
-            'quiz': q,
-        })
     stu = get_object_or_404(Student, user= req.user)
+    if q.end < timezone.now():
+        return render(req, "quiz/current.html", {
+            'mode': 'visit',
+            'quiz': q,
+            'current': timezone.now(),
+            'problems': json_of_problems(Question.objects.filter(quiz= q), stu),
+        })
     return render(req, "quiz/current.html", {
         'mode': 'current',
         'quiz': q,

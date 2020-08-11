@@ -19,6 +19,9 @@
     خالی باشد نمره شما ثبت نمی شود. اگر کادر از ابتدا خالی بود به این معنی است
     که دانش آموز به سوال پاسخ نداده است و باید کادر را همان طور که هست خالی بگذارید.
     {% endif %}
+    {% if mode == "visit" %}
+    نمره هایتان در زیر هر سوال آمده است.
+    {% endif %}
   </p>
   <div id="problems"></div>
   <script>
@@ -205,6 +208,11 @@
         odiv.appendChild(el);
       }
       pdiv.appendChild(odiv);
+      if (mode === 'visit') {
+        const cdiv = document.createElement('div');
+        cdiv.innerText = `نمره شما: ${p.answer.grade}\nپیام مصحح: ${p.answer.grademsg}`;
+        pdiv.appendChild(cdiv);
+      }
       if (mode === 'check') {
         const cdiv = document.createElement('div');
         cdiv.className = 'form-group';
