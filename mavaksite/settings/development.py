@@ -120,7 +120,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/var/www/mavak'
+STATIC_ROOT = '/var/www/mavak/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/var/www/mavak/media/'
 
 LOGGING = {
     'version': 1,
