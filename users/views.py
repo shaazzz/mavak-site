@@ -1,9 +1,29 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as dlogin
 from django.contrib.auth.models import User
 import re
 from .models import Student, Org
 from django.db.models import Max, Count
+
+def agreementView(req):
+    if (req.user.is_anonymous):
+        return redirect("/users/login")
+    stu = get_object_or_404(Student, user= req.user)
+    if (stu.verified < 1):
+        return render(req, "users/rejected.html")
+    if (stu.verified > 1):
+        return redirect("/users/me")
+    if (req.method == 'GET'):
+        return render(req, "users/agreement.html")
+    print(req.FILES)
+    if not 'shenasname' in req.FILES:
+        return render(req, "users/agreement.html", {
+            "error": "yes",
+        })
+    stu.shenasname = req.FILES['shenasname']
+    stu.verified = 2
+    stu.save()
+    return redirect(".")
 
 def is_valid_iran_code(input):
     if not re.search(r'^\d{10}$', input):
@@ -75,6 +95,11 @@ def me(req):
         return render(req, 'users/meOrg.html', {
             'user': req.user,
             'org': Org.objects.get(user= req.user),
+        })
+    if Student.objects.filter(user= req.user).exists():
+        return render(req, 'users/me.html', {
+            'user': req.user,
+            'student': Student.objects.get(user= req.user),
         })
     return render(req, 'users/me.html', {
         'user': req.user,

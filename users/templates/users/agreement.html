@@ -1,0 +1,63 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h1>
+        شما پذیرفته شده اید
+    </h1>
+    <p>
+      اگر مایلید که در دوره تابستانی ماواک ثبت نام کنید، تصویر صفحه اول
+      شناسنامه تان را از طریق فرم زیر به ما ارسال کنید. اطلاعات بیشتر را
+      در این
+      <a href="/text/summer-start">لینک</a>
+      بخوانید.
+    </p>
+    <form id="loginForm" action="/users/agreement/" enctype="multipart/form-data" method="post">
+      {% csrf_token %}
+      <fieldset>
+        <div class="form-group">
+          <input class="form-check-input" type="checkbox" value="" required>
+          <label class="form-check-label" for="defaultCheck1">
+          &emsp;  من لینک بالا را خوانده ام و آن را کاملا متوجه شده ام.
+          </label>
+          <br>
+          <input class="form-check-input" type="checkbox" value="" required>
+          <label class="form-check-label" for="defaultCheck1">
+          &emsp; من از امکانات آموزشی و منابعی که در اختیارم قرار داده می شود، نهایت استفاده
+          را می برم و در غیر این صورت انصراف می دهم تا جا برای دیگر افراد باز شود.
+          </label>
+          <br>
+          <input class="form-check-input" type="checkbox" value="" required>
+          <label class="form-check-label" for="defaultCheck1">
+          &emsp; من در صورتی که به کمک ماواک موفقیتی به دست آوردم، به صورت داوطلب
+          به ماواک کمک خواهم کرد.
+          </label>
+          <br>
+          <input class="form-check-input" type="checkbox" value="" required>
+          <label class="form-check-label" for="defaultCheck1">
+          &emsp; من کاملا در چارچوب تعیین شده عمل می کنم و از رفتار های نامتعارف
+          مانند تخلف، تقلب، خرابکاری، سواستفاده از امکانات، جعل هویت، ایجاد مزاحمت
+          برای سایر دانش آموزان و ... خودداری می کنم.
+          </label>
+          <br>
+          <input class="form-check-input" type="checkbox" value="" required>
+          <label class="form-check-label" for="defaultCheck1">
+          &emsp; من می پذیرم که ماواک هیچ مسئولیت حقوقی در قبال من ندارد و می تواند
+          در هر زمانی به هر دلیلی از ارائه خدمات به من خودداری کند.
+          </label>
+        </div>
+        <div class="form-group">
+          تصویر صفحه اول شناسنامه:
+          <input class="form-control" name="shenasname" type="file" required="">
+        </div>
+        {% if error == "yes" %}
+        <div class="alert alert-danger" role="alert">
+          خطایی رخ داد
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-success btn-block">ثبت نام در دوره تابستانه ماواک</button>
+      </fieldset>
+    </form>
+</div>
+{% endblock %}
