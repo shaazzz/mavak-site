@@ -12,6 +12,7 @@ class Lesson(models.Model):
     title = models.CharField(max_length=250)
     text = models.TextField()
     order = models.FloatField()
+    release = models.DateTimeField()
     def __str__(self):
         return self.name
     class Meta:
