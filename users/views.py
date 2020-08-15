@@ -66,6 +66,12 @@ def createAccountStudent(req):
             'error': 'duplicate',
         })
 
+def verified(req):
+    if (not req.user.is_staff):
+        return redirect("/users/login")
+    return render(req, "users/verified.html", {
+        'data': Student.objects.filter(verified= 3),
+    })
 
 def createAccountSchool(req):
     if (req.method == 'GET'):

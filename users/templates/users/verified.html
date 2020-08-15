@@ -1,0 +1,32 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<table>
+  <thead>
+    <td>ردیف</td>
+    <td>نام</td>
+    <td>کد ملی</td>
+    <td>شماره</td>
+  </thead>
+  <tbody>
+    {% for x in data %}
+      <tr>
+        <td>
+          {{ forloop.counter }}
+        </td>
+        <td>
+          {{ x.user.get_full_name }}
+        </td>
+        <td>
+          {{ x.user }}
+        </td>
+        <td>
+          {{ x.shomare }}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
