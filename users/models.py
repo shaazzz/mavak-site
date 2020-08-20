@@ -16,6 +16,12 @@ class Student(models.Model):
     def __str__(self):
         return self.user.username
 
+class OJHandle(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    judge = models.CharField(max_length=250)
+    handle = models.CharField(max_length=250)
+    password = models.CharField(max_length=250)
+
 class Org(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     ostan = models.CharField(max_length=50)

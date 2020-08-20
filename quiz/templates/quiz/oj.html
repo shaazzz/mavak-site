@@ -1,0 +1,36 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h1>سوالات تحت تاثیر قرار گرفته</h1>
+    {% for s in questions %}
+      <h3>سوال {{ s.order }}</h3>
+      <ul>
+      {% if s.subtyp %}
+      <li>نوع سوال: {{ s.subtyp }}</li>
+      {% endif %}
+      {% if s.text %}
+      <li>پیام داور: {{ s.text }}</li>
+      {% endif %}
+      {% if s.error %}
+      <li>خطایی رخ داد: {{ s.error }}</li>
+      {% endif %}
+      {% if s.evaled %}
+      <li>پاسخ های افزوده شده: {{ s.evaled }}</li>
+      {% endif %}
+      {% if s.ignored %}
+      <li>
+        رکورد های ایگنور شده:
+        <ol>
+        {% for ign in s.ignored %}
+          <li>{{ ign }}</li>
+        {% endfor %}
+        </ol>
+      </li>
+      {% endif %}
+      </ul>
+    {% endfor %}
+</div>
+
+{% endblock %}

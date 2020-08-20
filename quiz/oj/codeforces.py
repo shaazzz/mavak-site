@@ -5,7 +5,7 @@ import time
 from collections import OrderedDict
 from urllib.parse import urlencode
 
-from ReqHandler import ReqHandler
+from .ReqHandler import ReqHandler
 
 
 def generate_random_number(length=6):
@@ -17,9 +17,8 @@ def generate_random_number(length=6):
 class CodeforcesApi:
     req = ReqHandler()
 
-    def __init__(self):
-        with open("keys.txt", "r") as f:
-            self.keys = json.loads(f.read())
+    def __init__(self, secrets):
+        self.keys = json.loads(secrets)
 
     def request(self, method_name, params):
         params["apiKey"] = self.keys["apiKey"]
@@ -33,25 +32,19 @@ class CodeforcesApi:
             raise Exception("return status is not ok")
         return result['result']
 
+def judge(secrets, contestId, total_score):
 
-cfApi = CodeforcesApi()
-'''
-sample input:
-291445
-100
-'''
+    cfApi = CodeforcesApi(secrets)
+    result = cfApi.request("contest.standings",
+                        {"contestId": contestId, "showUnofficial": "false"})
 
-contestId = input()
-total_score = int(input())
-result = cfApi.request("contest.standings",
-                       {"contestId": contestId, "showUnofficial": "false"})
+    problem_score = total_score / len(result['problems'])
 
-problem_score = total_score / len(result['problems'])
-
-users = {}
-for user in result['rows']:
-    users[user['party']['members'][0]['handle']] = {"rank": user['rank'], 'total_points': user['points'] * problem_score}
-    users[user['party']['members'][0]['handle']]["problemResults"] = []
-    for pres in user["problemResults"]:
-        users[user['party']['members'][0]['handle']]["problemResults"].append(pres['points']*problem_score)
-print(users)
+    users = []
+    for user in result['rows']:
+        users.append({
+            'handle': user['party']['members'][0]['handle'],
+            "rank": user['rank'], 
+            'total_points': user['points'] * problem_score,
+        })
+    return users

@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Quiz, Question, Answer
-from users.models import Student
+from .models import Quiz, Question, Answer, Secret
+from users.models import Student, OJHandle
 from django.utils import timezone
 from django.http import JsonResponse
 from json import dumps, loads
 from django.db.models import Sum, Q, Window, F
 from django.db.models.functions import Rank
+from .oj.codeforces import judge as judgeCF
 
 def get_answer(qu, stu):
     qs = Answer.objects.filter(question= qu, student= stu)
@@ -83,6 +84,48 @@ def bulkCheckView(req, name):
     Answer.objects.filter(question= qu).update(grade= 0, grademsg= "تصحیح خودکار")
     Answer.objects.filter(question= qu, text= req.POST['answer']).update(grade= qu.mxgrade)
     return redirect("../scoreboard/")
+
+def pickAnswerFromOJView(req, name):
+    if (not req.user.is_staff):
+        return redirect("/users/login")
+    qu = Question.objects.filter(quiz__name= name, typ= "OJ")
+    qs = []
+    for q in qu:
+        if q.text[:2] == "CF":
+            try:
+                secret = Secret.objects.get(key= "CF_API").value
+                data = judgeCF(secret, q.text[3:], q.mxgrade)
+                ignored = []
+                evaled = 0
+                for x in data:
+                    try:
+                        stu = OJHandle.objects.get(judge= "CF", handle= x['handle']).student
+                        Answer.objects.filter(question= q, student= stu).delete()
+                        Answer.objects.create(
+                            question= q,
+                            student= stu,
+                            text= ".",
+                            grade= x['total_points'],
+                            grademsg= "تصحیح با داوری خارجی"
+                        )
+                        evaled += 1
+                    except Exception as e:
+                        ignored.append(str(e))
+                qs.append({
+                    "order": q.order,
+                    "subtyp": "کد فرسز",
+                    "evaled": evaled,
+                    "ignored": ignored,
+                })
+            except Exception as e:
+                qs.append({
+                    "order": q.order,
+                    "subtyp": "کد فرسز",
+                    "error": str(e),
+                })
+    return render(req, "quiz/oj.html", {
+        "questions": qs,
+    })
 
 def checkView(req, name, user):
     if (not req.user.is_staff):

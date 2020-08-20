@@ -29,3 +29,7 @@ class Answer(models.Model):
     grade = models.IntegerField()
     grademsg = models.TextField()
     
+class Secret(models.Model):
+    key = models.CharField(max_length=50)
+    value = models.TextField()
+    
