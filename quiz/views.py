@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Quiz, Question, Answer, Secret
+from .models import Quiz, Question, Answer, Secret, Collection, CollectionQuiz
 from users.models import Student, OJHandle
 from django.utils import timezone
 from django.http import JsonResponse
@@ -8,6 +8,7 @@ from django.db.models import Sum, Q, Window, F
 from django.db.models.functions import Rank
 from .oj.codeforces import judge as judgeCF
 from .oj.atcoder import judge as judgeAT
+from django.core.serializers.json import DjangoJSONEncoder
 
 def get_answer(qu, stu):
     qs = Answer.objects.filter(question= qu, student= stu)
@@ -63,6 +64,13 @@ def submitView(req, name):
         ques = get_object_or_404(Question, quiz= q, order= x['order'])
         Answer.objects.create(question= ques, student= stu, text= x['text'], grade= -1, grademsg= "تصحیح نشده")
     return JsonResponse({ 'ok': True })
+
+def collectionScoreBoardView(req, name):
+    q = get_object_or_404(Collection, name= name)
+    stu = Student.objects.raw('SELECT student_id as id, SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id WHERE quiz_collectionquiz.collection_id="1" GROUP BY student_id;')
+    return render(req, "quiz/ranking.html", {
+        'students': stu,
+    })
 
 def scoreBoardView(req, name):
     q = get_object_or_404(Quiz, name= name)

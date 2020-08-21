@@ -1,0 +1,26 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h1>{{ quiz.title }}</h1>
+    <table style="width: 100%; text-align: center;">
+      <thead>
+        <td>رتبه      </td>
+        <td>نام       </td>
+        <td>نمره      </td>
+      </thead>
+      <tbody>
+        {% for s in students %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+              <a href="../check/{{ s.user }}/">{{ s.user.get_full_name }}</a></td>
+            <td>{{ s.nomre }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+{% endblock %}

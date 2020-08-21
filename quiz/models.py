@@ -10,6 +10,22 @@ class Quiz(models.Model):
     def __str__(self):
         return self.name
 
+class Collection(models.Model):
+    name = models.CharField(max_length=50)
+    title = models.CharField(max_length=250)
+    def __str__(self):
+        return self.name
+    
+class CollectionQuiz(models.Model):
+    quiz= models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    collection= models.ForeignKey(Collection, on_delete=models.CASCADE)
+    multiple= models.FloatField(default= 1)
+    order = models.IntegerField()
+    def __str__(self):
+        return self.collection.name+" "+str(self.order)
+    class Meta:
+        ordering = ["order"]
+
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     text = models.TextField()
@@ -32,4 +48,5 @@ class Answer(models.Model):
 class Secret(models.Model):
     key = models.CharField(max_length=50)
     value = models.TextField()
-    
+    def __str__(self):
+        return self.name
