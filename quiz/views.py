@@ -106,14 +106,14 @@ def pickAnswerFromJson(req, name):
         try:
             stu = Student.objects.get(user__username= x['handle'])
             Answer.objects.create(
-                question= q,
+                question= qu,
                 student= stu,
                 text= ".",
                 grade= x['total_points'],
                 grademsg= "تصحیح با داوری خارجی",
             )
-        except:
-            pass
+        except Exception as e:
+            print(e)
     return redirect("../scoreboard/")
     
 
