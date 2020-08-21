@@ -71,6 +71,25 @@ def collectionScoreBoardView(req, name):
     return render(req, "quiz/ranking.html", {
         'students': stu,
     })
+ 
+def next_rate(prev_rate, grade, max_grade):
+    max_rate = 600
+    f = prev_rate * max_grade / max_rate / max_rate
+    prev_rate *= (1-f)
+    return prev_rate+grade
+    
+def collectionProfileView(req, name, user):
+    q = get_object_or_404(Collection, name= name)
+    yaroo = get_object_or_404(Student, user__username= user)
+    stu = Student.objects.raw('SELECT * FROM (SELECT quiz_question.quiz_id as id, SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id WHERE quiz_collectionquiz.collection_id="'+ str(q.id) +'" and student_id="'+ str(yaroo.id) +'" GROUP BY quiz_question.quiz_id ORDER BY id) WHERE nomre > 0;')
+    rates=[]
+    rate=0
+    for pers in stu:
+    	rate=next_rate(rate,pers.nomre,pers.maxgrade)
+    	rates.append({"id":pers.id,"rate":rate)
+    return render(req, "quiz/ranking.html", {
+        'Rates': rates,
+    })
 
 def scoreBoardView(req, name):
     q = get_object_or_404(Quiz, name= name)
