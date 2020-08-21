@@ -105,7 +105,11 @@ def pickAnswerFromJson(req, name):
     Answer.objects.filter(question= qu).delete()
     for x in data:
         try:
-            stu = Student.objects.get(user__username= x['handle'])
+            stu = None
+            if qu.text.split("\n")[0] == "ATCODER":
+                stu = OJHandle.objects.get(judge= "ATCODER", handle= x['handle']).student        
+            else:
+                stu = Student.objects.get(user__username= x['handle'])
             Answer.objects.create(
                 question= qu,
                 student= stu,
@@ -117,7 +121,7 @@ def pickAnswerFromJson(req, name):
             print(e)
             print(x)
     return redirect("../scoreboard/")
-    
+
 
 def autoCheckerView(req, name):
     if (not req.user.is_staff):
@@ -125,8 +129,11 @@ def autoCheckerView(req, name):
     qu = Question.objects.filter(quiz__name= name)
     for q in qu:
         if q.typ[0] != 'O' or q.typ == 'OJ':
-            continue
-        
+            if q.typ != 'auto':
+                continue
+        Answer.objects.filter(question= q).update(grade= 0, grademsg= "تصحیح خودکار. پاسخ صحیح:" + q.hint)
+        Answer.objects.filter(question= q, text= q.hint.strip()).update(grade= q.mxgrade)
+    return redirect("../scoreboard/")
 
 def pickAnswerFromOJView(req, name):
     if (not req.user.is_staff):
