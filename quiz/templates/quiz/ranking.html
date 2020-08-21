@@ -60,7 +60,7 @@ body {
   font-size: 12px;
   line-height: 30px;
   color: #777777;
-  background: #8b7079;
+  background: #9b2029;
 }
 
 .container {
@@ -244,7 +244,7 @@ errorbox {
         {% for s in students %}
             	<tr id="user" style='margin: 100px'>
                         <td style='text-align:center;padding: 5px'>#{{ forloop.counter }}</td>
-                        <td dir='auto' style='font-size: 20px;width: 100%;padding: 15px'>
+                        <td dir='auto' style='font-size: 20px;padding: 15px'>
                         	<img class="circular--square" style="width: 35px;height:35px;vertical-align:middle;display:inline;" src="https://userpic.codeforces.com/1234975/avatar/a7e1d7b5c2c08902.jpg">
                         	<a href="profile/{{ s.user }}/" style='font-size:$fontSize;color: $userRateColor;text-decoration: none;margin-left: 3px;margin-right: : 3px'>{{ s.user.get_full_name }}</a>
                         </td>
