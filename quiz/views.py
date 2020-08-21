@@ -102,6 +102,7 @@ def pickAnswerFromJson(req, name):
     n = req.POST['order']
     qu = get_object_or_404(Question, quiz__name= name, order= n)
     data = loads(req.POST['answer'])
+    Answer.objects.filter(question= qu).delete()
     for x in data:
         try:
             stu = Student.objects.get(user__username= x['handle'])
@@ -114,6 +115,7 @@ def pickAnswerFromJson(req, name):
             )
         except Exception as e:
             print(e)
+            print(x)
     return redirect("../scoreboard/")
     
 
