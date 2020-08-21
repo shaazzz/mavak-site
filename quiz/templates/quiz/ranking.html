@@ -10,7 +10,7 @@
     <div id="contact">
 
         <img style="align-content:center;padding-left:20%;padding-right:20%;width: 70%;min-height:25%;margin:auto;vertical-align:middle;display:inline;"
-             src="//shaazzz.ir/logo.png" onerror="this.style.display='none'">
+             src="http://uupload.ir/files/wit7_maavaak.png" onerror="this.style.display='none'">
         <br><br>
         <h3 dir="rtl" style="font-size:45px;text-align:center">رتبه&zwnj;بندی</h3>
 
@@ -20,6 +20,17 @@
         		<th style='font-size:20px;padding: 20px'>نام</th>
         		<th style='font-size:20px;padding: 20px'>امتیاز</th>
         	</tr>
+            
+        {% for s in students %}
+            	<tr id="user" style='margin: 100px'>
+                        <td style='text-align:center;padding: 5px'>#{{ forloop.counter }}</td>
+                        <td dir='auto' style='font-size: 20px;width: 100%;padding: 15px'>
+                        	<img class="circular--square" style="width: 35px;height:35px;vertical-align:middle;display:inline;" src="https://userpic.codeforces.com/1234975/avatar/a7e1d7b5c2c08902.jpg">
+                        	<a href="profile/{{ s.user }}/" style='font-size:$fontSize;color: $userRateColor;text-decoration: none;margin-left: 3px;margin-right: : 3px'>{{ s.user.get_full_name }}</a>
+                        </td>
+                        <td dir='rtl' style='text-align:center;padding: 5px'>{{ s.nomre }}</td>
+              	</tr>
+        {% endfor %}
            </table>
     </div>
 
