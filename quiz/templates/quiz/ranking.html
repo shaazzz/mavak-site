@@ -27,6 +27,10 @@
             	<tr id="user" style='margin: 100px'>
                         <td style='text-align:center;padding: 5px'>#{{ forloop.counter }}</td>
                         <td dir='auto' style='font-size: 20px;width: 100%;padding: 15px'>
+                        <img class="circular--square" style="width: 35px;height:35px;vertical-align:middle;display:inline;" src="$photo">
+                        <a href="profile/{{ s.user }}/" style='font-size:$fontSize;color: $userRateColor;text-decoration: none;margin-left: 3px;margin-right: : 3px'>{{ s.user.get_full_name }}</a>
+                        </td>
+                        <td dir='rtl' style='text-align:center;padding: 5px'>{{ s.nomre }}</td>
               	</tr>
         {% endfor %}
            </table>
