@@ -1,0 +1,285 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>امتیاز کاربر</title>
+    <link href="//training.shaazzz.ir/files/styles.css" rel="stylesheet" type="text/css">
+    <link rel="icon" href="//shaazzz.ir/logo.png">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v26.0.2/dist/font-face.css" rel="stylesheet"
+          type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script type="text/javascript">
+        window.onload = function () {
+            var chart = new CanvasJS.Chart("chartContainer", {
+                title: {
+                    text: "Shaazzz Rating"
+                },
+                exportFileName: "Shaazzz Rating",
+                theme: "light2",
+                axisY: {
+                    thickness: 0,
+                    stripLines: <?php
+                    echo file_get_contents("data/rateColors.txt");
+                    ?>,
+                    valueFormatString: "####",
+                    gridThickness: 0
+                },
+                axisX: {
+                    valueFormatString: "#",
+                    interval: 7,
+                    prefix: "day "
+                },
+                data: [
+                    {
+                        type: "line",
+                        color: "#040568",
+                        dataPoints: {
+                        	1:100
+                        	2:200
+                        }
+                    }
+                ]
+            });
+            chart.render();
+        }
+    </script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+
+<noscript>Sorry, your browser does not support JavaScript!</noscript>
+
+<style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -o-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a:hover, a:visited, a:link, a:active
+{
+    text-decoration: none;
+}
+
+.circular--square {
+  border-radius: 50%;
+  width:25px;
+  height:30px;
+  overflow:hidden
+}
+.bottomright {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+}
+
+.rotate45 {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+
+.circular-big-square {
+  border-radius: 50%;
+  width:300px;
+  height:220px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  overflow:hidden
+}
+
+body {
+  font-family: "Vazir", Helvetica, Arial, sans-serif;
+  font-weight: 100;
+  font-size: 12px;
+  line-height: 30px;
+  color: #777777;
+  background: #16115e;
+}
+
+.container {
+  max-width: 700px;
+  min-width: 550px;
+  width: 80%;
+  margin: 0 auto;
+  position: relative;
+}
+
+#contact input[type="text"],
+#contact input[type="number"],
+#contact input[type="password"],
+#contact input[type="url"],
+#contact textarea,
+#contact button[type="submit"] {
+  font: 400 12px/16px "Vazir", Helvetica, Arial, sans-serif;
+}
+
+#contact {
+  border-radius: 20px;
+  background: #F9F9F9;
+  padding: 25px;
+  margin: 80px 0;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+#user {
+  background: #F9F9F9;
+  padding: 25px;
+  margin: 30px 0;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+#contact h3 {
+  display: block;
+  font-size: 30px;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+#contact h4 {
+  margin: 5px 0 15px;
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+upside {
+  min-width: 100%;
+  width: 100%;
+  background: #F9F9F9;
+  padding: 10px;
+  margin: 10px 0;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+fieldset {
+  border: medium none !important;
+  margin: 0 0 10px;
+  min-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+#name td {
+  border: medium none !important;
+  margin: 0 0 10px;
+  min-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+
+errorbox {
+  color: #d42020;
+  margin: 10px 0 10px;
+  min-width: 100%;
+  padding: 2%;
+  width: 100%;
+}
+
+#contact input[type="text"],
+#contact input[type="number"],
+#contact input[type="password"],
+#contact input[type="url"],
+#contact textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  background: #FFF;
+  margin: 0 0 5px;
+  padding: 10px;
+}
+
+#contact input[type="text"],
+#contact input[type="number"],
+#contact input[type="password"],
+#contact input[type="url"],
+#contact textarea:hover {
+  -webkit-transition: border-color 0.3s ease-in-out;
+  -moz-transition: border-color 0.3s ease-in-out;
+  transition: border-color 0.3s ease-in-out;
+  border: 1px solid #aaa;
+}
+
+#contact textarea {
+  height: 100px;
+  max-width: 100%;
+  resize: none;
+}
+
+#contact button[type="submit"] {
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  background: #26218e;
+  color: #FFF;
+  margin: 0 0 5px;
+  padding: 10px;
+  font-size: 15px;
+}
+
+#contact button[type="submit"]:hover {
+  background: #3631ae;
+  -webkit-transition: background 0.3s ease-in-out;
+  -moz-transition: background 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#contact button[type="submit"]:active {
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.copyright {
+  text-align: center;
+}
+
+.js-example-basic-multiple {
+  text-align: center;
+  width: 100%
+}
+
+#contact input:focus,
+#contact textarea:focus {
+  outline: 0;
+  border: 1px solid #aaa;
+}
+
+::-webkit-input-placeholder {
+  color: #888;
+}
+
+:-moz-placeholder {
+  color: #888;
+}
+
+::-moz-placeholder {
+  color: #888;
+}
+
+:-ms-input-placeholder {
+  color: #888;
+}
+</style>
+
+<div class="container">
+    <noscript>Sorry, your browser does not support JavaScript!</noscript>
+    <div id="contact" style="min-height:20%;">
+        <img class='circular-big-square' style="width: 220px;height:220px;" src="http://uupload.ir/files/ae0p_default.png">
+        <div dir='rtl' style="font-size: 20px;color: blue;">
+        <h4 style="margin-top:20px;font-size: 35px;text-align:center;">
+        {{ user.get_full_name }}
+        </h4>
+        </div>
+        <h4 dir='rtl' style="text-align:center;font-size: 20px;"> امتیاز:  . {{ last_rate }} </h4>;
+        <div id="chartContainer" style="margin-top: 30px; height: 300px; width: 100%;"></div>
+    </div>
+</div>
