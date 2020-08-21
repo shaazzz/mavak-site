@@ -67,7 +67,7 @@ def submitView(req, name):
 
 def collectionScoreBoardView(req, name):
     q = get_object_or_404(Collection, name= name)
-    stu = Student.objects.raw('SELECT student_id as id, SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id WHERE quiz_collectionquiz.collection_id="'+str(q.id)+'" GROUP BY student_id ORDER BY nomre;')
+    stu = Student.objects.raw('SELECT student_id as id, SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id WHERE quiz_collectionquiz.collection_id="'+str(q.id)+'" GROUP BY student_id ORDER BY nomre DESC;')
     return render(req, "quiz/ranking.html", {
         'students': stu,
     })
