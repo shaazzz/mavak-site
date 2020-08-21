@@ -94,6 +94,29 @@ def bulkCheckView(req, name):
     Answer.objects.filter(question= qu, text= req.POST['answer']).update(grade= qu.mxgrade)
     return redirect("../scoreboard/")
 
+def pickAnswerFromJson(req, name):
+    if (not req.user.is_staff):
+        return redirect("/users/login")
+    if req.method == 'GET':
+        return render(req, "quiz/pickjson.html")
+    n = req.POST['order']
+    qu = get_object_or_404(Question, quiz__name= name, order= n)
+    data = loads(req.POST['answer'])
+    for x in data:
+        try:
+            stu = Student.objects.get(user__username= x['handle'])
+            Answer.objects.create(
+                question= q,
+                student= stu,
+                text= ".",
+                grade= x['total_points'],
+                grademsg= "تصحیح با داوری خارجی",
+            )
+        except:
+            pass
+    return redirect("../scoreboard/")
+    
+
 def pickAnswerFromOJView(req, name):
     if (not req.user.is_staff):
         return redirect("/users/login")

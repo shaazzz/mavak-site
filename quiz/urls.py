@@ -11,5 +11,6 @@ urlpatterns = [
   path('<name>/check/<user>/', views.checkView, name='checkView'),
   path('<name>/check/<user>/checked/', views.checkedView, name='checkedView'),
   path('<name>/bulkcheck/', views.bulkCheckView, name='bulkCheckView'),
+  path('<name>/pickjson/', views.pickAnswerFromJson, name='pickAnswerFromJson'),
   path('<name>/oj/', views.pickAnswerFromOJView, name='pickAnswerFromOJView'),
 ]
