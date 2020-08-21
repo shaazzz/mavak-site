@@ -87,8 +87,10 @@ def collectionProfileView(req, name, user):
     for pers in stu:
     	rate=next_rate(rate,pers.nomre,pers.maxgrade)
     	rates.append({"id":pers.id,"rate":rate})
-    return render(req, "quiz/ranking.html", {
+    return render(req, "quiz/profile.html", {
         'Rates': rates,
+        'last_rate': rate,
+        'user': user,
     })
 
 def scoreBoardView(req, name):
