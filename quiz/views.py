@@ -116,7 +116,6 @@ def pickAnswerFromOJView(req, name):
                 qs.append({
                     "order": q.order,
                     "subtyp": "اتکدر",
-                    "text": data,
                     "evaled": evaled,
                     "ignored": ignored,
                 })
