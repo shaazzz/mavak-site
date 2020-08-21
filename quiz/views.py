@@ -7,6 +7,7 @@ from json import dumps, loads
 from django.db.models import Sum, Q, Window, F
 from django.db.models.functions import Rank
 from .oj.codeforces import judge as judgeCF
+from .oj.atcoder import judge as judgeAT
 
 def get_answer(qu, stu):
     qs = Answer.objects.filter(question= qu, student= stu)
@@ -91,6 +92,40 @@ def pickAnswerFromOJView(req, name):
     qu = Question.objects.filter(quiz__name= name, typ= "OJ")
     qs = []
     for q in qu:
+        if q.text[:2] == "AT":
+            try:
+                problems = q.text.split("\n")[1].split(" ")
+                handles = [ x.handle for x in OJHandle.objects.filter(judge= "ATCODER") ]
+                data = judgeAT(handles, problems, q.mxgrade)
+                ignored = []
+                evaled = 0
+                for x in data:
+                    try:
+                        stu = OJHandle.objects.get(judge= "ATCODER", handle= x['handle']).student
+                        Answer.objects.filter(question= q, student= stu).delete()
+                        Answer.objects.create(
+                            question= q,
+                            student= stu,
+                            text= ".",
+                            grade= x['total_points'],
+                            grademsg= "تصحیح با داوری خارجی"
+                        )
+                        evaled += 1
+                    except Exception as e:
+                        ignored.append(str(e))
+                qs.append({
+                    "order": q.order,
+                    "subtyp": "اتکدر",
+                    "text": data,
+                    "evaled": evaled,
+                    "ignored": ignored,
+                })
+            except Exception as e:
+                qs.append({
+                    "order": q.order,
+                    "subtyp": "اتکدر",
+                    "error": str(e),
+                })
         if q.text[:2] == "CF":
             try:
                 secret = Secret.objects.get(key= "CF_API").value
