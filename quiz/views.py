@@ -94,6 +94,7 @@ def pickAnswerFromOJView(req, name):
     for q in qu:
         if q.text[:2] == "AT":
             try:
+                Answer.objects.filter(question= q).delete()
                 problems = q.text.split("\n")[1].split(" ")
                 handles = [ x.handle for x in OJHandle.objects.filter(judge= "ATCODER") ]
                 data = judgeAT(handles, problems, q.mxgrade)
@@ -102,7 +103,6 @@ def pickAnswerFromOJView(req, name):
                 for x in data:
                     try:
                         stu = OJHandle.objects.get(judge= "ATCODER", handle= x['handle']).student
-                        Answer.objects.filter(question= q, student= stu).delete()
                         Answer.objects.create(
                             question= q,
                             student= stu,
