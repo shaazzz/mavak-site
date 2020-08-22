@@ -13,9 +13,9 @@
         window.onload = function () {
             var chart = new CanvasJS.Chart("chartContainer", {
                 title: {
-                    text: "Shaazzz Rating"
+                    text: "Mavak Rating"
                 },
-                exportFileName: "Shaazzz Rating",
+                exportFileName: "Mavak Rating",
                 theme: "light2",
                 axisY: {
                     thickness: 0,
@@ -78,8 +78,9 @@
                         dataPoints: [
                             {% for s in Rates %}
                             {
-                                'x':{{ forloop.counter }},
-                                'y':{{ s.rate }}
+                                x: {{ forloop.counter }},
+                                y: {{ s.rate }},
+                                indexLabel: {{ s.desc }}
                             },
                             {% endfor %}
                         ]
