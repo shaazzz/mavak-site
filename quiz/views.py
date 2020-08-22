@@ -95,7 +95,7 @@ def collectionProfileView(req, name, user):
                 rates.append(pers)
                 break
         else:
-            new_pers=copy.copy(user)
+            new_pers=copy.copy(yaroo)
             new_pers.id=qu.id
             new_pers.nomre=0
             new_pers.maxgrade=qu.maxgrade
