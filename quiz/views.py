@@ -81,7 +81,7 @@ def next_rate(prev_rate, grade, max_grade):
 def collectionProfileView(req, name, user):
     q = get_object_or_404(Collection, name= name)
     yaroo = get_object_or_404(Student, id= int(user))
-    stu = Student.objects.raw('SELECT * FROM   (SELECT 0 as rate, quiz_collectionquiz.id as id, SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre,   (quiz_quiz.title || " | " || cast(SUM(grade * quiz_collectionquiz.multiple) as text) || "امتیاز") as desc  FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id   INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id   INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id   WHERE quiz_collectionquiz.collection_id='+str(q.id)+' and student_id='+str(yaroo.id)+' GROUP BY quiz_collectionquiz.id ORDER BY id) WHERE nomre > 0;')
+    stu = Student.objects.raw('SELECT * FROM   (SELECT 0 as rate, quiz_collectionquiz.id as id, SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre,   (quiz_quiz.title || " \\n " || cast(SUM(grade * quiz_collectionquiz.multiple) as text) || "امتیاز") as desc  FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id   INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id   INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id   WHERE quiz_collectionquiz.collection_id='+str(q.id)+' and student_id='+str(yaroo.id)+' GROUP BY quiz_collectionquiz.id ORDER BY id) WHERE nomre > 0;')
     rates=[]
     rt=0
     for pers in stu:
