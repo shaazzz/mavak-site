@@ -76,16 +76,12 @@
                         type: "line",
                         color: "#040568",
                         dataPoints: [
+                            {% for s in Rates %}
                             {
-                                'x':1,
-                                'y':100
-                            },{
-                                'x':2,
-                                'y':300
-                            },{
-                                'x':5,
-                                'y':50
-                            }
+                                'x':{{ forloop.counter }},
+                                'y':{{ s.rate }}
+                            },
+                            {% endfor %}
                         ]
                     }
                 ],
@@ -322,13 +318,13 @@ errorbox {
 <div class="container">
     <noscript>Sorry, your browser does not support JavaScript!</noscript>
     <div id="contact" style="min-height:20%;">
-        <img class='circular-big-square' style="width: 220px;height:220px;" src="http://uupload.ir/files/ae0p_default.png">
+        <img class='circular-big-square' style="width: 220px;height:220px;" src="https://uupload.ir/files/ae0p_default.png">
         <div dir='rtl' style="font-size: 20px;color: blue;">
-        <h4 style="margin-top:20px;font-size: 35px;text-align:center;">
-        {{ user.get_full_name }}
-        </h4>
+            <h4 style="margin-top:20px;font-size: 35px;text-align:center;">
+                {{ user.user.get_full_name }}
+            </h4>
         </div>
-        <h4 dir='rtl' style="text-align:center;font-size: 20px;"> امتیاز: {{ last_rate }} </h4>;
+        <h4 dir='rtl' style="text-align:center;font-size: 20px;"> امتیاز: {{ last_rate }} </h4>
         <div id="chartContainer" style="margin-top: 30px; height: 300px; width: 100%;"></div>
     </div>
 </div>
