@@ -166,17 +166,19 @@
       header.innerText = `سوال ${p.order} (${p.mxgrade} امتیاز)`;
       pdiv.appendChild(header);
       const text = document.createElement('p');
-      if (p.typ === 'text') {
+      if (p.typ === 'text' || p.typ === 'auto') {
         text.innerHTML = p.text;
-      } else {
+      } else if (p.typ.match(/O[0-9]/)) {
         const oc = Number(p.typ.slice(1));
         const matn = p.text.split("\n").slice(0, -oc).join("\n");
         text.innerHTML = matn;
+      } else {
+        text.innerHTML = 'صورت سوال در دسترس نیست';
       }
       pdiv.appendChild(text);
       const odiv = document.createElement('div');
       odiv.className = 'form-group';
-      if (p.typ !== 'text') {
+      if (p.typ !== 'text' && p.typ !== 'auto') {
         const oc = Number(p.typ.slice(1));
         p.text.split("\n").slice(-oc).forEach((op, i) => {
           const radio = document.createElement('input');
