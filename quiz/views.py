@@ -91,7 +91,7 @@ def collectionProfileView(req, name, user):
     return render(req, "quiz/profile.html", {
         'Rates': rates,
         'last_rate': rt,
-        'user': user,
+        'user': yaroo,
     })
 
 def scoreBoardView(req, name):
