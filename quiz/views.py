@@ -85,7 +85,7 @@ def collectionProfileView(req, name, user):
     stu = Student.objects.raw('SELECT * FROM   (SELECT 0 as rate, quiz_collectionquiz.id as id, SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre,   (quiz_quiz.title || " | " || cast(SUM(grade * quiz_collectionquiz.multiple) as text) || "/" || cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " امتیاز") as desc  FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id   INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id   INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id   WHERE quiz_collectionquiz.collection_id='+str(q.id)+' and student_id='+str(yaroo.id)+' GROUP BY quiz_collectionquiz.id ORDER BY id) WHERE nomre > 0;')
     quz = CollectionQuiz.objects.raw('SELECT *, (quiz_quiz.title || " | 0/" || cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " امتیاز") as desc, SUM(multiple*mxgrade) as maxgrade FROM quiz_collectionquiz INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id WHERE quiz_collectionquiz.collection_id='+str(q.id)+' GROUP BY quiz_collectionquiz.id ORDER BY id')
     rates=[]
-    rt=200
+    rt=100
     sum_nomre=0
     for qu in quz:
         for pers in stu:
