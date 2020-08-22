@@ -9,6 +9,7 @@ from django.db.models.functions import Rank
 from .oj.codeforces import judge as judgeCF
 from .oj.atcoder import judge as judgeAT
 from django.core.serializers.json import DjangoJSONEncoder
+import copy
 
 def get_answer(qu, stu):
     qs = Answer.objects.filter(question= qu, student= stu)
