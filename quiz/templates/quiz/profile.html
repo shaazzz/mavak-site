@@ -19,9 +19,50 @@
                 theme: "light2",
                 axisY: {
                     thickness: 0,
-                    stripLines: <?php
-                    echo file_get_contents("data/rateColors.txt");
-                    ?>,
+                    stripLines: [{
+                        "startValue": 0,
+                        "endValue": 100,
+                        "name": "تازه&zwnj;کار",
+                        "color": "rgb(192,192,192)",
+                        "labelColor": "rgb(130,130,130)"
+                    }, {
+                        "startValue": 100,
+                        "endValue": 200,
+                        "name": "کم&zwnj;تلاش",
+                        "color": "rgb(36,186,9)",
+                        "labelColor": "rgb(30,145,7)"
+                    }, {
+                        "startValue": 200,
+                        "endValue": 350,
+                        "name": "تلاش&zwnj;گر",
+                        "color": "#1e51d2",
+                        "labelColor": "#1e51d2"
+                    }, {
+                        "startValue": 350,
+                        "endValue": 500,
+                        "name": "خبره",
+                        "color": "#be1780",
+                        "labelColor": "#be1780"
+                    }, {
+                        "startValue": 500,
+                        "endValue": 600,
+                        "name": "نیمچه استاد",
+                        "color": "#ece130",
+                        "labelColor": "#e0b415"
+                    }, {
+                        "startValue": 600,
+                        "endValue": 800,
+                        "name": "استاد",
+                        "color": "#e21d1d",
+                         "labelColor": "#e21d1d"
+                    }, {
+                        "startValue": 800,
+                        "endValue": 10000,
+                        "name": "استاد بزرگ",
+                        "color": "#9e0505",
+                        "labelColor": "#9e0505"
+                    }
+                    ],
                     valueFormatString: "####",
                     gridThickness: 0
                 },
@@ -39,7 +80,7 @@
                                 'x':1,
                                 'y':100
                             },{
-                                'x':1,
+                                'x':2,
                                 'y':300
                             },{
                                 'x':5,
@@ -47,7 +88,7 @@
                             }
                         ]
                     }
-                ]
+                ],
             });
             chart.render();
         }
