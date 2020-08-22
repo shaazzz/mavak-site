@@ -76,6 +76,13 @@
                         type: "line",
                         color: "#040568",
                         dataPoints: [
+                            {
+                                x:-1,
+                                y:10
+                            },{
+                                x:0,
+                                y:50
+                            },
                             {% for s in Rates %}
                             {
                                 x: {{ forloop.counter }},
