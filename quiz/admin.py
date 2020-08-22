@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Quiz, Question, Secret, Collection, CollectionQuiz
+from .models import Quiz, Question, Secret, Collection, CollectionQuiz, Answer
 
 class QuestionInline(admin.StackedInline):
     model = Question
@@ -21,4 +21,8 @@ class QuizAdmin(admin.ModelAdmin):
 
 @admin.register(Secret)
 class SecretAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Answer)
+class AnswerAdmin(admin.ModelAdmin):
     pass
