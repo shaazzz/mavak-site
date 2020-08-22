@@ -76,7 +76,7 @@ def next_rate(prev_rate, grade, max_grade):
     max_rate = 600
     f = prev_rate * max_grade / max_rate / max_rate
     prev_rate *= (1-f)
-    return prev_rate+grade
+    return int(prev_rate+grade)
     
 def collectionProfileView(req, name, user):
     q = get_object_or_404(Collection, name= name)
