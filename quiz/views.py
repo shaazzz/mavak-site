@@ -86,11 +86,13 @@ def collectionProfileView(req, name, user):
     quz = CollectionQuiz.objects.raw('SELECT *, (quiz_quiz.title || " | 0/" || cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " امتیاز") as desc, SUM(multiple*mxgrade) as maxgrade FROM quiz_collectionquiz INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id WHERE quiz_collectionquiz.collection_id='+str(q.id)+' GROUP BY quiz_collectionquiz.id ORDER BY id')
     rates=[]
     rt=200
+    sum_nomre=0
     for qu in quz:
         for pers in stu:
             if pers.id==qu.id:
                 rt=next_rate(rt,pers.nomre,pers.maxgrade)
                 pers.rate=rt
+                sum_nomre+=pers.nomre
                 rates.append(pers)
                 break
         else:
@@ -104,7 +106,7 @@ def collectionProfileView(req, name, user):
             rates.append(new_pers)
     return render(req, "quiz/profile.html", {
         'Rates': rates,
-        'last_rate': rt,
+        'last_rate': sum_nomre,
         'user': yaroo,
     })
 
