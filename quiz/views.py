@@ -82,12 +82,23 @@ def collectionProfileView(req, name, user):
     q = get_object_or_404(Collection, name= name)
     yaroo = get_object_or_404(Student, id= int(user))
     stu = Student.objects.raw('SELECT * FROM   (SELECT 0 as rate, quiz_collectionquiz.id as id, SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre,   (quiz_quiz.title || " | " || cast(SUM(grade * quiz_collectionquiz.multiple) as text) || "/" || cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " امتیاز") as desc  FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id   INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id   INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id   WHERE quiz_collectionquiz.collection_id='+str(q.id)+' and student_id='+str(yaroo.id)+' GROUP BY quiz_collectionquiz.id ORDER BY id) WHERE nomre > 0;')
+    quz = CollectionQuiz.objects.raw("SELECT *, multiple*mxgrade as maxgrade FROM quiz_collectionquiz INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id  WHERE quiz_collectionquiz.collection_id=1 ORDER BY id");
+
     rates=[]
-    rt=300
-    for pers in stu:
-        rt=next_rate(rt,pers.nomre,pers.maxgrade)
-        pers.rate=rt
-        rates.append(pers)
+    rt=200
+    for qu in quz:
+        for pers in stu:
+            if pers.id==qu.id:
+                rt=next_rate(rt,pers.nomre,pers.maxgrade)
+                pers.rate=rt
+                rates.append(pers)
+                break
+        else:
+            new_pers=copy.copy(user)
+            new_pers.id=qu.id
+            new_pers.nomre=0
+            new_pers.maxgrade=qu.maxgrade
+            rates.append(new_pers)
     return render(req, "quiz/profile.html", {
         'Rates': rates,
         'last_rate': rt,
