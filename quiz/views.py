@@ -83,14 +83,14 @@ def collectionProfileView(req, name, user):
     yaroo = get_object_or_404(Student, id= int(user))
     stu = Student.objects.raw('SELECT * FROM (SELECT 0 as rate quiz_question.quiz_id as id, SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id WHERE quiz_collectionquiz.collection_id="'+ str(q.id) +'" and student_id="'+ str(yaroo.id) +'" GROUP BY quiz_question.quiz_id ORDER BY id) WHERE nomre > 0;')
     rates=[]
-    rate=0
+    rt=0
     for pers in stu:
-    	rate=next_rate(rate,pers.nomre,pers.maxgrade)
-        pers.rate=rate
+        rt=next_rate(rt,pers.nomre,pers.maxgrade)
+        pers.rate=rt
         rates.append(pers)
     return render(req, "quiz/profile.html", {
         'Rates': rates,
-        'last_rate': rate,
+        'last_rate': rt,
         'user': user,
     })
 
