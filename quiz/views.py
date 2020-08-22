@@ -97,6 +97,7 @@ def collectionProfileView(req, name, user):
             new_pers=copy.copy(yaroo)
             new_pers.id=qu.id
             new_pers.nomre=0
+            new_pers.desc=qu.desc
             new_pers.maxgrade=qu.maxgrade
             rt=next_rate(rt,new_pers.nomre,new_pers.maxgrade)
             new_pers.rate=rt
