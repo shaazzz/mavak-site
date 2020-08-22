@@ -6,6 +6,7 @@ class OJHandleInline(admin.StackedInline):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
+    ordering = ('user__username',)
     list_display = ('user', 'ostan', 'shomare', 'verified')
     list_editable = ( 'verified', )
     inlines = [
