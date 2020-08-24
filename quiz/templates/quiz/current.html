@@ -105,7 +105,7 @@
         saveButton.innerText = 'در حال ذخیره سازی...'
         const answer = [];
         problems.forEach((p) => {
-          if (p.typ === 'text') {
+          if (p.typ === 'text' || p.typ === 'auto') {
             answer.push({
               order: p.order,
               text: document.getElementById('ans' + p.order).value,
