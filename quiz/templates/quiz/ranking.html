@@ -8,6 +8,7 @@
 <script>
 var cf_accounts ="{% for ac in cf_accounts %}{{ ac.handle }};{% endfor %}";
 $.getJSON('https://api.allorigins.win/get?url=' + encodeURIComponent('https://codeforces.com/api/user.info?handles='+cf_accounts), function(data) {
+   data = JSON.parse(data.contents);
    {% for ac in cf_accounts %}
       if("//userpic.codeforces.com/no-avatar.jpg"!=data["result"][{{ forloop.counter }}-1]["avatar"]){
             $(".image{{ ac.id }}").attr("src","https:"+data["result"][{{ forloop.counter }}-1]["avatar"]);
