@@ -68,10 +68,11 @@ def submitView(req, name):
 
 def collectionScoreBoardView(req, name):
     q = get_object_or_404(Collection, name= name)
-    stu = Student.objects.raw('SELECT * FROM (SELECT users_ojhandle.handle, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN users_ojhandle ON users_ojhandle.student_id=quiz_answer.student_id INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id WHERE quiz_collectionquiz.collection_id='+str(q.id)+' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
-    
+    stu = Student.objects.raw('SELECT * FROM (SELECT quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id WHERE quiz_collectionquiz.collection_id='+str(q.id)+' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
+    acc = Student.objects.raw('SELECT * FROM (SELECT users_ojhandle.handle, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN users_ojhandle ON users_ojhandle.student_id=quiz_answer.student_id INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id WHERE quiz_collectionquiz.collection_id='+str(q.id)+' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
     return render(req, "quiz/ranking.html", {
         'students': stu,
+        'cf_accounts': acc,
     })
  
 def next_rate(prev_rate, grade, max_grade):
