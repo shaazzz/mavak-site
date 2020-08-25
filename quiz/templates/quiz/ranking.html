@@ -9,7 +9,7 @@
 var cf_accounts ="{% for ac in cf_accounts %}{{ ac.handle }};{% endfor %}";
 $.getJSON('https://codeforces.com/api/user.info?handles='+cf_accounts, function(data) {
    {% for ac in cf_accounts %}
-      if("//userpic.codeforces.com/no-title.jpg"!=data["result"][{{ forloop.counter }}-1]["avatar"]){
+      if("://userpic.codeforces.com/no-avatar.jpg"!=data["result"][{{ forloop.counter }}-1]["avatar"]){
             $(".image{{ ac.id }}").attr("src","https:"+data["result"][{{ forloop.counter }}-1]["avatar"]);
       }
    {% endfor %}
