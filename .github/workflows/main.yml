@@ -24,4 +24,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script: whoami
+          script: tmux send-keys -t mavak-site-tmux C-c Enter Up Enter
