@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import Student
+from users.models import Student, StudentGroup
 from datetime import datetime
 
 class Quiz(models.Model):
@@ -13,6 +13,7 @@ class Quiz(models.Model):
 class Collection(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
+    students = models.ForeignKey(StudentGroup, blank= True, null= True, on_delete=models.CASCADE)
     def __str__(self):
         return self.name
     
