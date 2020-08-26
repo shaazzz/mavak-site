@@ -4,16 +4,19 @@
 
 
 <noscript>Sorry, your browser does not support JavaScript!</noscript>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
 var cf_accounts ="{% for ac in cf_accounts %}{{ ac.handle }};{% endfor %}";
-$.getJSON('http://api.allorigins.win/get?url=' + encodeURIComponent('http://codeforces.com/api/user.info?handles='+cf_accounts), function(data) {
-   data = JSON.parse(data.contents);
-   {% for ac in cf_accounts %}
-      if("//userpic.codeforces.com/no-avatar.jpg"!=data["result"][{{ forloop.counter }}-1]["avatar"]){
-            $(".image{{ ac.id }}").attr("src","https:"+data["result"][{{ forloop.counter }}-1]["avatar"]);
-      }
-   {% endfor %}
+fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('http://codeforces.com/api/user.info?handles=mikaeel;'+cf_accounts)}`).then(response => {
+	if (response.ok) return response.json()
+		throw new Error('Network response was not ok.')
+}).then(data=> {
+	console.log(data.contents);
+	data = JSON.parse(data.contents);
+	{% for ac in cf_accounts %}
+		if("//userpic.codeforces.com/no-avatar.jpg"!=data["result"][{{ forloop.counter }}-1]["avatar"]){
+		    $(".image{{ ac.id }}").attr("src","https:"+data["result"][{{ forloop.counter }}-1]["avatar"]);
+		}
+	{% endfor %}
 });
 </script>
 
