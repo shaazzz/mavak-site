@@ -16,6 +16,13 @@ class Student(models.Model):
     def __str__(self):
         return self.user.username
 
+class StudentGroup(models.Model):
+    name = models.CharField(max_length=50)
+    title = models.CharField(max_length=250)
+    students = models.ManyToManyField(Student)
+    def __str__(self):
+        return self.name
+
 class OJHandle(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     judge = models.CharField(max_length=250)

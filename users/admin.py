@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Student, OJHandle
+from .models import Student, OJHandle, StudentGroup
 
 class OJHandleInline(admin.StackedInline):
     model = OJHandle
@@ -12,3 +12,7 @@ class StudentAdmin(admin.ModelAdmin):
     inlines = [
         OJHandleInline,
     ]
+
+@admin.register(StudentGroup)
+class StudentGroupAdmin(admin.ModelAdmin):
+    pass
