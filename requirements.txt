@@ -1,0 +1,4 @@
+django==3.0.8
+markdown2
+django-next-prev
+
