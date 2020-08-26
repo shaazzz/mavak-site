@@ -10,11 +10,10 @@ fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('http://codeforce
 	if (response.ok) return response.json()
 		throw new Error('Network response was not ok.')
 }).then(data=> {
-	console.log(data.contents);
 	data = JSON.parse(data.contents);
 	{% for ac in cf_accounts %}
 		if("//userpic.codeforces.com/no-avatar.jpg"!=data["result"][{{ forloop.counter }}-1]["avatar"]){
-		    document.getElementById('myImage').src="https:"+data["result"][{{ forloop.counter }}-1]["avatar"];
+		    document.getElementById('image{{ ac.id }}').src="https:"+data["result"][{{ forloop.counter }}-1]["avatar"];
 		}
 	{% endfor %}
 });
