@@ -15,4 +15,4 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(StudentGroup)
 class StudentGroupAdmin(admin.ModelAdmin):
-    pass
+    filter_horizontal = ('students',)
