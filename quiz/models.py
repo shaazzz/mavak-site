@@ -63,5 +63,13 @@ class Secret(models.Model):
     key = models.CharField(max_length=50)
     value = models.TextField()
 
+class RateColor(models.Model):
+    key = models.CharField(max_length=50)
+    startValue = models.IntegerField()
+    endValue = models.IntegerField()
+    name = models.CharField(max_length=50)
+    color = models.CharField(max_length=50)
+    labelColor = models.CharField(max_length=50)
+
     def __str__(self):
         return self.name
