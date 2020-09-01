@@ -178,7 +178,7 @@
       pdiv.appendChild(text);
       const odiv = document.createElement('div');
       odiv.className = 'form-group';
-      if (p.typ !== 'text' && p.typ !== 'auto') {
+      if (p.typ !== 'text' && p.typ !== 'auto' && p.typ !== 'textnocheck') {
         const oc = Number(p.typ.slice(1));
         p.text.split("\n").slice(-oc).forEach((op, i) => {
           const radio = document.createElement('input');
