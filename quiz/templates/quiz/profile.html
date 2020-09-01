@@ -35,50 +35,15 @@
                 theme: "light2",
                 axisY: {
                     thickness: 0,
-                    stripLines: [{
-                        "startValue": 0,
-                        "endValue": 100,
-                        "name": "تازه&zwnj;کار",
-                        "color": "rgb(192,192,192)",
-                        "labelColor": "rgb(130,130,130)"
-                    }, {
-                        "startValue": 100,
-                        "endValue": 200,
-                        "name": "کم&zwnj;تلاش",
-                        "color": "rgb(36,186,9)",
-                        "labelColor": "rgb(30,145,7)"
-                    }, {
-                        "startValue": 200,
-                        "endValue": 350,
-                        "name": "تلاش&zwnj;گر",
-                        "color": "#1e51d2",
-                        "labelColor": "#1e51d2"
-                    }, {
-                        "startValue": 350,
-                        "endValue": 500,
-                        "name": "خبره",
-                        "color": "#be1780",
-                        "labelColor": "#be1780"
-                    }, {
-                        "startValue": 500,
-                        "endValue": 600,
-                        "name": "نیمچه استاد",
-                        "color": "#ece130",
-                        "labelColor": "#e0b415"
-                    }, {
-                        "startValue": 600,
-                        "endValue": 800,
-                        "name": "استاد",
-                        "color": "#e21d1d",
-                         "labelColor": "#e21d1d"
-                    }, {
-                        "startValue": 800,
-                        "endValue": 10000,
-                        "name": "استاد بزرگ",
-                        "color": "#9e0505",
-                        "labelColor": "#9e0505"
-                    }
-                    ],
+                    stripLines: [{% for rate_color in rate_colors %}
+                    {
+                        startValue: {{ rate_color.startValue }},
+                        endValue: {{ rate_color.endValue }},
+                        name: "{{ rate_color.name }}",
+                        color: "{{ rate_color.color }}",
+                        labelColor: "{{ rate_color.labelColor }}",
+                    },
+                    {% endfor %}],
                     valueFormatString: "####",
                     gridThickness: 0
                 },
@@ -335,9 +300,11 @@ errorbox {
     <noscript>Sorry, your browser does not support JavaScript!</noscript>
     <div id="contact" style="min-height:20%;">
         <img id="profileImage" class='circular-big-square' style="width: 220px;height:220px;" src="http://uupload.ir/files/ae0p_default.png">
-        <div dir='rtl' style="font-size: 20px;color: blue;">
+        <div dir='rtl' style="font-size: 20px;color: {{ user_color.color }};">
             <h4 style="margin-top:20px;font-size: 35px;text-align:center;">
                 {{ user.user.get_full_name }}
+            </h4><h4 style="margin-top:2px;font-size: 20px;text-align:center;">
+                {{ user_color.name }}
             </h4>
         </div>
         <h4 dir='rtl' style="text-align:center;font-size: 20px;"> امتیاز: {{ last_rate }} </h4>

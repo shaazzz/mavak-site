@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Quiz, Question, Answer, Secret, Collection, CollectionQuiz
+from .models import Quiz, Question, Answer, Secret, Collection, CollectionQuiz, RateColor
 from users.models import Student, OJHandle
 from django.utils import timezone
 from django.http import JsonResponse
@@ -144,6 +144,9 @@ def collectionProfileView(req, name, user):
         'WHERE quiz_collectionquiz.collection_id=' + str(
             q.id) + ' and quiz_answer.student_id=' + str(
             yaroo.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
+
+    rate_colors = RateColor.objects.raw('SELECT * from quiz_ratecolor')
+
     rates = []
     rt = 100
     sum_nomre = 0
@@ -165,9 +168,16 @@ def collectionProfileView(req, name, user):
             rt = next_rate(rt, new_pers.expectedScore, new_pers.nomre, new_pers.maxgrade)
             new_pers.rate = rt
             rates.append(new_pers)
+    user_color = -1
+    for rate_color in rate_colors:
+        if rate_color.startValue <= rt < rate_color.endValue:
+            user_color = rate_color
+
     return render(req, "quiz/profile.html", {
         'Rates': rates,
         'cf_accounts': acc,
+        'rate_colors': rate_colors,
+        'user_color': user_color,
         'last_rate': sum_nomre,
         'user': yaroo,
     })
