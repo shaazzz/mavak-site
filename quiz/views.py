@@ -98,8 +98,10 @@ def collectionScoreBoardView(req, name):
     })
 
 
-def next_rate(prev_rate, grade, max_grade):
+def next_rate(prev_rate, expected_score, grade, max_grade):
     scale = 0.5
+    # grade_scale = scale * max_grade / (max_grade - expected_score)
+    grade -= expected_score / 2
     grade *= scale
     max_grade *= scale
     max_rate = 800
@@ -147,7 +149,7 @@ def collectionProfileView(req, name, user):
     for qu in quz:
         for pers in stu:
             if pers.id == qu.id:
-                rt = next_rate(rt, pers.nomre-pers.expectedScore, pers.maxgrade)
+                rt = next_rate(rt, pers.expectedScore, pers.nomre, pers.maxgrade)
                 pers.rate = rt
                 sum_nomre += pers.nomre
                 rates.append(pers)
@@ -158,7 +160,7 @@ def collectionProfileView(req, name, user):
             new_pers.nomre = 0
             new_pers.desc = qu.desc
             new_pers.maxgrade = qu.maxgrade
-            rt = next_rate(rt, new_pers.nomre-pers.expectedScore, new_pers.maxgrade)
+            rt = next_rate(rt, new_pers.expectedScore, new_pers.nomre, new_pers.maxgrade)
             new_pers.rate = rt
             rates.append(new_pers)
     return render(req, "quiz/profile.html", {
