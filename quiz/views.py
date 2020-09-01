@@ -127,7 +127,7 @@ def collectionProfileView(req, name, user):
     quz = CollectionQuiz.objects.raw('SELECT *, '
                                      '(quiz_quiz.title || " | 0/" || cast(SUM(mxgrade * quiz_collectionquiz.multiple) '
                                      'as text) || " ریتینگ") '
-                                     'as desc, SUM(multiple*mxgrade) as maxgrade FROM quiz_collectionquiz '
+                                     'as desc, quiz_collectionquiz.expectedScore, SUM(multiple*mxgrade) as maxgrade FROM quiz_collectionquiz '
                                      'INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
                                      'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
                                      'WHERE quiz_collectionquiz.collection_id='
@@ -159,6 +159,7 @@ def collectionProfileView(req, name, user):
             new_pers.id = qu.id
             new_pers.nomre = 0
             new_pers.desc = qu.desc
+            new_pers.expectedScore = qu.expectedScore
             new_pers.maxgrade = qu.maxgrade
             rt = next_rate(rt, new_pers.expectedScore, new_pers.nomre, new_pers.maxgrade)
             new_pers.rate = rt
