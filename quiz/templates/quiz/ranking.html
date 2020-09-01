@@ -1,5 +1,3 @@
-
-
 {% block content %}
 
 
@@ -17,6 +15,7 @@ fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('http://codeforce
 		}
 	{% endfor %}
 });
+
 </script>
 
 <style>
@@ -232,6 +231,7 @@ errorbox {
 :-ms-input-placeholder {
   color: #888;
 }
+
 </style>
 
 <div class="container">
@@ -241,26 +241,29 @@ errorbox {
         <img style="align-content:center;padding-left:10%;padding-right:10%;width: 100%;min-height:25%;margin:auto;vertical-align:middle;display:inline;"
              src="http://uupload.ir/files/iyp_untitled.png" onerror="this.style.display='none'">
         <br><br>
-        <h3 dir="rtl" style="font-size:45px;text-align:center">رتبه&zwnj;بندی</h3>
+        <h3 dir="rtl" style="font-size:45px;text-align:center">{{ title }}</h3>
 
         <table dir='rtl' style='max-witdth:95%;width: 95%;margin: 15px;vertical-align:middle;'>
-        	<tr>
-        		<th style='font-size:20px;padding: 20px'>رتبه</th>
-        		<th style='font-size:20px;padding: 20px'>نام</th>
-        		<th style='font-size:20px;padding: 20px'>امتیاز</th>
-        	</tr>
-            
-        {% for s in students %}
-            	<tr id="user" style='margin: 100px'>
-                        <td style='text-align:center;padding: 5px'>#{{ forloop.counter }}</td>
-                        <td dir='auto' style='font-size: 20px;padding: 15px'>
-                        	<img id='image{{ s.id }}' style="border-radius: 50%;overflow:hidden;width: 35px;height:35px;vertical-align:middle;display:inline;" src="http://uupload.ir/files/ae0p_default.png">
-                        <a href="../profile/{{ s.id }}/" style='font-size:$fontSize;color: blue;text-decoration: none;margin-left: 3px;margin-right: : 3px'>{{ s.user.get_full_name }}</a>
-                        </td>
-                        <td dir='rtl' style='text-align:center;padding: 5px'>{{ s.nomre }}</td>
-              	</tr>
-        {% endfor %}
-           </table>
+            <tr>
+                <th style='font-size:20px;padding: 20px'>رتبه</th>
+                <th style='font-size:20px;padding: 20px'>نام</th>
+                <th style='font-size:20px;padding: 20px'>امتیاز</th>
+            </tr>
+
+            {% for s in students %}
+            <tr id="user" style='margin: 100px'>
+                <td style='text-align:center;padding: 5px'>#{{ forloop.counter }}</td>
+                <td dir='auto' style='font-size: 20px;padding: 15px'>
+                    <img id='image{{ s.id }}'
+                         style="border-radius: 50%;overflow:hidden;width: 35px;height:35px;vertical-align:middle;display:inline;"
+                         src="http://uupload.ir/files/ae0p_default.png">
+                    <a href="../profile/{{ s.id }}/"
+                       style='font-size:$fontSize;color: blue;text-decoration: none;margin-left: 3px;margin-right: : 3px'>{{ s.user.get_full_name }}</a>
+                </td>
+                <td dir='rtl' style='text-align:center;padding: 5px'>{{ s.nomre }}</td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 
 </div>

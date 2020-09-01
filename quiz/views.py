@@ -92,9 +92,11 @@ def collectionScoreBoardView(req, name):
         'INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
         'WHERE quiz_collectionquiz.collection_id=' + str(
             q.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
+
     return render(req, "quiz/ranking.html", {
         'students': stu,
         'cf_accounts': acc,
+        'title': q.title
     })
 
 
