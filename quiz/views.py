@@ -112,7 +112,7 @@ def collectionProfileView(req, name, user):
     q = get_object_or_404(Collection, name=name)
     yaroo = get_object_or_404(Student, id=int(user))
     stu = Student.objects.raw(
-        'SELECT * FROM   (SELECT 0 as rate, quiz_collectionquiz.id as id, '
+        'SELECT * FROM   (SELECT 0 as rate, quiz_quiz.expectedScore, quiz_collectionquiz.id as id, '
         'SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre,'
         ' (quiz_quiz.title || " | " || cast(SUM(grade * quiz_collectionquiz.multiple) as text) || "/" || '
         'cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " ریتینگ") as desc  FROM quiz_answer '
@@ -132,8 +132,10 @@ def collectionProfileView(req, name, user):
                                      + str(q.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id')
     acc = Student.objects.raw(
         'SELECT * FROM '
-        ' (SELECT users_ojhandle.handle, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) '
-        ' as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id '
+        ' (SELECT users_ojhandle.handle, quiz_quiz.expectedScore, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) '
+        ' as nomre FROM quiz_answer '
+        'INNER JOIN quiz_question ON question_id=quiz_question.id '
+        'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
         'INNER JOIN users_ojhandle ON users_ojhandle.student_id=quiz_answer.student_id AND users_ojhandle.judge="CF" '
         'INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
         'WHERE quiz_collectionquiz.collection_id=' + str(
@@ -145,7 +147,7 @@ def collectionProfileView(req, name, user):
     for qu in quz:
         for pers in stu:
             if pers.id == qu.id:
-                rt = next_rate(rt, pers.nomre, pers.maxgrade)
+                rt = next_rate(rt, pers.nomre-pers.expectedScore, pers.maxgrade)
                 pers.rate = rt
                 sum_nomre += pers.nomre
                 rates.append(pers)
@@ -156,7 +158,7 @@ def collectionProfileView(req, name, user):
             new_pers.nomre = 0
             new_pers.desc = qu.desc
             new_pers.maxgrade = qu.maxgrade
-            rt = next_rate(rt, new_pers.nomre, new_pers.maxgrade)
+            rt = next_rate(rt, new_pers.nomre-pers.expectedScore, new_pers.maxgrade)
             new_pers.rate = rt
             rates.append(new_pers)
     return render(req, "quiz/profile.html", {

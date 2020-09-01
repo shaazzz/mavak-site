@@ -2,30 +2,39 @@ from django.db import models
 from users.models import Student, StudentGroup
 from datetime import datetime
 
+
 class Quiz(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
-    start = models.DateTimeField(default= datetime.now)
-    end   = models.DateTimeField(default= datetime.now)
+    start = models.DateTimeField(default=datetime.now)
+    end = models.DateTimeField(default=datetime.now)
+    expectedScore = models.IntegerField(default=0)
+
     def __str__(self):
         return self.name
+
 
 class Collection(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
-    students = models.ForeignKey(StudentGroup, blank= True, null= True, on_delete=models.CASCADE)
+    students = models.ForeignKey(StudentGroup, blank=True, null=True, on_delete=models.CASCADE)
+
     def __str__(self):
         return self.name
-    
+
+
 class CollectionQuiz(models.Model):
-    quiz= models.ForeignKey(Quiz, on_delete=models.CASCADE)
-    collection= models.ForeignKey(Collection, on_delete=models.CASCADE)
-    multiple= models.FloatField(default= 1)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    multiple = models.FloatField(default=1)
     order = models.IntegerField()
+
     def __str__(self):
-        return self.collection.name+" "+str(self.order)
+        return self.collection.name + " " + str(self.order)
+
     class Meta:
         ordering = ["order"]
+
 
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
@@ -34,10 +43,13 @@ class Question(models.Model):
     typ = models.CharField(max_length=50)
     hint = models.TextField()
     mxgrade = models.IntegerField()
+
     def __str__(self):
-        return self.quiz.name+" "+str(self.order)
+        return self.quiz.name + " " + str(self.order)
+
     class Meta:
         ordering = ["order"]
+
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -45,9 +57,11 @@ class Answer(models.Model):
     text = models.TextField()
     grade = models.IntegerField()
     grademsg = models.TextField()
-    
+
+
 class Secret(models.Model):
     key = models.CharField(max_length=50)
     value = models.TextField()
+
     def __str__(self):
         return self.name
