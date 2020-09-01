@@ -101,11 +101,12 @@ def collectionScoreBoardView(req, name):
 def next_rate(prev_rate, expected_score, grade, max_grade):
     scale = 0.5
     # grade_scale = scale * max_grade / (max_grade - expected_score)
-    grade -= expected_score / 2
     grade *= scale
+    expected_score *= scale
+    grade -= expected_score
     max_grade *= scale
     max_rate = 800
-    f = prev_rate * max_grade / max_rate / max_rate
+    f = 2 * (prev_rate - max_rate / 2) * expected_score / max_rate / max_rate
     prev_rate *= (1 - f)
     return int(prev_rate + grade)
 

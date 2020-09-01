@@ -105,7 +105,7 @@
         saveButton.innerText = 'در حال ذخیره سازی...'
         const answer = [];
         problems.forEach((p) => {
-          if (p.typ === 'text' || p.typ === 'auto') {
+          if (p.typ === 'text' || p.typ === 'auto' || p.typ === 'textnocheck') {
             answer.push({
               order: p.order,
               text: document.getElementById('ans' + p.order).value,
@@ -166,7 +166,7 @@
       header.innerText = `سوال ${p.order} (${p.mxgrade} امتیاز)`;
       pdiv.appendChild(header);
       const text = document.createElement('p');
-      if (p.typ === 'text' || p.typ === 'auto') {
+      if (p.typ === 'text' || p.typ === 'auto' || p.typ === 'textnocheck') {
         text.innerHTML = p.text;
       } else if (p.typ.match(/O[0-9]/)) {
         const oc = Number(p.typ.slice(1));
