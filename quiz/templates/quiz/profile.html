@@ -9,6 +9,22 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <script>
+    var cf_accounts =
+    "{% for ac in cf_accounts %}{{ ac.handle }};{% endfor %}";
+    fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('http://codeforces.com/api/user.info?handles='+cf_accounts)}`).then(response => {
+        if (response.ok) return response.json()
+            throw new Error('Network response was not ok.')
+    }).then(data=> {
+        data = JSON.parse(data.contents);
+        {% for ac in cf_accounts %}
+            if("//userpic.codeforces.com/no-avatar.jpg"!=data["result"][{{ forloop.counter }}-1]["avatar"]){
+                document.getElementById('profileImage').src="https:"+data["result"][{{ forloop.counter }}-1]["titlePhoto"];
+            }
+        {% endfor %}
+    });
+    </script>
     <script type="text/javascript">
         window.onload = function () {
             var chart = new CanvasJS.Chart("chartContainer", {
@@ -318,7 +334,7 @@ errorbox {
 <div class="container">
     <noscript>Sorry, your browser does not support JavaScript!</noscript>
     <div id="contact" style="min-height:20%;">
-        <img class='circular-big-square' style="width: 220px;height:220px;" src="http://uupload.ir/files/ae0p_default.png">
+        <img id="profileImage" class='circular-big-square' style="width: 220px;height:220px;" src="http://uupload.ir/files/ae0p_default.png">
         <div dir='rtl' style="font-size: 20px;color: blue;">
             <h4 style="margin-top:20px;font-size: 35px;text-align:center;">
                 {{ user.user.get_full_name }}
