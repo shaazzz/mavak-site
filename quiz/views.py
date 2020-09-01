@@ -105,10 +105,10 @@ def next_rate(prev_rate, expected_score, grade, max_grade):
     # grade_scale = scale * max_grade / (max_grade - expected_score)
     grade *= scale
     expected_score *= scale
-    grade -= expected_score
+    grade -= expected_score / 2
     max_grade *= scale
     max_rate = 800
-    f = 2 * (prev_rate - max_rate / 2) * expected_score / max_rate / max_rate
+    f = prev_rate * max_grade / max_rate / max_rate
     prev_rate *= (1 - f)
     return int(prev_rate + grade)
 
