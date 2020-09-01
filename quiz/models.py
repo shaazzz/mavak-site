@@ -63,6 +63,7 @@ class Secret(models.Model):
     key = models.CharField(max_length=50)
     value = models.TextField()
 
+
 class RateColor(models.Model):
     key = models.CharField(max_length=50)
     startValue = models.IntegerField()
