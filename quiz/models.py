@@ -8,7 +8,6 @@ class Quiz(models.Model):
     title = models.CharField(max_length=250)
     start = models.DateTimeField(default=datetime.now)
     end = models.DateTimeField(default=datetime.now)
-    expectedScore = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -28,6 +27,7 @@ class CollectionQuiz(models.Model):
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     multiple = models.FloatField(default=1)
     order = models.IntegerField()
+    expectedScore = models.IntegerField(default=0)
 
     def __str__(self):
         return self.collection.name + " " + str(self.order)

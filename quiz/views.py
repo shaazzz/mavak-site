@@ -112,7 +112,7 @@ def collectionProfileView(req, name, user):
     q = get_object_or_404(Collection, name=name)
     yaroo = get_object_or_404(Student, id=int(user))
     stu = Student.objects.raw(
-        'SELECT * FROM   (SELECT 0 as rate, quiz_quiz.expectedScore, quiz_collectionquiz.id as id, '
+        'SELECT * FROM   (SELECT 0 as rate, quiz_collectionquiz.expectedScore, quiz_collectionquiz.id as id, '
         'SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre,'
         ' (quiz_quiz.title || " | " || cast(SUM(grade * quiz_collectionquiz.multiple) as text) || "/" || '
         'cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " ریتینگ") as desc  FROM quiz_answer '
@@ -132,7 +132,7 @@ def collectionProfileView(req, name, user):
                                      + str(q.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id')
     acc = Student.objects.raw(
         'SELECT * FROM '
-        ' (SELECT users_ojhandle.handle, quiz_quiz.expectedScore, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) '
+        ' (SELECT users_ojhandle.handle, quiz_collectionquiz.expectedScore, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) '
         ' as nomre FROM quiz_answer '
         'INNER JOIN quiz_question ON question_id=quiz_question.id '
         'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
