@@ -71,6 +71,55 @@ def submitView(req, name):
     return JsonResponse({'ok': True})
 
 
+def getLastRates(name):
+    q = get_object_or_404(Collection, name=name)
+    stu = Student.objects.raw(
+        'SELECT * FROM   (SELECT 0 as rate, quiz_answer.student_id, quiz_collectionquiz.expectedScore, '
+        'quiz_collectionquiz.id as id, SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, '
+        'SUM(grade * quiz_collectionquiz.multiple) as nomre, (quiz_quiz.title || " | " || '
+        'cast(SUM(grade * quiz_collectionquiz.multiple) as text) || "/" || '
+        'cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " ریتینگ") as desc FROM quiz_answer '
+        'INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN quiz_quiz ON '
+        'quiz_question.quiz_id=quiz_quiz.id INNER join users_studentgroup_students on '
+        'users_studentgroup_students.student_id=quiz_answer.student_id INNER JOIN quiz_collection '
+        'on quiz_collection.students_id=users_studentgroup_students.studentgroup_id '
+        'INNER JOIN quiz_collectionquiz ON quiz_quiz.id=quiz_collectionquiz.quiz_id '
+        'WHERE quiz_collection.id=' + str(q.id) +
+        ' GROUP BY quiz_collectionquiz.id, quiz_answer.student_id ORDER BY id) WHERE nomre > 0;'
+    )
+    quz = CollectionQuiz.objects.raw('SELECT *, '
+                                     '(quiz_quiz.title || " | 0/" || cast(SUM(mxgrade * quiz_collectionquiz.multiple) '
+                                     'as text) || " ریتینگ") '
+                                     'as desc, quiz_collectionquiz.expectedScore, '
+                                     'SUM(multiple*mxgrade) as maxgrade FROM quiz_collectionquiz '
+                                     'INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
+                                     'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
+                                     'WHERE quiz_collectionquiz.collection_id='
+                                     + str(q.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id')
+    students = Student.objects.raw("SELECT users_student.id from users_student "
+                                   "INNER join users_studentgroup_students on"
+                                   " users_studentgroup_students.student_id=users_student.id "
+                                   "INNER join quiz_collection on "
+                                   "quiz_collection.students_id=users_studentgroup_students.studentgroup_id "
+                                   "where quiz_collection.id=" + str(q.id))
+    rt = {}
+    data = []
+    for pers in students:
+        rt[pers.id] = 100
+    for qu in quz:
+        mark = {}
+        for pers in stu:
+            data.append(pers.nomre)
+            if pers.id == qu.id:
+                rt[pers.student_id] = next_rate(rt[pers.student_id], pers.expectedScore, pers.nomre, pers.maxgrade)
+                mark[pers.student_id] = True
+        for pers in students:
+            if pers.id not in mark:
+                rt[pers.id] = next_rate(rt[pers.id], qu.expectedScore, 0, qu.maxgrade)
+                mark[pers.id] = True
+    return rt
+
+
 def collectionScoreBoardView(req, name):
     q = get_object_or_404(Collection, name=name)
     stu = Student.objects.raw(
@@ -93,8 +142,17 @@ def collectionScoreBoardView(req, name):
         'WHERE quiz_collectionquiz.collection_id=' + str(
             q.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
 
+    rt = getLastRates(name)
+    new_stu = []
+    for s in stu:
+        new_s = copy.copy(s)
+        new_s.nomre = rt[s.id]
+        if new_s.nomre>0:
+            new_stu.append(new_s)
+
+    new_stu = sorted(new_stu, key=lambda x: -x.nomre)
     return render(req, "quiz/ranking.html", {
-        'students': stu,
+        'students': new_stu,
         'cf_accounts': acc,
         'title': q.title
     })
@@ -102,7 +160,6 @@ def collectionScoreBoardView(req, name):
 
 def next_rate(prev_rate, expected_score, grade, max_grade):
     scale = 0.5
-    # grade_scale = scale * max_grade / (max_grade - expected_score)
     grade *= scale
     expected_score *= scale
     grade -= expected_score / 2
@@ -137,8 +194,8 @@ def collectionProfileView(req, name, user):
                                      + str(q.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id')
     acc = Student.objects.raw(
         'SELECT * FROM '
-        ' (SELECT users_ojhandle.handle, quiz_collectionquiz.expectedScore, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) '
-        ' as nomre FROM quiz_answer '
+        ' (SELECT users_ojhandle.handle, quiz_collectionquiz.expectedScore, quiz_answer.student_id as id, '
+        'SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer '
         'INNER JOIN quiz_question ON question_id=quiz_question.id '
         'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
         'INNER JOIN users_ojhandle ON users_ojhandle.student_id=quiz_answer.student_id AND users_ojhandle.judge="CF" '
@@ -180,7 +237,7 @@ def collectionProfileView(req, name, user):
         'cf_accounts': acc,
         'rate_colors': rate_colors,
         'user_color': user_color,
-        'last_rate': sum_nomre,
+        'last_rate': rt,
         'user': yaroo,
     })
 
