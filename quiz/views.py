@@ -141,13 +141,18 @@ def collectionScoreBoardView(req, name):
         'INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
         'WHERE quiz_collectionquiz.collection_id=' + str(
             q.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
+    rate_colors = RateColor.objects.raw('SELECT * from quiz_ratecolor')
 
     rt = getLastRates(name)
     new_stu = []
     for s in stu:
         new_s = copy.copy(s)
         new_s.nomre = rt[s.id]
-        if new_s.nomre>0:
+        if new_s.nomre >= 0:
+            new_s.user_color = None
+            for rate_color in rate_colors:
+                if rate_color.startValue <= new_s.nomre < rate_color.endValue:
+                    new_s.user_color = rate_color
             new_stu.append(new_s)
 
     new_stu = sorted(new_stu, key=lambda x: -x.nomre)
@@ -227,7 +232,7 @@ def collectionProfileView(req, name, user):
             rt = next_rate(rt, new_pers.expectedScore, new_pers.nomre, new_pers.maxgrade)
             new_pers.rate = rt
             rates.append(new_pers)
-    user_color = -1
+    user_color = None
     for rate_color in rate_colors:
         if rate_color.startValue <= rt < rate_color.endValue:
             user_color = rate_color
