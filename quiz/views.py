@@ -399,6 +399,7 @@ def checkView(req, name, user):
         'quiz': q,
         'current': timezone.now(),
         'problems': json_of_problems(Question.objects.filter(quiz=q), yaroo),
+        'user': yaroo.user,
     })
 
 
@@ -418,10 +419,12 @@ def quizView(req, name):
             'quiz': q,
             'current': timezone.now(),
             'problems': json_of_problems(Question.objects.filter(quiz=q), stu),
+            'user': stu.user,
         })
     return render(req, "quiz/current.html", {
         'mode': 'current',
         'quiz': q,
         'current': timezone.now(),
         'problems': json_of_problems(Question.objects.filter(quiz=q), stu),
+        'user': stu.user,
     })

@@ -25,6 +25,16 @@
   </p>
   <div id="problems"></div>
   <script>
+    const userCode = (()=>{
+      const username = '{{ user.username }}';
+      if (isFinite(username)) {
+        return Number(username) % 720;
+      } else {
+        return 123;
+      }
+    })();
+    console.log(userCode);
+    const primes = [13, 17, 23, 29, 31, 37, 41, 43];
     const mode = '{{ mode }}';
     function getCookie(cname) {
       var name = cname + "=";
@@ -157,7 +167,25 @@
       };
       navbar.appendChild(saveButton);
     }
-    const problems = JSON.parse({{ problems| safe }});
+    const problems = (()=>{
+      const p = JSON.parse({{ problems| safe }});
+      const count = new Map();
+      for (const x of p) {
+        count.set(x.order, 0);
+      }
+      for (const x of p) {
+        count.set(x.order, count.get(x.order) + 1);
+      }
+      for (const x of count.keys()) {
+        count.set(x, userCode * primes[x] % count.get(x));
+      }
+      for (const x of p) {
+        const y = count.get(x.order);
+        x.forMe = (y === 0);
+        count.set(x.order, y - 1);
+      }
+      return p.filter(x=>x.forMe);
+    })();
     console.log(problems);
     const div = document.getElementById('problems');
     problems.forEach((p) => {
