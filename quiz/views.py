@@ -291,6 +291,14 @@ def pickAnswerFromJson(req, name):
     return redirect("../scoreboard/")
 
 
+def un_correct(s: str):
+    new = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
+    old = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    for i in range(10):
+        s = s.replace(old[i], new[i])
+    return s
+
+
 def autoCheckerView(req, name):
     mode = "strict"
     if "mode" in req.GET:
@@ -304,10 +312,15 @@ def autoCheckerView(req, name):
                 continue
         Answer.objects.filter(question=q).update(grade=0, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
         if mode == "strict":
-            Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade)
+            Answer.objects.filter(question=q, text__regex=r'^(' + q.hint.strip() + '|' + un_correct(
+                q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)$').update(grade=q.mxgrade)
         else:
-            Answer.objects.filter(question=q, text__startswith=q.hint.strip() + '\n').update(grade=q.mxgrade)
-            Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade / 2)
+            Answer.objects.filter(question=q,
+                                  text__regex=r'^(' + q.hint.strip() + '|' + un_correct(
+                                      q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)$').update(
+                grade=q.mxgrade)
+            Answer.objects.filter(question=q, text__regex=r'^(' + q.hint.strip() + '|' + un_correct(
+                q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)$').update(grade=(q.mxgrade+1) / 2)
     return redirect("../scoreboard/")
 
 
