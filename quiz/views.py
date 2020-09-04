@@ -420,6 +420,7 @@ def quizView(req, name):
         return render(req, "quiz/current.html", {
             'mode': 'visit',
             'quiz': q,
+            'desc': markdown(q.desc),
             'current': timezone.now(),
             'problems': json_of_problems(Question.objects.filter(quiz=q), stu),
             'user': stu.user,
