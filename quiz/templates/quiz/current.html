@@ -121,7 +121,7 @@
         problems.forEach((p) => {
           if (p.typ === 'text' || p.typ === 'auto' || p.typ === 'textnocheck') {
             answer.push({
-              order: p.order,
+              id: p.id,
               text: document.getElementById('ans' + p.order).value,
             });
           } else {
@@ -160,10 +160,10 @@
           const gm = document.getElementById('grademsg'+p.order).value;
           if (gm === '') return;
           answer.push({
-            order: p.order,
+            id: p.id,
             grade: g === '' ? -1 : Number(g),
             grademsg: gm,
-          })
+          });
         });
         console.log(answer);
         await sendData("checked/", answer);

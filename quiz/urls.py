@@ -11,7 +11,6 @@ urlpatterns = [
   path('<name>/scoreboard/', views.scoreBoardView, name='scoreBoardView'),
   path('<name>/check/<user>/', views.checkView, name='checkView'),
   path('<name>/check/<user>/checked/', views.checkedView, name='checkedView'),
-  path('<name>/bulkcheck/', views.bulkCheckView, name='bulkCheckView'),
   path('<name>/autocheck/', views.autoCheckerView, name='autoCheckerView'),
   path('<name>/pickjson/', views.pickAnswerFromJson, name='pickAnswerFromJson'),
   path('<name>/oj/', views.pickAnswerFromOJView, name='pickAnswerFromOJView'),
