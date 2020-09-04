@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+
 from course.models import Course, Lesson
 from markdown2 import markdown
 from comment.json import json_of_root
@@ -21,7 +24,7 @@ def courseView(req, date):
             'current': timezone.now(),
         })
     ls = Lesson.objects.filter(release__lte=date, drop_off_date__gt=date)
-    qs = Quiz.objects.filter(start__lte=date, end__gt=date)
+    qs = Quiz.objects.filter(start__lte=date-timedelta(days=1), end__gte=date)
     return render(req, "content/course.html", {
         'tarikh': date,
         'lessons': ls,
@@ -34,7 +37,7 @@ def lessonView(req, date, lesson):
         return JsonResponse({'ok': False, 'reason': 'anonymous'})
     l = get_object_or_404(Lesson, name=lesson, drop_off_date__gt=date, release__lte=date)
     c = get_object_or_404(Course, id=l.course_id)
-    lessons = Lesson.objects.filter(drop_off_date__gte=date, release__lte=date)
+    lessons = Lesson.objects.filter(drop_off_date__gt=date, release__lte=date)
     next = next_in_order(l, qs=lessons)
     prev = prev_in_order(l, qs=lessons)
     return render(req, "content/lesson.html", {
