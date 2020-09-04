@@ -320,7 +320,7 @@ def autoCheckerView(req, name):
                                       q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(
                 grade=q.mxgrade)
             Answer.objects.filter(question=q, text__regex=r'^[ \n]*(' + q.hint.strip() + '|' + un_correct(
-                q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(grade=(q.mxgrade+1) / 2)
+                q.hint.strip()) + ')[ \n]*$').update(grade=(q.mxgrade+1) / 2)
     return redirect("../scoreboard/")
 
 
