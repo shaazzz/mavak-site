@@ -412,6 +412,7 @@ def quizView(req, name):
     if q.start > timezone.now():
         return render(req, "quiz/not_started.html", {
             'quiz': q,
+            'desc': markdown(q.desc),
             'current': timezone.now(),
         })
     stu = get_object_or_404(Student, user=req.user)
