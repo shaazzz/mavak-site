@@ -261,6 +261,7 @@ def scoreBoardView(req, name):
         'students': stu,
     })
 
+
 def pickAnswerFromJson(req, name):
     if (not req.user.is_staff):
         return redirect("/users/login")
@@ -291,7 +292,10 @@ def pickAnswerFromJson(req, name):
 
 
 def autoCheckerView(req, name):
-    if (not req.user.is_staff):
+    mode = "strict"
+    if "mode" in req.GET:
+        mode = req.GET["mode"]
+    if not req.user.is_staff:
         return redirect("/users/login")
     qu = Question.objects.filter(quiz__name=name)
     for q in qu:
@@ -299,8 +303,11 @@ def autoCheckerView(req, name):
             if q.typ != 'auto':
                 continue
         Answer.objects.filter(question=q).update(grade=0, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
-        Answer.objects.filter(question=q, text__startswith=q.hint.strip()+'\n').update(grade=q.mxgrade)
-        Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade)
+        if mode == "strict":
+            Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade / 2)
+        else:
+            Answer.objects.filter(question=q, text__startswith=q.hint.strip() + '\n').update(grade=q.mxgrade)
+            Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade)
     return redirect("../scoreboard/")
 
 
