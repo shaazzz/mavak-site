@@ -6,6 +6,7 @@ from datetime import datetime
 class Quiz(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
+    desc = models.TextField(default="")
     start = models.DateTimeField(default=datetime.now)
     end = models.DateTimeField(default=datetime.now)
 

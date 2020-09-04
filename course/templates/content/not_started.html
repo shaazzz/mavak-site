@@ -1,0 +1,26 @@
+{% extends "main/base.html" %}
+{% load l10n %}
+
+{% block content %}
+
+<div class="container">
+    <p>
+      هنوز به این تاریخ نرسیده ایم. زمان نمایش این مطلب
+      <span id="cont"></span>
+      است. اکنون
+      <span id="now"></span>
+      است.
+    </p>
+    <script>
+      const options = {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        hour: 'numeric', minute: 'numeric', second: 'numeric',
+      };
+      const cont = new Date('{{ start_date|date:"Y-m-d H:i:s" }}');
+      document.getElementById('cont').innerText = cont.toLocaleString('fa-IR', options);
+      const now = new Date('{{ current|date:"Y-m-d H:i:s" }}');
+      document.getElementById('now').innerText = now.toLocaleString('fa-IR', options);
+    </script>
+</div>
+
+{% endblock %}

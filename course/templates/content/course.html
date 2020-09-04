@@ -1,0 +1,42 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <br>
+    <h3>
+    <span id="tarikh"></span>
+    </h3><br>
+    {% if lessons|length > 0 %}
+        <h1>مطالب آموزشی</h1>
+        <ol>
+            {% for l in lessons %}
+            <li>
+                <a href="{{l.name}}/">{{l.title}}</a>
+            </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+    {% endif %}
+
+    {% if quizzes|length > 0 %}
+        <h1>تمرین‌ها و آزمون‌ها</h1>
+        <ol>
+            {% for q in quizzes %}
+            <li>
+                <a href="/quiz/{{q.name}}/">{{q.title}}</a>
+            </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+    {% endif %}
+</div>
+
+<script>
+  const options = {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  };
+  const dateString = new Date('{{ tarikh|date:"Y-m-d H:i:s" }}');
+  document.getElementById('tarikh').innerText = dateString.toLocaleString('fa-IR', options);
+</script>
+{% endblock %}

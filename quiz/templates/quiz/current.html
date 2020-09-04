@@ -22,7 +22,10 @@
     {% if mode == "visit" %}
     نمره هایتان در زیر هر سوال آمده است.
     {% endif %}
+    <br>
+    {{ quiz.desc }}
   </p>
+
   <div id="problems"></div>
   <script>
     const userCode = (()=>{

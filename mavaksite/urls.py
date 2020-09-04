@@ -24,6 +24,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('texts/', include('text.urls')),
     path('courses/', include('course.urls')),
+    path('content/', include('content.urls')),
     path('quiz/', include('quiz.urls')),
     path('comments/', include('comment.urls')),
     path('static/', views.serve),
