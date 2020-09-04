@@ -24,7 +24,7 @@ def courseView(req, date):
             'current': timezone.now(),
         })
     ls = Lesson.objects.filter(release__lt=date + timedelta(days=1), drop_off_date__gt=date)
-    qs = Quiz.objects.filter(start__lte=date + timedelta(days=1), end__gte=date)
+    qs = Quiz.objects.filter(start__lte=date + timedelta(days=1), end__gt=date)
     next_date = date + timedelta(days=1)
     nxt = str(next_date.year) + '-' + str(next_date.month) + '-' + str(next_date.day)
     prev_date = date + timedelta(days=-1)
