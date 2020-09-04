@@ -32,6 +32,7 @@ def get_answer(qu, stu):
 
 def json_of_problems(qs, stu):
     return dumps(dumps([{
+        'id': x.id,
         'text': x.text,
         'mxgrade': x.mxgrade,
         'order': x.order,
@@ -48,7 +49,7 @@ def checkedView(req, name, user):
     ans = loads(req.POST['answers'])
     for x in ans:
         ano = get_object_or_404(
-            Answer, question__quiz=q, student=yaroo, question__order=x['order']
+            Answer, student=yaroo, question__id=x['id']
         )
         ano.grade = x['grade']
         ano.grademsg = x['grademsg']
@@ -68,7 +69,7 @@ def submitView(req, name):
     Answer.objects.filter(question__quiz=q, student=stu).delete()
     ans = loads(req.POST['answers'])
     for x in ans:
-        ques = get_object_or_404(Question, quiz=q, order=x['order'])
+        ques = get_object_or_404(Question, id=x['id'])
         Answer.objects.create(question=ques, student=stu, text=x['text'], grade=-1, grademsg="تصحیح نشده")
     return JsonResponse({'ok': True})
 
@@ -259,19 +260,6 @@ def scoreBoardView(req, name):
     return render(req, "quiz/scoreboard.html", {
         'students': stu,
     })
-
-
-def bulkCheckView(req, name):
-    if not req.user.is_staff:
-        return redirect("/users/login")
-    if req.method == 'GET':
-        return render(req, "quiz/bulkcheck.html")
-    n = req.POST['order']
-    qu = get_object_or_404(Question, quiz__name=name, order=n)
-    Answer.objects.filter(question=qu).update(grade=0, grademsg="تصحیح خودکار")
-    Answer.objects.filter(question=qu, text=req.POST['answer']).update(grade=qu.mxgrade)
-    return redirect("../scoreboard/")
-
 
 def pickAnswerFromJson(req, name):
     if (not req.user.is_staff):
