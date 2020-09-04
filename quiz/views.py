@@ -312,15 +312,15 @@ def autoCheckerView(req, name):
                 continue
         Answer.objects.filter(question=q).update(grade=0, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
         if mode == "strict":
-            Answer.objects.filter(question=q, text__regex=r'^(' + q.hint.strip() + '|' + un_correct(
-                q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)$').update(grade=q.mxgrade)
+            Answer.objects.filter(question=q, text__regex=r'^[ \n]*(' + q.hint.strip() + '|' + un_correct(
+                q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(grade=q.mxgrade)
         else:
             Answer.objects.filter(question=q,
-                                  text__regex=r'^(' + q.hint.strip() + '|' + un_correct(
-                                      q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)$').update(
+                                  text__regex=r'^[ \n]*(' + q.hint.strip() + '|' + un_correct(
+                                      q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(
                 grade=q.mxgrade)
-            Answer.objects.filter(question=q, text__regex=r'^(' + q.hint.strip() + '|' + un_correct(
-                q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)$').update(grade=(q.mxgrade+1) / 2)
+            Answer.objects.filter(question=q, text__regex=r'^[ \n]*(' + q.hint.strip() + '|' + un_correct(
+                q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(grade=(q.mxgrade+1) / 2)
     return redirect("../scoreboard/")
 
 
