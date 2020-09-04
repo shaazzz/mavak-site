@@ -24,7 +24,7 @@ def courseView(req, date):
             'current': timezone.now(),
         })
     ls = Lesson.objects.filter(release__lte=date, drop_off_date__gt=date)
-    qs = Quiz.objects.filter(start__lte=date-timedelta(days=1), end__gte=date)
+    qs = Quiz.objects.filter(start__lte=date+timedelta(days=1), end__gte=date)
     return render(req, "content/course.html", {
         'tarikh': date,
         'lessons': ls,
