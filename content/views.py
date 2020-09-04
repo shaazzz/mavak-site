@@ -34,7 +34,7 @@ def lessonView(req, date, lesson):
         return JsonResponse({'ok': False, 'reason': 'anonymous'})
     l = get_object_or_404(Lesson, name=lesson, drop_off_date__gt=date, release__lte=date)
     c = get_object_or_404(Course, id=l.course_id)
-    lessons = Lesson.objects.filter(drop_off_date__gt=date, release__lte=date)
+    lessons = Lesson.objects.filter(drop_off_date__gte=date, release__lte=date)
     next = next_in_order(l, qs=lessons)
     prev = prev_in_order(l, qs=lessons)
     return render(req, "content/lesson.html", {
