@@ -23,7 +23,7 @@ def courseView(req, date):
             'start_date': date,
             'current': timezone.now(),
         })
-    ls = Lesson.objects.filter(release__lt=date - timedelta(days=1), drop_off_date__gt=date)
+    ls = Lesson.objects.filter(release__lt=date + timedelta(days=1), drop_off_date__gt=date)
     qs = Quiz.objects.filter(start__lte=date + timedelta(days=1), end__gte=date)
     next_date = date + timedelta(days=1)
     nxt = str(next_date.year) + '-' + str(next_date.month) + '-' + str(next_date.day)
@@ -41,9 +41,9 @@ def courseView(req, date):
 def lessonView(req, date, lesson):
     if date.today() < date and not req.user.is_staff:
         return JsonResponse({'ok': False, 'reason': 'anonymous'})
-    l = get_object_or_404(Lesson, name=lesson, release__lt=date - timedelta(days=1), drop_off_date__gt=date)
+    l = get_object_or_404(Lesson, name=lesson, release__lt=date + timedelta(days=1), drop_off_date__gt=date)
     c = get_object_or_404(Course, id=l.course_id)
-    lessons = Lesson.objects.filter(release__lt=date - timedelta(days=1), drop_off_date__gt=date)
+    lessons = Lesson.objects.filter(release__lt=date + timedelta(days=1), drop_off_date__gt=date)
     next = next_in_order(l, qs=lessons)
     prev = prev_in_order(l, qs=lessons)
     return render(req, "content/lesson.html", {
