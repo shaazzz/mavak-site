@@ -10,15 +10,10 @@
     {% if lessons|length > 0 %}
         <h1>مطالب آموزشی</h1>
         <ol>
-            {% for c in lessons %}
-                <h4>
-                    c.name
-                </h4>
-                {% for l in c.lessons %}
-                    <li>
-                        <a href="{{l.name}}/">{{l.title}}</a>
-                    </li>
-                {% endfor %}
+            {% for l in lessons %}
+            <li>
+                <a href="{{l.name}}/">{{l.title}}</a>
+            </li>
             {% endfor %}
         </ol>
     {% else %}

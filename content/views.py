@@ -24,11 +24,6 @@ def courseView(req, date):
             'current': timezone.now(),
         })
     ls = Lesson.objects.filter(release__lt=date - timedelta(days=1), drop_off_date__gt=date)
-    contents = {}
-    for x in ls:
-        if x.name not in contents:
-            contents[x.name] = {"name": x.name, "lessons": []}
-        contents[x.name]["lessons"].append(x)
     qs = Quiz.objects.filter(start__lte=date + timedelta(days=1), end__gte=date)
     next_date = date + timedelta(days=1)
     nxt = str(next_date.year) + '-' + str(next_date.month) + '-' + str(next_date.day)
@@ -36,7 +31,7 @@ def courseView(req, date):
     prv = str(prev_date.year) + '-' + str(prev_date.month) + '-' + str(prev_date.day)
     return render(req, "content/course.html", {
         'tarikh': date,
-        'lessons': list(contents),
+        'lessons': ls,
         'next': nxt,
         'prev': prv,
         'quizzes': qs,
