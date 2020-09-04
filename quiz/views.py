@@ -311,6 +311,7 @@ def autoCheckerView(req, name):
             if q.typ != 'auto':
                 continue
         Answer.objects.filter(question=q).update(grade=0, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
+        Answer.objects.filter(question=q, text__startswith=q.hint.strip()+'\n').update(grade=q.mxgrade)
         Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade)
     return redirect("../scoreboard/")
 
