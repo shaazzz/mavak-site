@@ -304,10 +304,10 @@ def autoCheckerView(req, name):
                 continue
         Answer.objects.filter(question=q).update(grade=0, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
         if mode == "strict":
-            Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade / 2)
+            Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade)
         else:
             Answer.objects.filter(question=q, text__startswith=q.hint.strip() + '\n').update(grade=q.mxgrade)
-            Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade)
+            Answer.objects.filter(question=q, text=q.hint.strip()).update(grade=q.mxgrade / 2)
     return redirect("../scoreboard/")
 
 
