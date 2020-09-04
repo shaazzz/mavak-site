@@ -24,10 +24,16 @@ def courseView(req, date):
             'current': timezone.now(),
         })
     ls = Lesson.objects.filter(release__lte=date, drop_off_date__gt=date)
-    qs = Quiz.objects.filter(start__lte=date+timedelta(days=1), end__gte=date)
+    qs = Quiz.objects.filter(start__lte=date + timedelta(days=1), end__gte=date)
+    next_date = date + timedelta(days=1)
+    nxt = str(next_date.year) + '-' + str(next_date.month) + '-' + str(next_date.day)
+    prev_date = date + timedelta(days=-1)
+    prv = str(prev_date.year) + '-' + str(prev_date.month) + '-' + str(prev_date.day)
     return render(req, "content/course.html", {
         'tarikh': date,
         'lessons': ls,
+        'next': nxt,
+        'prev': prv,
         'quizzes': qs,
     })
 

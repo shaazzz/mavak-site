@@ -30,6 +30,13 @@
         </ol>
     {% else %}
     {% endif %}
+
+    {% if prev %}
+    <a class="btn btn-primary" href="../{{ prev }}/">روز قبل</a>
+    {% endif %}
+    {% if next %}
+    <a class="btn btn-primary" href="../{{ next }}/">روز بعد</a>
+    {% endif %}
 </div>
 
 <script>
