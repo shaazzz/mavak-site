@@ -26,6 +26,7 @@ h2 {
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
   margin: 20px 2%;
   padding: 3%;
+  width:800px;
 }
 
 @media (min-width: 800px) {
@@ -100,7 +101,6 @@ h2 {
 </style>
 
 
-<div class="container">
     <div class="box">
     <h3><span id="tarikh"></span></h3><br>
         <ul class="directory-list">
@@ -136,12 +136,11 @@ h2 {
         <a class="btn btn-primary" style="font-size:20px;bottom: 10px;top:20px;right: 40px;" href="../{{ prev }}/">روز قبل</a>
         {% endif %}
         {% if next %}
-        <a class="btn btn-primary" style="transform: translateX(-800%);top:20px;font-size:20px;bottom: 10px;" href="../{{ next }}/">روز بعد</a>
+        <a class="btn btn-primary" style="transform: translateX(-700%);top:20px;font-size:20px;bottom: 10px;" href="../{{ next }}/">روز بعد</a>
         {% endif %}
     </div>
 
 
-</div>
 
 <script>
   const options = {
