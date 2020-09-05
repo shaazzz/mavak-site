@@ -6,7 +6,7 @@
 
 body {
   background: #eee;
-  line-height: 28px;
+  line-height: 3vmin;
   direction: rtl;
 }
 
@@ -24,7 +24,7 @@ h2 {
 .box {
   background: #fff;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
-  margin: 20px 2%;
+  margin: 2%;
   padding: 3%;
 }
 
@@ -33,25 +33,16 @@ h2 {
     margin: 30px auto;
     border-radius: 2px;
     max-width: 880px;
-    padding: 30px;
+    padding: 25px;
   }
 }
 
 
-/* The list style
--------------------------------------------------------------- */
-
-.directory-list ul {
-  margin-left: 10px;
-  padding-left: 10px;
-  border-left: 1px dashed #ddd;
-  padding-top: 10px;
-}
 
 .directory-list li {
   list-style: none;
   color: #444;
-  font-size: 2.5vmin;
+  font-size: 2.1vmin;
   font-weight: normal;
 }
 
@@ -70,16 +61,18 @@ h2 {
 .directory-list .folder,
 .directory-list .folder > a {
   color: #333;
-  font-size: 1.8em;
+  font-size: 3.2vmin;
   font-weight: bold;
 }
 
 
 .directory-list li:before {
   content: "";
-  height: 40px;
+  height: 5vmin;
+  min-height: 30px;
   vertical-align: middle;
-  width: 40px;
+  width: 5vmin;
+  min-width: 30px;
   background-repeat: no-repeat;
   display: inline-block;
   /* file icon by default */
@@ -132,10 +125,10 @@ h2 {
 
         </ul>
         {% if prev %}
-        <a class="btn btn-primary" style="width:15%;left: 70%;font-size:0.95em;bottom: 10px;top:20px;" href="../{{ prev }}/">روز قبل</a>
+        <a class="btn btn-primary" style="width:15%;left: 70%;font-size:2.5vmin;bottom: 10px;top:20px;" href="../{{ prev }}/">روز قبل</a>
         {% endif %}
         {% if next %}
-        <a class="btn btn-primary" style="width:15%;position: relative; right: 70%;top:0px;font-size:0.95em;bottom: 10px;" href="../{{ next }}/">روز بعد</a>
+        <a class="btn btn-primary" style="width:15%;position: relative; right: 70%;top:0px;font-size:2.5vmin;bottom: 10px;" href="../{{ next }}/">روز بعد</a>
         {% endif %}
     </div>
 
