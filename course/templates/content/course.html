@@ -13,7 +13,7 @@ body {
 h2 {
   color: #aaa;
   font-size: 25px;
-  line-height: 40px;
+  line-height: 5vmin;
   font-style: italic;
   font-weight: 200;
   margin: 40px;
@@ -26,7 +26,6 @@ h2 {
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
   margin: 20px 2%;
   padding: 3%;
-  width:800px;
 }
 
 @media (min-width: 800px) {
@@ -52,7 +51,7 @@ h2 {
 .directory-list li {
   list-style: none;
   color: #444;
-  font-size: 18px;
+  font-size: 2.5vmin;
   font-weight: normal;
 }
 
@@ -71,7 +70,7 @@ h2 {
 .directory-list .folder,
 .directory-list .folder > a {
   color: #333;
-  font-size: 30px;
+  font-size: 1.8em;
   font-weight: bold;
 }
 
@@ -133,10 +132,10 @@ h2 {
 
         </ul>
         {% if prev %}
-        <a class="btn btn-primary" style="font-size:20px;bottom: 10px;top:20px;right: 40px;" href="../{{ prev }}/">روز قبل</a>
+        <a class="btn btn-primary" style="width:15%;left: 70%;font-size:0.95em;bottom: 10px;top:20px;" href="../{{ prev }}/">روز قبل</a>
         {% endif %}
         {% if next %}
-        <a class="btn btn-primary" style="transform: translateX(-700%);top:20px;font-size:20px;bottom: 10px;" href="../{{ next }}/">روز بعد</a>
+        <a class="btn btn-primary" style="width:15%;position: relative; right: 70%;top:0px;font-size:0.95em;bottom: 10px;" href="../{{ next }}/">روز بعد</a>
         {% endif %}
     </div>
 
