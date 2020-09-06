@@ -117,7 +117,7 @@ def telegramView(req, token):
                             '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
                             'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.id='
                             + reply_text.split("\n")[0])[0]
-    if parent is None:
+    if parent.root is None:
         sendMessageToTelegram("parent not found")
         return JsonResponse({"ok": False, "result": "parent not found"})
     if text == "/ignore":
