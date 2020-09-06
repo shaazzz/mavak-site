@@ -108,6 +108,10 @@ def telegramView(req, token):
     reply_text = inp["message"]["reply_to_message"]["text"]
 
     print(reply_text)
+    first_line = reply_text.split("\n")[0]
+    if not first_line.isnummeric():
+        sendMessageToTelegram("reply ignored")
+        return JsonResponse({"ok": False, "result": "parent not found"})
     parent = \
         Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle)'
                             ', ",", "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
@@ -116,9 +120,9 @@ def telegramView(req, token):
                             'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
                             '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
                             'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.id='
-                            + reply_text.split("\n")[0])[0]
+                            + first_line)[0]
     if parent.root is None:
-        sendMessageToTelegram("parent not found")
+        sendMessageToTelegram("parent not found:" + first_line)
         return JsonResponse({"ok": False, "result": "parent not found"})
     if text == "/ignore":
         parent.answered = True
