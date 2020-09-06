@@ -9,7 +9,7 @@ from .models import Comment
 def sendCommentToTelegram(comment):
     chat_id = Secret.objects.get(key="telegram_comments_chat_id").value
     token = Secret.objects.get(key="botToken").value
-    url = "https://api.telegram.org/bot" + token + "/sendMessages"
+    url = "https://api.telegram.org/bot" + token + "/sendMessage"
     params = {
         "chat_id": chat_id,
         "parse_mode": "MarkdownV2",
