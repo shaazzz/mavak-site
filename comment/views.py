@@ -85,9 +85,7 @@ def telegramView(req, token):
         body = req.body.decode('utf8')
         inp = json.loads(body)
         text = inp["message"]["text"]
-        print("webhook func" + text)
         if text.startswith("/show_unanswered_comments"):
-            print("here0")
             comments = Comment.objects.raw(
                 'select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle), ",",'
                 ' "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
@@ -97,25 +95,19 @@ def telegramView(req, token):
                 '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
                 'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.answered='
                 '0 group by comment_comment.id')
-            print("here")
-            print(comments)
-            print(len(comments))
             for c in comments:
-                print("here1.5")
                 c.text += c.handles
-                print("here2")
-                print(c.text)
                 sendCommentToTelegram(c)
             return JsonResponse({"ok": True})
 
         if "message" not in inp or "reply_to_message" not in inp["message"] or "chat" \
                 not in inp["message"]["reply_to_message"] or "text" not in \
-                inp["message"]["reply_to_message"]:
-            sendMessageToTelegram("request ignored")
+                inp["message"]["reply_to_message"] or \
+                inp["message"]["reply_to_message"]["username"] != "mavakbot":
+            print("request ignored")
             return JsonResponse({"ok": True, "result": "request ignored"})
         reply_text = inp["message"]["reply_to_message"]["text"]
 
-        print(reply_text)
         first_line = reply_text.split("\n")[0]
         if not first_line.isnumeric():
             sendMessageToTelegram("reply ignored")
@@ -143,17 +135,11 @@ def telegramView(req, token):
             return JsonResponse({"ok": True, "result": "comment deleted"})
 
         username = inp['message']["from"]["username"].lower()
-        print(username)
         try:
             user = OJHandle.objects.get(judge="TELEGRAM", handle=username).student.user
         except ObjectDoesNotExist:
             user = User.objects.get(username="mikaeel")
 
-        print(parent.root)
-        print(text)
-        print(parent)
-        print(parent.private)
-        print(user)
         cmt = Comment.objects.create(
             root=parent.root,
             text=text,
@@ -168,6 +154,5 @@ def telegramView(req, token):
         sendMessageToTelegram("comment added")
         return JsonResponse({"ok": True, "result": "comment added"})
     except Exception as e:
-        print(e)
         sendMessageToTelegram("request ignored, id:" + str(inp["update_id"]) + "\n" + str(e))
         return JsonResponse({"ok": True, "result": "request ignored"})

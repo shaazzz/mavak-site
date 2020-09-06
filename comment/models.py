@@ -25,4 +25,4 @@ class Comment(models.Model):
                "mavak.shaazzz.ir" + \
                str(self.root) + "\n" + str(self.sender.first_name) \
                + " " + str(self.sender.last_name) \
-               + ":\n" + str(self.text) + last_line
+               + ":\n" + str(self.text) + last_line + "\n\n"
