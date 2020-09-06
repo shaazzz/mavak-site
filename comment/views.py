@@ -32,7 +32,6 @@ def sendCommentToTelegram(comment):
         'text': comment.get_message().encode(encoding='UTF-8', errors='strict')
     }
     x = requests.post(url, data=params)
-    print(x.text)
 
 
 def newView(req):
@@ -74,6 +73,7 @@ def newView(req):
 
 @csrf_exempt
 def telegramView(req, token):
+    print("webhook func")
     telegram_response_token = Secret.objects.get(key="telegram_response_token").value
     if telegram_response_token != token:
         return JsonResponse({"ok": False, "reason": "invalid token"})

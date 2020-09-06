@@ -22,7 +22,7 @@ class Comment(models.Model):
         if self.parent is not None and self.parent != "":
             line2 = "in reply to:" + str(self.parent.id) + "\n"
         return str(self.id) + "\n" + line2 + \
-               "mavak.shaazzz.ir/" + \
+               "mavak.shaazzz.ir" + \
                str(self.root) + "\n" + str(self.sender.first_name) \
                + " " + str(self.sender.last_name) \
                + ":\n" + str(self.text) + last_line
