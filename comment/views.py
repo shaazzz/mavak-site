@@ -109,8 +109,8 @@ def telegramView(req, token):
         reply_text = inp["message"]["reply_to_message"]["text"]
 
         print(reply_text)
-        first_line = reply_text.split("\n")[0].encode("utf-8", "strict")
-        if not first_line.isnummeric():
+        first_line = reply_text.split("\n")[0]
+        if not first_line.isnumeric():
             sendMessageToTelegram("reply ignored")
             return JsonResponse({"ok": False, "result": "parent not found"})
         parent = \
