@@ -96,10 +96,9 @@ def telegramView(req, token):
                 'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.answered='
                 '0 group by comment_comment.id')
             for c in comments:
-                c.text += c.handles
+                c.text += "\n\n" + c.handles
                 sendCommentToTelegram(c)
             return JsonResponse({"ok": True})
-       # print(inp["message"]["reply_to_message"])
         if "message" not in inp or "reply_to_message" not in inp["message"] or "chat" \
                 not in inp["message"]["reply_to_message"] or "text" not in \
                 inp["message"]["reply_to_message"] or \
@@ -150,7 +149,7 @@ def telegramView(req, token):
         cmt.answered = True
         cmt.save()
         sendCommentToTelegram(cmt)
-        cmt.text += "\n" + parent.handles
+        cmt.text += "\n\n" + parent.handles
         sendMessageToTelegram("comment added")
         return JsonResponse({"ok": True, "result": "comment added"})
     except Exception as e:
