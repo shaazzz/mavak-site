@@ -14,5 +14,7 @@ class Comment(models.Model):
     root = models.CharField(max_length=250)
 
     def get_message(self):
-        return "آدرس:" + str(self.root) + "\n" + "فرستنده:" + str(self.sender) + "\n" + "فرستنده:" + str(
-            self.sender) + "\n" + str(self.text)
+        return "[" + str(self.root).replace("-", "\\-") + "](mavak.shaazzz.ir/" + str(
+            self.root).replace("-", "\\-") + ")\n" + str(self.sender.first_name) \
+               + " " + str(self.sender.last_name) \
+               + ":\n" + str(self.text)
