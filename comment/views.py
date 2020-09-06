@@ -87,6 +87,7 @@ def telegramView(req, token):
         text = inp["message"]["text"]
         print("webhook func" + text)
         if text.startswith("/show_unanswered_comments"):
+            print("here0")
             comments = Comment.objects.raw(
                 'select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle), ",",'
                 ' "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
@@ -96,6 +97,7 @@ def telegramView(req, token):
                 '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
                 'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.answered='
                 'false group by comment_comment.id')
+            print("here")
             for c in comments:
                 c.text += c.handles
                 sendCommentToTelegram(c)
