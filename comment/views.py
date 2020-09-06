@@ -141,7 +141,7 @@ def telegramView(req, token):
     )
     print("su")
     cmt.answered = True
-    cmt.text += cmt.handles
+    cmt.text += parent.handles
     cmt.save()
     print(username)
     sendCommentToTelegram(cmt)
