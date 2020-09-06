@@ -160,6 +160,7 @@ def telegramView(req, token):
         cmt.text += "\n" + parent.handles
         sendMessageToTelegram("comment added")
         return JsonResponse({"ok": True, "result": "comment added"})
-    except Exception:
-        sendMessageToTelegram("request ignored, id:"+str(inp["update_id"]))
+    except Exception as e:
+        print(e)
+        sendMessageToTelegram("request ignored, id:"+str(inp["update_id"])+"\n"+str(e))
         return JsonResponse({"ok": True, "result": "request ignored"})
