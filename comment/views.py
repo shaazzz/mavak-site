@@ -99,7 +99,10 @@ def telegramView(req, token):
                 'false group by comment_comment.id')
             print("here")
             for c in comments:
+                print("here1.5")
                 c.text += c.handles
+                print("here2")
+                print(c.text)
                 sendCommentToTelegram(c)
             return JsonResponse({"ok": True})
 
