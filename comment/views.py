@@ -127,7 +127,11 @@ def telegramView(req, token):
         except ObjectDoesNotExist:
             user = User.objects.get(username="mikaeel")
 
-        print(username)
+        print(parent.root)
+        print(text)
+        print(parent)
+        print(parent.private)
+        print(user)
         cmt = Comment.objects.create(
             root=parent.root,
             text=text,
@@ -135,7 +139,7 @@ def telegramView(req, token):
             private=parent.private,
             sender=user,
         )
-        print(username)
+        print("su")
         cmt.answered = True
         cmt.save()
         print(username)
