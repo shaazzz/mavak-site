@@ -404,7 +404,7 @@ def pickAnswerFromOJView(req, name):
 
 
 def checkView(req, name, user):
-    if (not req.user.is_staff):
+    if not req.user.is_staff:
         return redirect("/users/login")
     yaroo = get_object_or_404(Student, user__username=user)
     q = get_object_or_404(Quiz, name=name)
