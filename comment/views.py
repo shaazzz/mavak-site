@@ -73,7 +73,7 @@ def newView(req):
 
 @csrf_exempt
 def telegramView(req, token):
-    #try:
+    # try:
     telegram_response_token = Secret.objects.get(key="telegram_response_token").value
     if telegram_response_token != token:
         return JsonResponse({"ok": False, "reason": "invalid token"})
@@ -141,9 +141,10 @@ def telegramView(req, token):
     )
     print("su")
     cmt.answered = True
+    cmt.text += cmt.handles
     cmt.save()
     print(username)
     sendCommentToTelegram(cmt)
     return JsonResponse({"ok": True, "result": "comment added"})
-    #except Exception:
-       # return JsonResponse({"ok": True, "result": "request ignored"})
+    # except Exception:
+    # return JsonResponse({"ok": True, "result": "request ignored"})
