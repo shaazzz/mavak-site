@@ -73,15 +73,14 @@ def newView(req):
 
 @csrf_exempt
 def telegramView(req, token):
-    print("webhook func")
     telegram_response_token = Secret.objects.get(key="telegram_response_token").value
     if telegram_response_token != token:
         return JsonResponse({"ok": False, "reason": "invalid token"})
     body = req.body.decode('utf8')
     inp = json.loads(body)
     text = inp["message"]["text"]
+    print("webhook func" + text)
     if text.startswith("/show_unanswered_comments"):
-        tags = text[len("/show_unanswered_comments") + 1:].split()
         comments = Comment.objects.raw(
             'select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle), ",",'
             ' "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
