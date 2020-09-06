@@ -100,6 +100,8 @@ def telegramView(req, token):
             inp["message"]["reply_to_message"]:
         return JsonResponse({"ok": True, "result": "request ignored"})
     reply_text = inp["message"]["reply_to_message"]["text"]
+
+    print(reply_text)
     parent = \
         Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle)'
                             ', ",", "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
@@ -118,11 +120,13 @@ def telegramView(req, token):
         return JsonResponse({"ok": True, "result": "comment deleted"})
 
     username = inp['message']["from"]["username"].lower()
+    print(username)
     try:
         user = OJHandle.objects.get(judge="TELEGRAM", handle=username).student.user
     except ObjectDoesNotExist:
         user = User.objects.get(username="mikaeel")
 
+    print(username)
     cmt = Comment.objects.create(
         root=parent.root,
         text=text,
@@ -130,7 +134,9 @@ def telegramView(req, token):
         private=parent.private,
         sender=user,
     )
+    print(username)
     cmt.answered = True
     cmt.save()
+    print(username)
     sendCommentToTelegram(cmt)
     return JsonResponse({"ok": True, "result": "comment added"})
