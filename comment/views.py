@@ -15,23 +15,19 @@ from users.models import OJHandle
 from .models import Comment
 
 
-def sendCommentToTelegram(comment):
-    '''
-    proxy = 'http://127.0.0.1:38673/'
-    os.environ['http_proxy'] = proxy
-    os.environ['HTTP_PROXY'] = proxy
-    os.environ['https_proxy'] = proxy
-    os.environ['HTTPS_PROXY'] = proxy
-    '''
-
+def sendMessageToTelegram(s):
     chat_id = Secret.objects.get(key="telegram_comments_chat_id").value
     token = Secret.objects.get(key="botToken").value
     url = "https://api.telegram.org/bot" + token + "/sendMessage"
     params = {
         "chat_id": chat_id,
-        'text': comment.get_message().encode(encoding='UTF-8', errors='strict')
+        'text': s
     }
     x = requests.post(url, data=params)
+
+
+def sendCommentToTelegram(comment):
+    sendMessageToTelegram(comment.get_message().encode(encoding='UTF-8', errors='strict'))
 
 
 def newView(req):
@@ -67,6 +63,14 @@ def newView(req):
             private=parent.private,
             sender=req.user,
         )
+    cmt = Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle)'
+                              ', ",", "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
+                              ' on course_course.id=course_lesson.course_id and comment_comment.root='
+                              '("/courses/"||course_course.name||"/"||course_lesson.name) INNER join course_tag on '
+                              'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
+                              '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
+                              'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.id='
+                              + cmt.id)[0]
     sendCommentToTelegram(cmt)
     return redirect(req.POST['root'])
 
@@ -99,6 +103,7 @@ def telegramView(req, token):
     if "message" not in inp or "reply_to_message" not in inp["message"] or "chat" \
             not in inp["message"]["reply_to_message"] or "text" not in \
             inp["message"]["reply_to_message"]:
+        sendMessageToTelegram("request ignored")
         return JsonResponse({"ok": True, "result": "request ignored"})
     reply_text = inp["message"]["reply_to_message"]["text"]
 
@@ -112,12 +117,17 @@ def telegramView(req, token):
                             '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
                             'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.id='
                             + reply_text.split("\n")[0])[0]
+    if parent is None:
+        sendMessageToTelegram("parent not found")
+        return JsonResponse({"ok": False, "result": "parent not found"})
     if text == "/ignore":
         parent.answered = True
         parent.save()
+        sendMessageToTelegram("comment ignored")
         return JsonResponse({"ok": True, "result": "comment ignored"})
     if text == "/delete":
         parent.delete()
+        sendMessageToTelegram("comment deleted")
         return JsonResponse({"ok": True, "result": "comment deleted"})
 
     username = inp['message']["from"]["username"].lower()
@@ -139,12 +149,11 @@ def telegramView(req, token):
         private=parent.private,
         sender=user,
     )
-    print("su")
     cmt.answered = True
-    cmt.text += parent.handles
     cmt.save()
-    print(username)
     sendCommentToTelegram(cmt)
+    cmt.text += "\n" + parent.handles
+    sendMessageToTelegram("comment added")
     return JsonResponse({"ok": True, "result": "comment added"})
     # except Exception:
     # return JsonResponse({"ok": True, "result": "request ignored"})
