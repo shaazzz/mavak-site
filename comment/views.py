@@ -96,7 +96,7 @@ def telegramView(req, token):
                 'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
                 '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
                 'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.answered='
-                'false group by comment_comment.id')
+                '0 group by comment_comment.id')
             print("here")
             print(comments)
             print(len(comments))
