@@ -98,6 +98,8 @@ def telegramView(req, token):
                 'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.answered='
                 'false group by comment_comment.id')
             print("here")
+            print(comments)
+            print(len(comments))
             for c in comments:
                 print("here1.5")
                 c.text += c.handles
