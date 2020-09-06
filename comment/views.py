@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import time
 
 import requests
 from django.contrib.auth.models import User
@@ -16,9 +17,11 @@ from .models import Comment
 
 
 def firstRun():
+    print("start run")
     Comment.objects.raw("update comment_comment set answered=1 where EXISTS "
                         "(SELECT * FROM comment_comment AS c2 WHERE c2.parent_id=comment_comment.id)")
 
+    print("finish run")
 
 def sendMessageToTelegram(s):
     chat_id = Secret.objects.get(key="telegram_comments_chat_id").value
@@ -104,6 +107,7 @@ def telegramView(req, token):
             for c in comments:
                 c.text += "\n\n" + c.handles
                 sendCommentToTelegram(c)
+                time.sleep(2)
             return JsonResponse({"ok": True})
         if "message" not in inp or "reply_to_message" not in inp["message"] or "chat" \
                 not in inp["message"]["reply_to_message"] or "text" not in \
