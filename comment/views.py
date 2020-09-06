@@ -16,13 +16,13 @@ from .models import Comment
 
 
 def sendCommentToTelegram(comment):
-    # '''
+    '''
     proxy = 'http://127.0.0.1:38673/'
     os.environ['http_proxy'] = proxy
     os.environ['HTTP_PROXY'] = proxy
     os.environ['https_proxy'] = proxy
     os.environ['HTTPS_PROXY'] = proxy
-    # '''
+    '''
 
     chat_id = Secret.objects.get(key="telegram_comments_chat_id").value
     token = Secret.objects.get(key="botToken").value
