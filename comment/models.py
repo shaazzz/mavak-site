@@ -23,6 +23,6 @@ class Comment(models.Model):
             line2 = "in reply to:" + str(self.parent.id) + "\n"
         return str(self.id) + "\n" + line2 + \
                "mavak.shaazzz.ir/" + \
-               str(self.root).replace("-", "\\-") + "\n" + str(self.sender.first_name) \
+               str(self.root) + "\n" + str(self.sender.first_name) \
                + " " + str(self.sender.last_name) \
                + ":\n" + str(self.text) + last_line
