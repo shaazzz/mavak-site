@@ -77,87 +77,89 @@ def newView(req):
 
 @csrf_exempt
 def telegramView(req, token):
-    # try:
-    telegram_response_token = Secret.objects.get(key="telegram_response_token").value
-    if telegram_response_token != token:
-        return JsonResponse({"ok": False, "reason": "invalid token"})
-    body = req.body.decode('utf8')
-    inp = json.loads(body)
-    text = inp["message"]["text"]
-    print("webhook func" + text)
-    if text.startswith("/show_unanswered_comments"):
-        comments = Comment.objects.raw(
-            'select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle), ",",'
-            ' "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
-            ' on course_course.id=course_lesson.course_id and comment_comment.root='
-            '("/courses/"||course_course.name||"/"||course_lesson.name) INNER join course_tag on '
-            'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
-            '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
-            'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.answered='
-            'false group by comment_comment.id')
-        for c in comments:
-            c.text += c.handles
-            sendCommentToTelegram(c)
-        return JsonResponse({"ok": True})
-
-    if "message" not in inp or "reply_to_message" not in inp["message"] or "chat" \
-            not in inp["message"]["reply_to_message"] or "text" not in \
-            inp["message"]["reply_to_message"]:
-        sendMessageToTelegram("request ignored")
-        return JsonResponse({"ok": True, "result": "request ignored"})
-    reply_text = inp["message"]["reply_to_message"]["text"]
-
-    print(reply_text)
-    first_line = reply_text.split("\n")[0]
-    if not first_line.isnummeric():
-        sendMessageToTelegram("reply ignored")
-        return JsonResponse({"ok": False, "result": "parent not found"})
-    parent = \
-        Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle)'
-                            ', ",", "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
-                            ' on course_course.id=course_lesson.course_id and comment_comment.root='
-                            '("/courses/"||course_course.name||"/"||course_lesson.name) INNER join course_tag on '
-                            'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
-                            '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
-                            'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.id='
-                            + first_line)[0]
-    if parent.root is None:
-        sendMessageToTelegram("parent not found:" + first_line)
-        return JsonResponse({"ok": False, "result": "parent not found"})
-    if text == "/ignore":
-        parent.answered = True
-        parent.save()
-        sendMessageToTelegram("comment ignored")
-        return JsonResponse({"ok": True, "result": "comment ignored"})
-    if text == "/delete":
-        parent.delete()
-        sendMessageToTelegram("comment deleted")
-        return JsonResponse({"ok": True, "result": "comment deleted"})
-
-    username = inp['message']["from"]["username"].lower()
-    print(username)
+    global inp
     try:
-        user = OJHandle.objects.get(judge="TELEGRAM", handle=username).student.user
-    except ObjectDoesNotExist:
-        user = User.objects.get(username="mikaeel")
+        telegram_response_token = Secret.objects.get(key="telegram_response_token").value
+        if telegram_response_token != token:
+            return JsonResponse({"ok": False, "reason": "invalid token"})
+        body = req.body.decode('utf8')
+        inp = json.loads(body)
+        text = inp["message"]["text"]
+        print("webhook func" + text)
+        if text.startswith("/show_unanswered_comments"):
+            comments = Comment.objects.raw(
+                'select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle), ",",'
+                ' "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
+                ' on course_course.id=course_lesson.course_id and comment_comment.root='
+                '("/courses/"||course_course.name||"/"||course_lesson.name) INNER join course_tag on '
+                'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
+                '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
+                'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.answered='
+                'false group by comment_comment.id')
+            for c in comments:
+                c.text += c.handles
+                sendCommentToTelegram(c)
+            return JsonResponse({"ok": True})
 
-    print(parent.root)
-    print(text)
-    print(parent)
-    print(parent.private)
-    print(user)
-    cmt = Comment.objects.create(
-        root=parent.root,
-        text=text,
-        parent=parent,
-        private=parent.private,
-        sender=user,
-    )
-    cmt.answered = True
-    cmt.save()
-    sendCommentToTelegram(cmt)
-    cmt.text += "\n" + parent.handles
-    sendMessageToTelegram("comment added")
-    return JsonResponse({"ok": True, "result": "comment added"})
-    # except Exception:
-    # return JsonResponse({"ok": True, "result": "request ignored"})
+        if "message" not in inp or "reply_to_message" not in inp["message"] or "chat" \
+                not in inp["message"]["reply_to_message"] or "text" not in \
+                inp["message"]["reply_to_message"]:
+            sendMessageToTelegram("request ignored")
+            return JsonResponse({"ok": True, "result": "request ignored"})
+        reply_text = inp["message"]["reply_to_message"]["text"]
+
+        print(reply_text)
+        first_line = reply_text.split("\n")[0]
+        if not first_line.isnummeric():
+            sendMessageToTelegram("reply ignored")
+            return JsonResponse({"ok": False, "result": "parent not found"})
+        parent = \
+            Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle)'
+                                ', ",", "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
+                                ' on course_course.id=course_lesson.course_id and comment_comment.root='
+                                '("/courses/"||course_course.name||"/"||course_lesson.name) INNER join course_tag on '
+                                'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
+                                '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
+                                'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.id='
+                                + first_line)[0]
+        if parent.root is None:
+            sendMessageToTelegram("parent not found:" + first_line)
+            return JsonResponse({"ok": False, "result": "parent not found"})
+        if text == "/ignore":
+            parent.answered = True
+            parent.save()
+            sendMessageToTelegram("comment ignored")
+            return JsonResponse({"ok": True, "result": "comment ignored"})
+        if text == "/delete":
+            parent.delete()
+            sendMessageToTelegram("comment deleted")
+            return JsonResponse({"ok": True, "result": "comment deleted"})
+
+        username = inp['message']["from"]["username"].lower()
+        print(username)
+        try:
+            user = OJHandle.objects.get(judge="TELEGRAM", handle=username).student.user
+        except ObjectDoesNotExist:
+            user = User.objects.get(username="mikaeel")
+
+        print(parent.root)
+        print(text)
+        print(parent)
+        print(parent.private)
+        print(user)
+        cmt = Comment.objects.create(
+            root=parent.root,
+            text=text,
+            parent=parent,
+            private=parent.private,
+            sender=user,
+        )
+        cmt.answered = True
+        cmt.save()
+        sendCommentToTelegram(cmt)
+        cmt.text += "\n" + parent.handles
+        sendMessageToTelegram("comment added")
+        return JsonResponse({"ok": True, "result": "comment added"})
+    except Exception:
+        sendMessageToTelegram("request ignored, id:"+str(inp["update_id"]))
+        return JsonResponse({"ok": True, "result": "request ignored"})
