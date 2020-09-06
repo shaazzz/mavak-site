@@ -99,11 +99,11 @@ def telegramView(req, token):
                 c.text += c.handles
                 sendCommentToTelegram(c)
             return JsonResponse({"ok": True})
-        print(inp["message"]["reply_to_message"])
+       # print(inp["message"]["reply_to_message"])
         if "message" not in inp or "reply_to_message" not in inp["message"] or "chat" \
                 not in inp["message"]["reply_to_message"] or "text" not in \
                 inp["message"]["reply_to_message"] or \
-                inp["message"]["reply_to_message"]["username"] != "mavakbot":
+                inp["message"]["reply_to_message"]["from"]["username"] != "mavakbot":
             print("request ignored")
             return JsonResponse({"ok": True, "result": "request ignored"})
         reply_text = inp["message"]["reply_to_message"]["text"]
