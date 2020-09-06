@@ -5,5 +5,5 @@ from . import views
 app_name = 'comment'
 urlpatterns = [
   path('new/', views.newView, name='courseView'),
-  path('add_from_telegram/<token>', views.addFromTelegramView, name='addCommentTelegramView'),
+  path('add_from_telegram/<token>', views.telegramView, name='addCommentTelegramView'),
 ]

@@ -5,10 +5,11 @@ import re
 from .models import Student, Org
 from django.db.models import Max, Count
 
+
 def agreementView(req):
     if (req.user.is_anonymous):
         return redirect("/users/login")
-    stu = get_object_or_404(Student, user= req.user)
+    stu = get_object_or_404(Student, user=req.user)
     if (stu.verified < 1):
         return render(req, "users/rejected.html")
     if (stu.verified > 1):
@@ -25,6 +26,7 @@ def agreementView(req):
     stu.save()
     return redirect(".")
 
+
 def is_valid_iran_code(input):
     if not re.search(r'^\d{10}$', input):
         return False
@@ -33,9 +35,11 @@ def is_valid_iran_code(input):
     s = sum([int(input[x]) * (10 - x) for x in range(9)]) % 11
     return (s < 2 and check == s) or (s >= 2 and check + s == 11)
 
-persiandigit='۱۲۳۴۵۶۷۸۹۰١٢٣٤٥٦٧٨٩٠'
-englishdigit='12345678901234567890'
+
+persiandigit = '۱۲۳۴۵۶۷۸۹۰١٢٣٤٥٦٧٨٩٠'
+englishdigit = '12345678901234567890'
 translation_table = str.maketrans(persiandigit, englishdigit)
+
 
 def createAccountStudent(req):
     if (req.method == 'GET'):
@@ -59,19 +63,21 @@ def createAccountStudent(req):
         user.last_name = famil
         user.save()
         dlogin(req, user)
-        Student.objects.create(user= user, ostan= ostan, dore= dore, shomare= shomare)
+        Student.objects.create(user=user, ostan=ostan, dore=dore, shomare=shomare)
         return redirect('/users/me')
     except:
         return render(req, 'users/createAccountStudent.html', {
             'error': 'duplicate',
         })
 
+
 def verified(req):
     if (not req.user.is_staff):
         return redirect("/users/login")
     return render(req, "users/verified.html", {
-        'data': Student.objects.filter(verified= 3),
+        'data': Student.objects.filter(verified=3),
     })
+
 
 def createAccountSchool(req):
     if (req.method == 'GET'):
@@ -90,33 +96,35 @@ def createAccountSchool(req):
     user.last_name = famil
     user.save()
     dlogin(req, user)
-    Org.objects.create(user= user, ostan= ostan, goone= goone, shomare= shomare, title= title)
+    Org.objects.create(user=user, ostan=ostan, goone=goone, shomare=shomare, title=title)
     return redirect('/users/me')
-    
+
 
 def me(req):
     if not req.user.is_authenticated:
         return redirect('/users/login')
-    if Org.objects.filter(user= req.user).exists():
+    if Org.objects.filter(user=req.user).exists():
         return render(req, 'users/meOrg.html', {
             'user': req.user,
-            'org': Org.objects.get(user= req.user),
+            'org': Org.objects.get(user=req.user),
         })
-    if Student.objects.filter(user= req.user).exists():
+    if Student.objects.filter(user=req.user).exists():
         return render(req, 'users/me.html', {
             'user': req.user,
-            'student': Student.objects.get(user= req.user),
+            'student': Student.objects.get(user=req.user),
         })
     return render(req, 'users/me.html', {
         'user': req.user,
     })
 
+
 def log(req):
     if not req.user.is_staff:
         return render(req, 'users/login.html')
     return render(req, 'users/log.html', {
-        "data": Student.objects.values('ostan').annotate(count= Count('id')),
+        "data": Student.objects.values('ostan').annotate(count=Count('id')),
     })
+
 
 def shomare(req):
     if not req.user.is_staff:
@@ -124,6 +132,7 @@ def shomare(req):
     return render(req, "users/shomare.html", {
         "users": Student.objects.all(),
     })
+
 
 def shomareEnglish(req):
     if not req.user.is_staff:
@@ -133,12 +142,13 @@ def shomareEnglish(req):
         stu.save()
     return redirect("/users/shomare")
 
+
 def login(req):
     if (req.method == 'GET'):
         return render(req, 'users/login.html')
     username = req.POST['username']
     password = req.POST['password']
-    u = authenticate(req, username= username, password= password)
+    u = authenticate(req, username=username, password=password)
     if u is not None:
         dlogin(req, u)
         return redirect('/users/me')

@@ -2,6 +2,8 @@ from django.db import models
 from django.utils import timezone
 from datetime import datetime
 
+from main.models import Tag
+
 
 class Course(models.Model):
     name = models.CharField(max_length=50)
@@ -9,6 +11,11 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Tag(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
 
 class Lesson(models.Model):

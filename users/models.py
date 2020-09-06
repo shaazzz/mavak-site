@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
+from main.models import Tag
+
 
 def get_file_path(instance, filename):
     ext = filename.split('.')[-1]
@@ -34,6 +36,11 @@ class OJHandle(models.Model):
     judge = models.CharField(max_length=250)
     handle = models.CharField(max_length=250)
     password = models.CharField(max_length=250)
+
+
+class SupporterTag(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, default=1)
 
 
 class Org(models.Model):
