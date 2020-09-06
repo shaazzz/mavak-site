@@ -16,9 +16,8 @@ from .models import Comment
 
 
 def firstRun():
-    [x for x in Comment.objects.raw("select * from comment_comment where EXISTS "
-                                    "(SELECT * FROM comment_comment AS c2 WHERE c2.parent_id="
-                                    "comment_comment.id)")].update(answered=True)
+    Comment.objects.raw("update comment_comment set answered=1 where EXISTS "
+                        "(SELECT * FROM comment_comment AS c2 WHERE c2.parent_id=comment_comment.id)")
 
 
 def sendMessageToTelegram(s):
