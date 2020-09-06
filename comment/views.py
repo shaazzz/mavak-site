@@ -15,6 +15,12 @@ from users.models import OJHandle
 from .models import Comment
 
 
+def firstRun():
+    Comment.objects.raw("select * from comment_comment where EXISTS "
+                        "(SELECT * FROM comment_comment AS c2 WHERE c2.parent_id="
+                        "comment_comment.id)").update(answered=True)
+
+
 def sendMessageToTelegram(s):
     chat_id = Secret.objects.get(key="telegram_comments_chat_id").value
     token = Secret.objects.get(key="botToken").value
@@ -31,6 +37,7 @@ def sendCommentToTelegram(comment):
 
 
 def newView(req):
+    firstRun()
     if not req.user.is_authenticated:
         return redirect('/users/login')
     if req.method == 'GET':
