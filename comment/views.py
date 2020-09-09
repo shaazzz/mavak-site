@@ -43,7 +43,7 @@ def sendCommentToTelegram(comment):
 
 
 def newView(req):
-    firstRun()
+    #firstRun()
     if not req.user.is_authenticated:
         return redirect('/users/login')
     if req.method == 'GET':
