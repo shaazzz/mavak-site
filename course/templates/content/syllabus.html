@@ -1,0 +1,185 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<style>
+
+body {
+  background: #eee;
+  line-height: 3vmin;
+  direction: rtl;
+}
+
+h2 {
+  color: #aaa;
+  font-size: 25px;
+  line-height: 5vmin;
+  font-style: italic;
+  font-weight: 200;
+  margin: 40px;
+  text-align: center;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+.box {
+  background: #fff;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  margin: 2%;
+  padding: 3%;
+}
+
+@media (min-width: 800px) {
+  .box {
+    margin: 30px auto;
+    border-radius: 2px;
+    max-width: 880px;
+    padding: 25px;
+  }
+}
+
+
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+    background-color: #900839;
+    color: #ffffff;
+    text-align: right;
+}
+
+.styled-table th {
+    text-align: right;
+    padding: 12px 15px;
+    line-height: 50px;
+}
+.styled-table td {
+    text-align: right;
+    padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.styled-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+
+
+.styled-table a {
+  border-bottom: 1px solid transparent;
+  color: #444;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.styled-table a:hover {
+  border-color: #eee;
+  color: #000;
+}
+
+
+
+</style>
+
+
+<div class="box">
+    <table id="syllabus" class="styled-table" dir="rtl">
+    </table>
+</div>
+
+
+<script>
+    const options = {
+        year: 'numeric', month: 'long', day: 'numeric'
+    };
+    const options_just_weekday = {
+        weekday: 'long'
+    };
+    const options_complete = {
+         year: 'numeric', month: 'long', day: 'numeric',weekday: 'long'
+    };
+    const options_url = {
+        day: 'numeric',month: 'numeric', year: 'numeric',
+    };
+
+    let lesson_groups=[
+        {% for lessons in lesson_groups %}
+        [
+            {% for l in lessons %}
+            {
+                "name": "{{l.name}}",
+                "title": "{{l.title}}",
+                "release": new Date('{{ l.release|date:"Y-m-d H:i:s" }}'),
+                "drop_off_date": new Date('{{ l.drop_off_date|date:"Y-m-d" }}'),
+                "date_id": '{{ l.date_id }}',
+                "type": '{{ l.type }}',
+            },
+            {% endfor %}
+        ],
+        {% endfor %}
+    ];
+
+    var table = document.getElementById("syllabus");
+    for(var j=0;j<lesson_groups.length;j++){
+        let lessons=lesson_groups[j];
+        var row = table.insertRow(table.rows.length);
+        var title_cell = row.insertCell(0);
+        var first_day=new Date((new Date(lesson_groups[j][0]["date_id"]))
+        .setDate(new Date(lesson_groups[j][0]["date_id"]).getDate()+1))
+        row.insertCell(1).innerHTML=first_day.toLocaleString('fa-IR', options_complete);
+        row.insertCell(2);
+        row.insertCell(3);
+        var link = document.createElement('a');
+        var linkText = document.createTextNode("هفته‌ی "+parseInt(j+1));
+        link.appendChild(linkText);
+        link.title = "هفته‌ی "+parseInt(j+1);
+        link.setAttribute("style", "color: #ffffff;text-align: right;");
+        row.setAttribute("style", "background-color: #c03839;color: #ffffff;text-align: right;");
+        var date_str=first_day.getFullYear()+"-"+(first_day.getMonth()+ 1)+"-"+first_day.getDate();
+        link.href = "/content/date/"+date_str;
+        title_cell.appendChild(link);
+        for(var i=0;i<lessons.length;i++){
+            var release_str=lessons[i]["release"].getFullYear()+"-"+(lessons[i]["release"].getMonth()+ 1)+"-"+lessons[i]["release"].getDate();
+            var row = table.insertRow(table.rows.length);
+            var title_cell = row.insertCell(0);
+            var link = document.createElement('a');
+            var linkText = document.createTextNode(lessons[i]["title"]);
+            link.appendChild(linkText);
+            link.title = lessons[i]["title"];
+            if(lessons[i]["type"]=="lesson"){
+                link.href = "/content/date/"+release_str+"/"+lessons[i]["name"]+"/";
+            }else{
+                link.href = "/quiz/"+lessons[i].name
+            }
+            title_cell.appendChild(link);
+            row.insertCell(1).innerHTML=lessons[i]["release"].toLocaleString('fa-IR', options_just_weekday);
+            row.insertCell(2).innerHTML=lessons[i]["drop_off_date"].toLocaleString('fa-IR', options_complete);
+            if(lessons[i]["type"]=="lesson"){
+                row.insertCell(3).innerHTML="مطلب آموزشی";
+            }else{
+                row.insertCell(3).innerHTML="تمرین یا امتحان";
+            }
+        }
+    }
+    console.log(lesson_groups.length);
+
+
+</script>
+{% endblock %}

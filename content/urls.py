@@ -4,6 +4,7 @@ from . import views
 
 app_name = 'content'
 
+
 class DateConverter:
     regex = '\d{4}-\d{1,2}-\d{1,2}'
 
@@ -18,6 +19,7 @@ register_converter(DateConverter, 'yyyy')
 
 urlpatterns = [
     path('', views.todayCourseView, name='todayCourseView'),
+    path('syllabus/', views.syllabusView, name='syllabusView'),
     path('today/', views.todayCourseView, name='todayCourseView'),
     path('date/<yyyy:date>/', views.courseView, name='courseView'),
     path('date/<yyyy:date>/<lesson>/', views.lessonView, name='lessonView'),

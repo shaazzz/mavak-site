@@ -23,6 +23,7 @@ def firstRun():
 
     print("finish run")
 
+
 def sendMessageToTelegram(s):
     chat_id = Secret.objects.get(key="telegram_comments_chat_id").value
     token = Secret.objects.get(key="botToken").value

@@ -144,7 +144,7 @@ def shomareEnglish(req):
 
 
 def login(req):
-    if (req.method == 'GET'):
+    if req.method == 'GET':
         return render(req, 'users/login.html')
     username = req.POST['username']
     password = req.POST['password']

@@ -38,6 +38,40 @@ def courseView(req, date):
     })
 
 
+def getGroups(rows):
+    groups = []
+    now = []
+    last_id = None
+    for row in rows:
+        if last_id is not None and last_id != row.date_id:
+            groups.append(now)
+            now = []
+        now.append(row)
+        last_id = row.date_id
+    if last_id is not None:
+        groups.append(now)
+    # print(groups)
+    return groups
+
+
+def syllabusView(req):
+    addit = "where release<'" + timezone.now().strftime("%Y-%m-%d %H:%M:%S") + "'"
+    if req.user.is_staff:
+        addit = ""
+    ls = Lesson.objects.raw("select *,'lesson' as type,(DATE(release, 'weekday 5', '-7 days')) "
+                            "as date_id from course_lesson " + addit +
+                            " order by release")
+    qs = Quiz.objects.raw("select *,'quiz' as type,quiz_quiz.start as release,quiz_quiz.end as drop_off_date,"
+                          "(DATE(quiz_quiz.start, 'weekday 5', '-7 days')) as date_id from quiz_quiz " + addit +
+                          " order by release")
+
+    ls = [row for row in ls] + [row for row in qs]
+    ls.sort(key=lambda x: x.date_id)
+    return render(req, "content/syllabus.html", {
+        'lesson_groups': getGroups(ls),
+    })
+
+
 def lessonView(req, date, lesson):
     if date.today() < date and not req.user.is_staff:
         return JsonResponse({'ok': False, 'reason': 'anonymous'})

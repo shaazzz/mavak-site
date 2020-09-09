@@ -427,6 +427,8 @@ def quizView(req, name):
             'desc': markdown(q.desc),
             'current': timezone.now(),
         })
+    if req.user.is_staff:
+        return redirect("/admin/quiz/quiz/"+str(q.id))
     stu = get_object_or_404(Student, user=req.user)
     if q.end < timezone.now():
         return render(req, "quiz/current.html", {
