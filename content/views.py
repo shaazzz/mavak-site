@@ -50,7 +50,6 @@ def getGroups(rows):
         last_id = row.date_id
     if last_id is not None:
         groups.append(now)
-    # print(groups)
     return groups
 
 
@@ -64,6 +63,27 @@ def syllabusView(req):
     qs = Quiz.objects.raw("select *,'quiz' as type,quiz_quiz.start as release,quiz_quiz.end as drop_off_date,"
                           "(DATE(quiz_quiz.start, 'weekday 5', '-7 days')) as date_id from quiz_quiz " + addit +
                           " order by release")
+
+    ls = [row for row in ls] + [row for row in qs]
+    ls.sort(key=lambda x: x.date_id)
+    return render(req, "content/syllabus.html", {
+        'lesson_groups': getGroups(ls),
+    })
+
+
+def syllabusWithTagView(req, tag):
+    addit = "where release<'" + timezone.now().strftime("%Y-%m-%d %H:%M:%S") + "'"
+    if req.user.is_staff:
+        addit = ""
+    ls = Lesson.objects.raw("select course_lesson.*,'lesson' as type,(DATE(release, 'weekday 5', '-7 days')) "
+                            "as date_id from course_lesson inner join course_tag on course_tag.course_id"
+                            "=course_lesson.id INNER join main_tag on course_tag.tag_id=main_tag.id and "
+                            "main_tag.name='" + tag + "' " + addit + " order by release")
+    qs = Quiz.objects.raw("select quiz_quiz.*,'quiz' as type,quiz_quiz.start as release,quiz_quiz.end "
+                          "as drop_off_date, (DATE(quiz_quiz.start, 'weekday 5', '-7 days')) as date_id "
+                          "from quiz_quiz inner join quiz_tag on quiz_tag.quiz_id=quiz_quiz.id INNER join "
+                          "main_tag on quiz_tag.tag_id=main_tag.id and main_tag.name="
+                          "'" + tag + "' " + addit + " order by release")
 
     ls = [row for row in ls] + [row for row in qs]
     ls.sort(key=lambda x: x.date_id)

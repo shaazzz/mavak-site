@@ -1,4 +1,6 @@
 from django.db import models
+
+from main.models import Tag
 from users.models import Student, StudentGroup
 from datetime import datetime
 
@@ -12,6 +14,11 @@ class Quiz(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Tag(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='qtag')
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
 
 
 class Collection(models.Model):
