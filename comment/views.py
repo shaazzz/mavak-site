@@ -27,6 +27,17 @@ def firstRun():
     print("finish run")
 
 
+def deleteMessageTelegram(msg_id):
+    chat_id = Secret.objects.get(key="telegram_comments_chat_id").value
+    token = Secret.objects.get(key="botToken").value
+    url = "https://api.telegram.org/bot" + token + "/deleteMessage"
+    params = {
+        "chat_id": chat_id,
+        'message_id': msg_id
+    }
+    x = requests.post(url, data=params)
+
+
 def sendMessageToTelegram(s):
     chat_id = Secret.objects.get(key="telegram_comments_chat_id").value
     token = Secret.objects.get(key="botToken").value
@@ -43,7 +54,7 @@ def sendCommentToTelegram(comment):
 
 
 def newView(req):
-    #firstRun()
+    # firstRun()
     if not req.user.is_authenticated:
         return redirect('/users/login')
     if req.method == 'GET':
@@ -121,7 +132,10 @@ def telegramView(req, token):
             print("request ignored")
             return JsonResponse({"ok": True, "result": "request ignored"})
         reply_text = inp["message"]["reply_to_message"]["text"]
-
+        src_id = inp["message"]["reply_to_message"]["message_id"]
+        deleteMessageTelegram(src_id)
+        src_id = inp["message"]["message_id"]
+        deleteMessageTelegram(src_id)
         first_line = reply_text.split("\n")[0]
         if not first_line.isnumeric():
             sendMessageToTelegram("reply ignored")
