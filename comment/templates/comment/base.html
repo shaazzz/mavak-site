@@ -8,7 +8,7 @@
     <div id="comment_root"></div>
     <script>
         const x = JSON.parse({{ comment.json | safe }});
-        const div = document.getElementById('comment_root');
+        var div = document.getElementById('comment_root');
         const buildDiv = (c) => {
             const r = document.createElement('div');
             r.className = 'card';
