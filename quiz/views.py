@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from markdown2 import markdown
 
+from comment.json import json_of_root
 from .models import Quiz, Question, Answer, Secret, Collection, CollectionQuiz, RateColor
 from users.models import Student, OJHandle
 from django.utils import timezone
@@ -438,6 +439,7 @@ def quizView(req, name):
             'current': timezone.now(),
             'problems': json_of_problems(Question.objects.filter(quiz=q), stu),
             'user': stu.user,
+            'comment': json_of_root('/quiz/' + name + '/', req.user),
         })
     return render(req, "quiz/current.html", {
         'mode': 'current',

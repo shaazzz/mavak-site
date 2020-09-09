@@ -28,6 +28,12 @@
     </p>
 
     <div id="problems"></div>
+
+
+    {% if mode == "visit" %}
+        {% include "comment/base.html" %}
+    {% endif %}
+
     <script>
     const userCode = (()=>{
       const username = '{{ user.username }}';
