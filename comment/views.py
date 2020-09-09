@@ -126,7 +126,7 @@ def telegramView(req, token):
             for c in comments:
                 c.text += "\n\n" + c.handles
                 sendCommentToTelegram(c)
-                time.sleep(2)
+                time.sleep(0.2)
             return JsonResponse({"ok": True})
         if "message" not in inp or "reply_to_message" not in inp["message"] or "chat" \
                 not in inp["message"]["reply_to_message"] or "text" not in \
