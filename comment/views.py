@@ -87,14 +87,22 @@ def newView(req):
             private=parent.private,
             sender=req.user,
         )
-    cmt = Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle)'
-                              ', ",", "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
-                              ' on course_course.id=course_lesson.course_id and comment_comment.root='
-                              '("/courses/"||course_course.name||"/"||course_lesson.name) INNER join course_tag on '
-                              'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
-                              '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
-                              'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.id='
-                              + str(cmt.id))[0]
+    cmt = Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle),'
+                              ' ",", "\n@")) as handles  from comment_comment inner join course_lesson inner join'
+                              ' course_course on course_course.id=course_lesson.course_id and comment_comment.root='
+                              '("/courses/"||course_course.name||"/"||course_lesson.name)  INNER join course_tag on '
+                              'course_tag.course_id=course_course.id INNER join users_supportertag on'
+                              ' users_supportertag.tag_id=course_tag.tag_id  INNER join users_ojhandle on '
+                              'users_supportertag.student_id=users_ojhandle.student_id and users_ojhandle.judge='
+                              '"TELEGRAM"  where comment_comment.id=' + str(
+        cmt.id) + ' group by comment_comment.id UNION select '
+                  'comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle),'
+                  ' ",", "\n@")) as handles  from comment_comment inner join quiz_quiz on '
+                  'comment_comment.root=("/quiz/"||quiz_quiz.name||"/")  INNER join quiz_tag on '
+                  'quiz_tag.quiz_id=quiz_quiz.id  INNER join users_supportertag on users_supportertag.'
+                  'tag_id=quiz_tag.tag_id  INNER join users_ojhandle on users_supportertag.student_id='
+                  'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM"  where comment_comment.id'
+                  '=' + str(cmt.id) + ' group by comment_comment.id')[0]
     cmt.text += "\n\n" + cmt.handles
     sendCommentToTelegram(cmt)
     return redirect(req.POST['root'])
@@ -112,14 +120,21 @@ def telegramView(req, token):
         text = inp["message"]["text"]
         if text.startswith("/show_unanswered_comments"):
             comments = Comment.objects.raw(
-                'select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle), ",",'
-                ' "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
-                ' on course_course.id=course_lesson.course_id and comment_comment.root='
-                '("/courses/"||course_course.name||"/"||course_lesson.name) INNER join course_tag on '
-                'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
-                '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
-                'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.answered='
-                '0 group by comment_comment.id')
+                'select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle),'
+                ' ",", "\n@")) as handles  from comment_comment inner join course_lesson inner join'
+                ' course_course on course_course.id=course_lesson.course_id and comment_comment.root='
+                '("/courses/"||course_course.name||"/"||course_lesson.name)  INNER join course_tag on '
+                'course_tag.course_id=course_course.id INNER join users_supportertag on'
+                ' users_supportertag.tag_id=course_tag.tag_id  INNER join users_ojhandle on '
+                'users_supportertag.student_id=users_ojhandle.student_id and users_ojhandle.judge='
+                '"TELEGRAM"  where comment_comment.answered=0 group by comment_comment.id UNION select '
+                'comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle),'
+                ' ",", "\n@")) as handles  from comment_comment inner join quiz_quiz on '
+                'comment_comment.root=("/quiz/"||quiz_quiz.name||"/")  INNER join quiz_tag on '
+                'quiz_tag.quiz_id=quiz_quiz.id  INNER join users_supportertag on users_supportertag.'
+                'tag_id=quiz_tag.tag_id  INNER join users_ojhandle on users_supportertag.student_id='
+                'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM"'
+                ' where comment_comment.id=comment_comment.answered=0 group by comment_comment.id')
             for c in comments:
                 c.text += "\n\n" + c.handles
                 sendCommentToTelegram(c)
@@ -141,14 +156,23 @@ def telegramView(req, token):
             sendMessageToTelegram("reply ignored")
             return JsonResponse({"ok": False, "result": "parent not found"})
         parent = \
-            Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle)'
-                                ', ",", "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
-                                ' on course_course.id=course_lesson.course_id and comment_comment.root='
-                                '("/courses/"||course_course.name||"/"||course_lesson.name) INNER join course_tag on '
-                                'course_tag.course_id=course_course.id INNER join users_supportertag on users_supportertag.tag_id'
-                                '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
-                                'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.id='
-                                + first_line)[0]
+            Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle),'
+                                ' ",", "\n@")) as handles  from comment_comment inner join course_lesson inner join'
+                                ' course_course on course_course.id=course_lesson.course_id and comment_comment.root='
+                                '("/courses/"||course_course.name||"/"||course_lesson.name)  INNER join course_tag on '
+                                'course_tag.course_id=course_course.id INNER join users_supportertag on'
+                                ' users_supportertag.tag_id=course_tag.tag_id  INNER join users_ojhandle on '
+                                'users_supportertag.student_id=users_ojhandle.student_id and users_ojhandle.judge='
+                                '"TELEGRAM" '
+                                'where comment_comment.id=' + first_line + ' group by comment_comment.id UNION select '
+                                                                           'comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle),'
+                                                                           ' ",", "\n@")) as handles  from comment_comment inner join quiz_quiz on '
+                                                                           'comment_comment.root=("/quiz/"||quiz_quiz.name||"/")  INNER join quiz_tag on '
+                                                                           'quiz_tag.quiz_id=quiz_quiz.id  INNER join users_supportertag on users_supportertag.'
+                                                                           'tag_id=quiz_tag.tag_id  INNER join users_ojhandle on users_supportertag.student_id='
+                                                                           'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM"  where comment_comment.id'
+                                                                           '=' + first_line + ' group by comment_comment.id')[
+                0]
         if parent.root is None:
             sendMessageToTelegram("parent not found:" + first_line)
             return JsonResponse({"ok": False, "result": "parent not found"})
