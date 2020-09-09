@@ -81,6 +81,7 @@ def newView(req):
                               '=course_tag.tag_id INNER join users_ojhandle on users_supportertag.student_id='
                               'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM" where comment_comment.id='
                               + str(cmt.id))[0]
+    cmt.text += "\n\n" + cmt.handles
     sendCommentToTelegram(cmt)
     return redirect(req.POST['root'])
 
