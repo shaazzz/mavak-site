@@ -111,8 +111,8 @@ def telegramView(req, token):
         inp = json.loads(body)
         text = inp["message"]["text"]
         if text.startswith("/show_unanswered_comments"):
-        sendMessageToTelegram("show request ignored, id:" + str(inp["update_id"]) + "\n" + str(e))
-        return JsonResponse({"ok": True, "result": "request ignored"})
+            sendMessageToTelegram("show request ignored, id:" + str(inp["update_id"]) + "\n" + str(e))
+            return JsonResponse({"ok": True, "result": "request ignored"})
             return JsonResponse({"ok": True})
             comments = Comment.objects.raw(
                 'select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle), ",",'
