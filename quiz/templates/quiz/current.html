@@ -29,12 +29,6 @@
 
     <div id="problems"></div>
 
-
-    {% if mode == "visit" %}
-         اکنون میتوانید از قسمت نظرات به نمرات خودتون اعتراض کنید، اعتراضاتتون رو به صورت خصوصی ارسال کنید
-        {% include "comment/base.html" %}
-    {% endif %}
-
     <script>
     const userCode = (()=>{
       const username = '{{ user.username }}';
@@ -275,6 +269,12 @@
     });
 
     </script>
+
+
+    {% if mode == "visit" %}
+         اکنون میتوانید از قسمت نظرات به نمرات خودتون اعتراض کنید، اعتراضاتتون رو به صورت خصوصی ارسال کنید
+        {% include "comment/base.html" %}
+    {% endif %}
 </div>
 
 {% endblock %}
