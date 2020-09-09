@@ -86,7 +86,7 @@ def syllabusWithTagView(req, tag):
                           "'" + tag + "' " + addit + " order by release")
 
     ls = [row for row in ls] + [row for row in qs]
-    ls.sort(key=lambda x: x.date_id)
+    ls.sort(key=lambda x: x.release)
     return render(req, "content/syllabus.html", {
         'lesson_groups': getGroups(ls),
     })
