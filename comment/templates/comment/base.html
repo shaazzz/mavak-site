@@ -8,7 +8,7 @@
     <div id="comment_root"></div>
     <script>
         const x = JSON.parse({{ comment.json | safe }});
-        var div = document.getElementById('comment_root');
+        var div_comment = document.getElementById('comment_root');
         const buildDiv = (c) => {
             const r = document.createElement('div');
             r.className = 'card';
@@ -41,7 +41,7 @@
                 ele.appendChild(buildDiv(c));
             });
         };
-        rec(div, x);
+        rec(div_comment, x);
     </script>
     <style>
         .card {
