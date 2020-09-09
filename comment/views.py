@@ -100,7 +100,6 @@ def telegramView(req, token):
         inp = json.loads(body)
         text = inp["message"]["text"]
         if text.startswith("/show_unanswered_comments"):
-            return JsonResponse({"ok": True})
             comments = Comment.objects.raw(
                 'select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle), ",",'
                 ' "\n@")) as handles from comment_comment inner join course_lesson  inner join course_course'
