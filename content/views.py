@@ -101,8 +101,10 @@ def lessonView(req, date, lesson):
     next = next_in_order(l, qs=lessons)
     prev = prev_in_order(l, qs=lessons)
     return render(req, "content/lesson.html", {
+        'lesson': l,
         'title': l.title,
         'content': markdown(l.text),
+        'is_staff': req.user.is_staff,
         'next': next,
         'prev': prev,
         'comment': json_of_root('/courses/' + c.name + '/' + lesson, req.user),
