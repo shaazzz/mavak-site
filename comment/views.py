@@ -134,7 +134,7 @@ def telegramView(req, token):
                 'quiz_tag.quiz_id=quiz_quiz.id  INNER join users_supportertag on users_supportertag.'
                 'tag_id=quiz_tag.tag_id  INNER join users_ojhandle on users_supportertag.student_id='
                 'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM"'
-                ' where comment_comment.id=comment_comment.answered=0 group by comment_comment.id')
+                ' where comment_comment.answered=0 group by comment_comment.id')
             for c in comments:
                 c.text += "\n\n" + c.handles
                 sendCommentToTelegram(c)
