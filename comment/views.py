@@ -185,7 +185,11 @@ def telegramView(req, token):
             parent.delete()
             sendMessageToTelegram("comment deleted")
             return JsonResponse({"ok": True, "result": "comment deleted"})
-
+        if not text.startswith("send"):
+            sendMessageToTelegram("request ignored")
+            return JsonResponse({"ok": True, "result": "request ignored"})
+        else:
+            text = text[4:].strip()
         username = inp['message']["from"]["username"].lower()
         try:
             user = OJHandle.objects.get(judge="TELEGRAM", handle=username).student.user
