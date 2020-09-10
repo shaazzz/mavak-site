@@ -21,7 +21,7 @@ def firstRun():
     comments = Comment.objects.raw("select * from comment_comment where EXISTS "
                                    "(SELECT * FROM comment_comment AS c2 WHERE c2.parent_id=comment_comment.id)")
     for c in comments:
-        c.answered = 1
+        c.answered = True
         c.save()
 
     print("finish run")
@@ -205,6 +205,8 @@ def telegramView(req, token):
             private=parent.private,
             sender=user,
         )
+        parent.answered = True
+        parent.save()
         cmt.answered = True
         cmt.save()
         sendCommentToTelegram(cmt)
