@@ -147,6 +147,13 @@ def telegramView(req, token):
             print("request ignored")
             return JsonResponse({"ok": True, "result": "request ignored"})
         reply_text = inp["message"]["reply_to_message"]["text"]
+
+        if not text.startswith("/") and not text.startswith("send"):
+            sendMessageToTelegram("request ignored")
+            return JsonResponse({"ok": True, "result": "request ignored"})
+        elif text.startswith("send"):
+            text = text[4:].strip()
+
         src_id = inp["message"]["reply_to_message"]["message_id"]
         deleteMessageTelegram(src_id)
         src_id = inp["message"]["message_id"]
@@ -185,11 +192,6 @@ def telegramView(req, token):
             parent.delete()
             sendMessageToTelegram("comment deleted")
             return JsonResponse({"ok": True, "result": "comment deleted"})
-        if not text.startswith("send"):
-            sendMessageToTelegram("request ignored")
-            return JsonResponse({"ok": True, "result": "request ignored"})
-        else:
-            text = text[4:].strip()
         username = inp['message']["from"]["username"].lower()
         try:
             user = OJHandle.objects.get(judge="TELEGRAM", handle=username).student.user
