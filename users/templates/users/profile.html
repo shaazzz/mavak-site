@@ -1,0 +1,389 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>امتیاز کاربر</title>
+    <link rel="icon" href="//shaazzz.ir/logo.png">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v26.0.2/dist/font-face.css" rel="stylesheet"
+          type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+    <script>
+    var cf_accounts =
+    "{% for ac in cf_accounts %}{{ ac.handle }};{% endfor %}";
+    fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('http://codeforces.com/api/user.info?handles='+cf_accounts)}`).then(response => {
+        if (response.ok) return response.json()
+            throw new Error('Network response was not ok.')
+    }).then(data=> {
+        data = JSON.parse(data.contents);
+        {% for ac in cf_accounts %}
+            if("//userpic.codeforces.com/no-avatar.jpg"!=data["result"][{{ forloop.counter }}-1]["avatar"]){
+                document.getElementById('profileImage').src="https:"+data["result"][{{ forloop.counter }}-1]["titlePhoto"];
+            }
+        {% endfor %}
+    });
+
+
+
+
+    </script>
+
+    <script>
+    window.onload = function () {
+
+    var chart = new CanvasJS.Chart("scoreChartContainer", {
+    	animationEnabled: true,
+        exportEnabled: true,
+        theme: "light1", // "light1", "light2", "dark1", "dark2"
+        title:{
+            text: "امتیازات تمرین‌ها و آزمون‌ها"
+        },
+        axisY: {
+          includeZero: true,minimum: 0,maximum: 100,
+        },
+        axisX: {
+            valueFormatString: "",
+            interval: 100000000,
+        },
+        data: [{
+            type: "column",
+            //indexLabel: "{y}",
+            indexLabelFontColor: "#5A5757",
+            indexLabelPlacement: "outside",
+            dataPoints: [
+                {% for q in qs %}
+                    {
+                        x: {{ forloop.counter }},
+                        y: {{ q.nomre }}*100 / {{ q.maxgrade }} ,
+                        label: "{{ q.desc }}"
+                    },
+                {% endfor %}
+            ]
+        }]
+    });
+    chart.render();
+
+    }
+
+
+
+
+    </script>
+<link href="//training.shaazzz.ir/files/styles.css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+
+<noscript>Sorry, your browser does not support JavaScript!</noscript>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  -o-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a:hover, a:visited, a:link, a:active
+{
+    text-decoration: none;
+}
+
+.circular--square {
+  border-radius: 50%;
+  width:25px;
+  height:30px;
+  overflow:hidden
+}
+.bottomright {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+}
+
+.rotate45 {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+
+.circular-big-square {
+  border-radius: 50%;
+  width:300px;
+  height:220px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  overflow:hidden
+}
+
+body {
+  font-family: "Vazir", Helvetica, Arial, sans-serif;
+  font-weight: 100;
+  font-size: 12px;
+  line-height: 30px;
+  color: #777777;
+  background: #2b5aab;
+}
+
+.container {
+  max-width: 630px;
+  width: 80%;
+  margin: 0 auto;
+  position: relative;
+}
+
+#contact input[type="text"],
+#contact input[type="number"],
+#contact input[type="password"],
+#contact input[type="url"],
+#contact textarea,
+#contact button[type="submit"] {
+  font: 400 12px/16px "Vazir", Helvetica, Arial, sans-serif;
+}
+
+#contact {
+  border-radius: 20px;
+  background: #F9F9F9;
+  padding: 25px;
+  margin: 80px 0;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+#user {
+  background: #F9F9F9;
+  padding: 25px;
+  margin: 30px 0;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+#contact h3 {
+  display: block;
+  font-size: 30px;
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+
+#contact h4 {
+  margin: 5px 0 15px;
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+upside {
+  min-width: 100%;
+  width: 100%;
+  background: #F9F9F9;
+  padding: 10px;
+  margin: 10px 0;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+
+fieldset {
+  border: medium none !important;
+  margin: 0 0 10px;
+  min-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+#name td {
+  border: medium none !important;
+  margin: 0 0 10px;
+  min-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+
+errorbox {
+  color: #d42020;
+  margin: 10px 0 10px;
+  min-width: 100%;
+  padding: 2%;
+  width: 100%;
+}
+
+#contact input[type="text"],
+#contact input[type="number"],
+#contact input[type="password"],
+#contact input[type="url"],
+#contact textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  background: #FFF;
+  margin: 0 0 5px;
+  padding: 10px;
+}
+
+#contact input[type="text"],
+#contact input[type="number"],
+#contact input[type="password"],
+#contact input[type="url"],
+#contact textarea:hover {
+  -webkit-transition: border-color 0.3s ease-in-out;
+  -moz-transition: border-color 0.3s ease-in-out;
+  transition: border-color 0.3s ease-in-out;
+  border: 1px solid #aaa;
+}
+
+#contact textarea {
+  height: 100px;
+  max-width: 100%;
+  resize: none;
+}
+
+#contact button[type="submit"] {
+  cursor: pointer;
+  width: 100%;
+  border: none;
+  background: #26218e;
+  color: #FFF;
+  margin: 0 0 5px;
+  padding: 10px;
+  font-size: 15px;
+}
+
+#contact button[type="submit"]:hover {
+  background: #3631ae;
+  -webkit-transition: background 0.3s ease-in-out;
+  -moz-transition: background 0.3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#contact button[type="submit"]:active {
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.copyright {
+  text-align: center;
+}
+
+.js-example-basic-multiple {
+  text-align: center;
+  width: 100%
+}
+
+#contact input:focus,
+#contact textarea:focus {
+  outline: 0;
+  border: 1px solid #aaa;
+}
+
+::-webkit-input-placeholder {
+  color: #888;
+}
+
+:-moz-placeholder {
+  color: #888;
+}
+
+::-moz-placeholder {
+  color: #888;
+}
+
+:-ms-input-placeholder {
+  color: #888;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  width: 200px;
+  height: auto;
+  transition: 0.3s;
+  margin: 10px;
+  border-radius: 5px; /* 5px rounded corners */
+}
+
+.card h4 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  width: 150px;
+}
+
+
+img {
+  border-radius: 5px 5px 0 0;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+/* Add some padding inside the card container */
+.container {
+  padding: 2px 16px;
+}
+
+
+
+
+</style>
+
+<div class="container">
+    <noscript>Sorry, your browser does not support JavaScript!</noscript>
+    <div id="contact" style="min-height:20%;">
+        <img id="profileImage" class='circular-big-square' style="float:left;width: 230px;height:230px;"
+             src="http://uupload.ir/files/ae0p_default.png">
+        <div dir='rtl' style="font-size: 20px;">
+            <h4 style="margin-top:20px;font-size: 35px;margin-right:20px;text-align:right;color:#000000;">
+                {{ student.user.get_full_name }}
+            </h4>
+            <h4 style="line-height:40px;margin-top:20px;font-size: 20px;margin-top:20px;margin-right:40px;text-align:right;color:#000000;">
+                استان: {{ student.ostan }}
+                <br>
+                پایه:
+                {{ dore }}
+                <br>
+                {% for ac in cf_accounts %}
+                        <a href="https://codeforces.com/usertalk?other={{ac.handle}}" target="_blank">
+                            ارسال پیام
+                        </a>
+                {% endfor %}
+            </h4>
+            <div style="clear: both;" >
+                رتبه‌بندی‌ها:
+
+            </div>
+            {% for g in groups %}
+            <div class="card" style="float:right;">
+                <a href="/quiz/{{g.name}}/ranking">
+                    <img src="{{g.picture_url}}" alt="Avatar"
+                         style="width:100%">
+                    <div class="container">
+                        <h4 dir='rtl' style="font-size: 15px;">
+                            <b>{{ g.title }}</b>
+                        </h4>
+                        <h4 dir='rtl' style="font-size: 12px;">
+                            {{ g.desc }}
+                        </h4>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        <div style="clear: both;"></div>
+        {% if self_profile %}
+            <a type="button" style="margin-top:10px" class="btn btn-primary btn-lg btn-block" href="/content/">رفتن به صفحه مطالب</a>
+        {% endif %}
+        <br>
+        <div id="scoreChartContainer" style="clear: both;margin-top:10px;height: 300px; width: 100%;"></div>
+    </div>
+</div>
+
+
+{% endblock %}
