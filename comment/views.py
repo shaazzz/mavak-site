@@ -148,10 +148,10 @@ def telegramView(req, token):
             return JsonResponse({"ok": True, "result": "request ignored"})
         reply_text = inp["message"]["reply_to_message"]["text"]
 
-        if not text.startswith("/") and not text.startswith("send"):
+        if not text.startswith("/") and not text[:4].lower() == "send":
             sendMessageToTelegram("request ignored")
             return JsonResponse({"ok": True, "result": "request ignored"})
-        elif text.startswith("send"):
+        elif text[:4].lower() == "send":
             text = text[4:].strip()
 
         src_id = inp["message"]["reply_to_message"]["message_id"]
