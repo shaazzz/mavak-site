@@ -11,6 +11,7 @@
         <td>استان     </td>
         <td>نمره      </td>
         <td>شماره     </td>
+        <td>کدملی     </td>
       </thead>
       <tbody>
         {% for s in students %}
@@ -21,6 +22,7 @@
             <td>{{ s.ostan }}</td>
             <td>{{ s.nomre }}</td>
             <td>{{ s.shomare }}</td>
+            <td>{{ s.user.username }}</td>
           </tr>
         {% endfor %}
       </tbody>
