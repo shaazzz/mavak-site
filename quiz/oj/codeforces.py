@@ -32,19 +32,19 @@ class CodeforcesApi:
             raise Exception("return status is not ok")
         return result['result']
 
-def judge(secrets, contestId, total_score):
 
+def judge(secrets, contestId, total_score):
     cfApi = CodeforcesApi(secrets)
     result = cfApi.request("contest.standings",
-                        {"contestId": contestId, "showUnofficial": "false"})
+                           {"contestId": contestId, "showUnofficial": "false"})
 
     problem_score = total_score / len(result['problems'])
 
     users = []
     for user in result['rows']:
         users.append({
-            'handle': user['party']['members'][0]['handle'],
-            "rank": user['rank'], 
+            'handle': user['party']['members'][0]['handle'].lower(),
+            "rank": user['rank'],
             'total_points': user['points'] * problem_score,
         })
     return users
