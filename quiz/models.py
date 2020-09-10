@@ -24,6 +24,8 @@ class Tag(models.Model):
 class Collection(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
+    desc = models.TextField(blank=True)
+    picture_url=models.URLField(default="https://cdn.quera.ir/overview/course-images/3-small.0-e8df0727a65f.jpg")
     students = models.ForeignKey(StudentGroup, blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):

@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as dlogin
 from django.contrib.auth.models import User
 import re
-from .models import Student, Org
+
+from quiz.models import Quiz
+from .models import Student, Org, StudentGroup
 from django.db.models import Max, Count
 
 
@@ -156,3 +158,48 @@ def login(req):
         return render(req, 'users/login.html', {
             'error': 'yes',
         })
+
+
+def profile(req, student_id):
+    self_profile = False
+    stu = get_object_or_404(Student, id=student_id)
+    if req.user.is_authenticated and req.user.id == stu.user_id:
+        self_profile = True
+    qs = Quiz.objects.raw('SELECT * FROM (SELECT quiz_quiz.id as id,'
+                          ' SUM(mxgrade) as maxgrade, SUM(grade) as nomre,'
+                          ' (quiz_quiz.title || " | " || cast(SUM(grade) as text) || "/" ||'
+                          ' cast(SUM(mxgrade) as text) || " امتیاز") as desc  FROM quiz_answer'
+                          ' INNER JOIN quiz_question ON question_id=quiz_question.id'
+                          ' INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
+                          ' WHERE student_id=' + str(
+        student_id) + ' GROUP BY quiz_quiz.id ORDER BY id) WHERE nomre > 0;')
+    acc = Student.objects.raw(
+        'SELECT users_ojhandle.handle,* FROM users_student INNER JOIN users_ojhandle ON '
+        'users_ojhandle.student_id=users_student.id '
+        'AND users_ojhandle.judge="CF" where users_student.id=' + str(student_id))
+
+    groups = StudentGroup.objects.raw('SELECT quiz_collection.* FROM quiz_collection INNER JOIN users_studentgroup '
+                                      'ON quiz_collection.students_id=users_studentgroup.id INNER JOIN '
+                                      'users_studentgroup_students on users_studentgroup_students.studentgroup_id='
+                                      'users_studentgroup.id  and users_studentgroup_students.student_id=' +
+                                      str(student_id) + ' group by quiz_collection.name')
+    dore = "دهم"
+    if stu.dore == 2:
+        dore = "نهم"
+    return render(req, 'users/profile.html', {
+        'student': stu,
+        'dore': dore,
+        'groups': groups,
+        "self_profile": self_profile,
+        'cf_accounts': acc,
+        'qs': qs
+    })
+
+
+def my_profile(req):
+    if not req.user.is_authenticated:
+        return redirect('/users/login')
+    if req.user.is_staff:
+        return me(req)
+    stu = get_object_or_404(Student, user_id=req.user.id)
+    return profile(req, stu.id)

@@ -25,6 +25,7 @@ class Student(models.Model):
 class StudentGroup(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
+    desc = models.TextField(blank=True)
     students = models.ManyToManyField(Student)
 
     def __str__(self):

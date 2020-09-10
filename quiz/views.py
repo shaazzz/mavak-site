@@ -186,7 +186,7 @@ def collectionProfileView(req, name, user):
         'SELECT * FROM   (SELECT 0 as rate, quiz_collectionquiz.expectedScore, quiz_collectionquiz.id as id, '
         'SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre,'
         ' (quiz_quiz.title || " | " || cast(SUM(grade * quiz_collectionquiz.multiple) as text) || "/" || '
-        'cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " ریتینگ") as desc  FROM quiz_answer '
+        'cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " امتیاز") as desc  FROM quiz_answer '
         'INNER JOIN quiz_question ON question_id=quiz_question.id '
         'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
         'INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
@@ -195,7 +195,7 @@ def collectionProfileView(req, name, user):
             yaroo.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id) WHERE nomre > 0;')
     quz = CollectionQuiz.objects.raw('SELECT *, '
                                      '(quiz_quiz.title || " | 0/" || cast(SUM(mxgrade * quiz_collectionquiz.multiple) '
-                                     'as text) || " ریتینگ") '
+                                     'as text) || " امتیاز") '
                                      'as desc, quiz_collectionquiz.expectedScore, SUM(multiple*mxgrade) as maxgrade FROM quiz_collectionquiz '
                                      'INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
                                      'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '

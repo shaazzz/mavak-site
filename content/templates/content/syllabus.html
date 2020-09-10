@@ -1,7 +1,6 @@
 {% extends "main/base.html" %}
 
 {% block content %}
-
 <style>
 
 body {
@@ -48,7 +47,7 @@ h2 {
 }
 
 .styled-table thead tr {
-    background-color: #900839;
+    background-color: #3030d0;
     color: #ffffff;
     text-align: right;
 }
@@ -147,7 +146,7 @@ h2 {
         link.appendChild(linkText);
         link.title = "هفته‌ی "+parseInt(j+1);
         link.setAttribute("style", "color: #ffffff;text-align: right;");
-        row.setAttribute("style", "background-color: #c03839;color: #ffffff;text-align: right;");
+        row.setAttribute("style", "background-color: #5090c0;color: #ffffff;text-align: right;");
         var date_str=first_day.getFullYear()+"-"+(first_day.getMonth()+ 1)+"-"+first_day.getDate();
         link.href = "/content/date/"+date_str;
         title_cell.appendChild(link);
