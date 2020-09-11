@@ -77,7 +77,7 @@ def syllabusWithTagView(req, tag):
         condition = ""
     ls = Lesson.objects.raw("select course_lesson.*,'lesson' as type,(DATE(release, 'weekday 5', '-7 days')) "
                             "as date_id from course_lesson inner join course_tag on course_tag.course_id"
-                            "=course_lesson.id INNER join main_tag on course_tag.tag_id=main_tag.id and "
+                            "=course_lesson.course_id INNER join main_tag on course_tag.tag_id=main_tag.id and "
                             "main_tag.name='" + tag + "' " + condition + " order by release")
     qs = Quiz.objects.raw("select quiz_quiz.*,'quiz' as type,quiz_quiz.start as release,quiz_quiz.end "
                           "as drop_off_date, (DATE(quiz_quiz.start, 'weekday 5', '-7 days')) as date_id "
