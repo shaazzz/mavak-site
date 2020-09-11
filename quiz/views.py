@@ -163,7 +163,8 @@ def collectionScoreBoardView(req, name):
     return render(req, "quiz/ranking.html", {
         'students': new_stu,
         'cf_accounts': acc,
-        'title': q.title
+        'title': q.title,
+        "collection_name": q.name,
     })
 
 

@@ -1,109 +1,12 @@
 {% extends "main/base.html" %}
 
 {% block content %}
-<style>
+{% load static %}
+<link href="{% static 'main/profile.css' %}" rel="stylesheet">
 
-body {
-  background: #eee;
-  line-height: 3vmin;
-  direction: rtl;
-}
-
-h2 {
-  color: #aaa;
-  font-size: 25px;
-  line-height: 5vmin;
-  font-style: italic;
-  font-weight: 200;
-  margin: 40px;
-  text-align: center;
-  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.7);
-}
-
-.box {
-  background: #fff;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
-  margin: 2%;
-  padding: 3%;
-}
-
-@media (min-width: 800px) {
-  .box {
-    margin: 30px auto;
-    border-radius: 2px;
-    max-width: 880px;
-    padding: 25px;
-  }
-}
-
-
-.styled-table {
-    border-collapse: collapse;
-    margin: 25px 25px;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-}
-
-.styled-table thead tr {
-    background-color: #0067EB;
-    color: #ffffff;
-    text-align: right;
-}
-
-.styled-table th {
-    text-align: right;
-    padding: 12px 15px;
-    line-height: 50px;
-}
-.styled-table td {
-    text-align: right;
-    padding: 12px 15px;
-}
-
-.styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
-}
-
-.styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
-
-.styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #0067EB;
-}
-
-.styled-table tbody tr.active-row {
-    font-weight: bold;
-    color: #009879;
-}
-
-.row-content:hover td {
-    background: none repeat scroll 0 0 #d0d0e0;
-    color: #000000;
-}
-
-.styled-table a {
-  border-bottom: 1px solid transparent;
-  color: #444;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.styled-table a:hover {
-  border-color: #eee;
-  color: #000;
-}
-
-
-
-
-</style>
-
+<div class="container">
 <table id="syllabus" class="styled-table" dir="rtl">
-</table>
-
+</table></div>
 <script>
     const options = {
         year: 'numeric', month: 'long', day: 'numeric'
@@ -179,6 +82,7 @@ h2 {
         }
     }
     console.log(lesson_groups.length);
+
 
 
 

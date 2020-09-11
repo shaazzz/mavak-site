@@ -3,6 +3,8 @@
 {% block content %}
 <html lang="en">
 <head>
+    {% load static %}
+    <link href="{% static 'main/profile.css' %}" rel="stylesheet">
     <meta charset="UTF-8">
     <title>امتیاز کاربر</title>
 
@@ -65,126 +67,9 @@
 
 <noscript>Sorry, your browser does not support JavaScript!</noscript>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-font-smoothing: antialiased;
-  -o-font-smoothing: antialiased;
-  font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-a:hover, a:visited, a:link, a:active
-{
-    text-decoration: none;
-}
-
-.circular--square {
-  border-radius: 50%;
-  width:25px;
-  height:30px;
-  overflow:hidden
-}
-.bottomright {
-  position: absolute;
-  bottom: 8px;
-  right: 16px;
-}
-
-.rotate45 {
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -o-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  transform: rotate(90deg);
-}
-
-.circular-big-square {
-  border-radius: 50%;
-  width:300px;
-  height:220px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  overflow:hidden
-}
-
-body {
-  background: #0053d7;
-}
-
-.container {
-  max-width: 700px;
-  min-width: 550px;
-  width: 80%;
-  margin: 0 auto;
-  position: relative;
-}
-#contact {
-  border-radius: 20px;
-  background: #F9F9F9;
-  padding: 25px;
-  margin: 80px 0;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-}
-
-#contact h3 {
-  display: block;
-  font-size: 30px;
-  font-weight: 300;
-  margin-bottom: 10px;
-}
-
-#contact h4 {
-  margin: 5px 0 15px;
-  display: block;
-  font-size: 13px;
-  font-weight: 400;
-}
-
-#name td {
-  border: medium none !important;
-  margin: 0 0 10px;
-  min-width: 100%;
-  padding: 0;
-  width: 100%;
-}
-
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  width: 140px;
-  height: 200px;
-  transition: 0.3s;
-  margin: 5px;
-  border-radius: 5px; /* 5px rounded corners */
-}
-.card a{
-  color: #202020
-}
-
-.card h4 {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  width: 111px;
-}
-
-.card:hover {
-  box-shadow: 0 4px 12px 0 rgba(0,0,0,0.4);
-}
-
-.container {
-  padding: 2px 10px;
-}
-</style>
-
 <div class="container">
     <noscript>Sorry, your browser does not support JavaScript!</noscript>
-    <div id="contact" style="min-height:20%;">
+    <div class="main-div" style="min-height:20%;">
         <img id="profileImage" class='circular-big-square' style="float:left;width: 230px;height:230px;"
              src="http://uupload.ir/files/ae0p_default.png">
         <div dir='rtl' style="font-size: 20px;">
@@ -198,7 +83,7 @@ body {
                 {{ dore }}
                 <br>
                 {% for ac in cf_accounts %}
-                <a href="https://codeforces.com/usertalk?other={{ac.handle}}" target="_blank">
+                <a style="text-decoration: none;" href="https://codeforces.com/usertalk?other={{ac.handle}}" target="_blank">
                     ارسال پیام
                 </a>
                 {% endfor %}
@@ -209,7 +94,7 @@ body {
             </div>
             {% for g in groups %}
             <div class="card" style="float:right;">
-                <a href="/quiz/{{g.name}}/ranking">
+                <a href="/ranking/{{g.name}}/">
                     <img width="100px" height="100px" src="{{g.picture_url}}" alt="Avatar"
                          style="width:100%">
                     <div class="container">
@@ -233,6 +118,4 @@ body {
         <div id="scoreChartContainer" style="clear: both;margin-top:10px;height: 300px; width: 100%;"></div>
     </div>
 </div>
-
-
 {% endblock %}

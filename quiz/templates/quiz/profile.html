@@ -1,14 +1,14 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
 <html lang="en">
 <head>
+    {% load static %}
+    <link href="{% static 'main/profile.css' %}" rel="stylesheet">
     <meta charset="UTF-8">
     <title>امتیاز کاربر</title>
-    <link href="//training.shaazzz.ir/files/styles.css" rel="stylesheet" type="text/css">
     <link rel="icon" href="//shaazzz.ir/logo.png">
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v26.0.2/dist/font-face.css" rel="stylesheet"
-          type="text/css"/>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
     <script>
     var cf_accounts =
@@ -24,6 +24,7 @@
             }
         {% endfor %}
     });
+
     </script>
     <script type="text/javascript">
         window.onload = function () {
@@ -69,6 +70,7 @@
             });
             chart.render();
         }
+
     </script>
     <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </head>
@@ -94,12 +96,6 @@ a:hover, a:visited, a:link, a:active
     text-decoration: none;
 }
 
-.circular--square {
-  border-radius: 50%;
-  width:25px;
-  height:30px;
-  overflow:hidden
-}
 .bottomright {
   position: absolute;
   bottom: 8px;
@@ -130,7 +126,8 @@ body {
   font-size: 12px;
   line-height: 30px;
   color: #777777;
-  background: #16115e;
+  background: #0053d7;
+  direction: rtl;
 }
 
 .container {
@@ -141,16 +138,7 @@ body {
   position: relative;
 }
 
-#contact input[type="text"],
-#contact input[type="number"],
-#contact input[type="password"],
-#contact input[type="url"],
-#contact textarea,
-#contact button[type="submit"] {
-  font: 400 12px/16px "Vazir", Helvetica, Arial, sans-serif;
-}
-
-#contact {
+.main-div {
   border-radius: 20px;
   background: #F9F9F9;
   padding: 25px;
@@ -213,102 +201,169 @@ errorbox {
   width: 100%;
 }
 
-#contact input[type="text"],
-#contact input[type="number"],
-#contact input[type="password"],
-#contact input[type="url"],
-#contact textarea {
-  width: 100%;
-  border: 1px solid #ccc;
-  background: #FFF;
-  margin: 0 0 5px;
-  padding: 10px;
-}
-
-#contact input[type="text"],
-#contact input[type="number"],
-#contact input[type="password"],
-#contact input[type="url"],
-#contact textarea:hover {
-  -webkit-transition: border-color 0.3s ease-in-out;
-  -moz-transition: border-color 0.3s ease-in-out;
-  transition: border-color 0.3s ease-in-out;
-  border: 1px solid #aaa;
-}
-
-#contact textarea {
-  height: 100px;
-  max-width: 100%;
-  resize: none;
-}
-
-#contact button[type="submit"] {
-  cursor: pointer;
-  width: 100%;
-  border: none;
-  background: #26218e;
-  color: #FFF;
-  margin: 0 0 5px;
-  padding: 10px;
-  font-size: 15px;
-}
-
-#contact button[type="submit"]:hover {
-  background: #3631ae;
-  -webkit-transition: background 0.3s ease-in-out;
-  -moz-transition: background 0.3s ease-in-out;
-  transition: background-color 0.3s ease-in-out;
-}
-
-#contact button[type="submit"]:active {
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-.copyright {
+h2 {
+  color: #aaa;
+  font-size: 25px;
+  line-height: 5vmin;
+  font-style: italic;
+  font-weight: 200;
+  margin: 40px;
   text-align: center;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.7);
 }
 
-.js-example-basic-multiple {
-  text-align: center;
-  width: 100%
+.box {
+  background: #fff;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  margin: 2%;
+  padding: 3%;
 }
 
-#contact input:focus,
-#contact textarea:focus {
-  outline: 0;
-  border: 1px solid #aaa;
+@media (min-width: 800px) {
+  .box {
+    margin: 30px auto;
+    border-radius: 2px;
+    max-width: 880px;
+    padding: 25px;
+  }
 }
 
-::-webkit-input-placeholder {
-  color: #888;
+
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 25px;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
-:-moz-placeholder {
-  color: #888;
+.styled-table thead tr {
+    background-color: #0067EB;
+    color: #ffffff;
+    text-align: right;
 }
 
-::-moz-placeholder {
-  color: #888;
+.styled-table th {
+    text-align: right;
+    padding: 12px 15px;
+    line-height: 50px;
+}
+.styled-table td {
+    text-align: right;
+    padding: 12px 15px;
 }
 
-:-ms-input-placeholder {
-  color: #888;
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
 }
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #0067EB;
+}
+
+.styled-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+.row-content:hover td {
+    background: none repeat scroll 0 0 #d0d0e0;
+    color: #000000;
+}
+
+.styled-table a {
+  border-bottom: 1px solid transparent;
+  color: #444;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.styled-table a:hover {
+  border-color: #eee;
+  color: #000;
+}
+
+
+
+.directory-list li {
+  list-style: none;
+  color: #444;
+  font-size: 2.1vmin;
+  font-weight: normal;
+}
+
+.directory-list a {
+  border-bottom: 1px solid transparent;
+  color: #444;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.directory-list a:hover {
+  border-color: #eee;
+  color: #000;
+}
+
+.directory-list .folder,
+.directory-list .folder > a {
+  color: #333;
+  font-size: 3.2vmin;
+  font-weight: bold;
+}
+
+
+.directory-list li:before {
+  content: "";
+  height: 5vmin;
+  min-height: 30px;
+  vertical-align: middle;
+  width: 5vmin;
+  min-width: 30px;
+  background-repeat: no-repeat;
+  display: inline-block;
+  /* file icon by default */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='lightgrey' d='M85.714,42.857V87.5c0,1.487-0.521,2.752-1.562,3.794c-1.042,1.041-2.308,1.562-3.795,1.562H19.643 c-1.488,0-2.753-0.521-3.794-1.562c-1.042-1.042-1.562-2.307-1.562-3.794v-75c0-1.487,0.521-2.752,1.562-3.794 c1.041-1.041,2.306-1.562,3.794-1.562H50V37.5c0,1.488,0.521,2.753,1.562,3.795s2.307,1.562,3.795,1.562H85.714z M85.546,35.714 H57.143V7.311c3.05,0.558,5.505,1.767,7.366,3.627l17.41,17.411C83.78,30.209,84.989,32.665,85.546,35.714z' /></svg>");
+  background-position: center 2px;
+  background-size: 60% auto;
+}
+
+.directory-list li.folder:before {
+  /* folder icon if folder class is specified */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='lightblue' d='M96.429,37.5v39.286c0,3.423-1.228,6.361-3.684,8.817c-2.455,2.455-5.395,3.683-8.816,3.683H16.071 c-3.423,0-6.362-1.228-8.817-3.683c-2.456-2.456-3.683-5.395-3.683-8.817V23.214c0-3.422,1.228-6.362,3.683-8.817 c2.455-2.456,5.394-3.683,8.817-3.683h17.857c3.422,0,6.362,1.228,8.817,3.683c2.455,2.455,3.683,5.395,3.683,8.817V25h37.5 c3.422,0,6.361,1.228,8.816,3.683C95.201,31.138,96.429,34.078,96.429,37.5z' /></svg>");
+  background-position: center top;
+  background-size: 75% auto;
+
+}
+
+
+a {
+    text-decoration: none;
+}
+
 </style>
 
 <div class="container">
     <noscript>Sorry, your browser does not support JavaScript!</noscript>
-    <div id="contact" style="min-height:20%;">
-        <img id="profileImage" class='circular-big-square' style="width: 220px;height:220px;" src="http://uupload.ir/files/ae0p_default.png">
-        <div dir='rtl' style="font-size: 20px;color: {{ user_color.labelColor }};">
-            <h4 style="margin-top:20px;font-size: 35px;text-align:center;">
+    <div class="main-div" style="min-height:20%;">
+        <img id="profileImage" class='circular-big-square' style="width: 220px;height:220px;"
+             src="http://uupload.ir/files/ae0p_default.png">
+        <div dir='rtl' style="color: {{ user_color.labelColor }};">
+            <h4 style="margin-top:20px;font-weight:normal;font-size: 35px;text-align:center;">
                 {{ user.user.get_full_name }}
             </h4>
-            <h4 style="margin-top:2px;font-size: 20px;text-align:center;">
+            <h4 style="margin-top:15px;font-weight:normal;font-size: 20px;text-align:center;">
                 {{ user_color.name }}
             </h4>
+            <h4 dir='rtl' style="margin-top:10px;font-weight:normal;text-align:center;font-size: 20px;"> امتیاز: {{ last_rate }} </h4>
         </div>
-        <h4 dir='rtl' style="text-align:center;font-size: 20px;"> امتیاز: {{ last_rate }} </h4>
         <div id="chartContainer" style="margin-top: 30px; height: 300px; width: 100%;"></div>
     </div>
 </div>
+
+
+{% endblock %}
