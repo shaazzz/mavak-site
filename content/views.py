@@ -72,20 +72,22 @@ def syllabusView(req):
 
 
 def syllabusWithTagView(req, tag):
-    addit = "where release<'" + timezone.now().strftime("%Y-%m-%d %H:%M:%S") + "'"
+    condition = "where release<'" + timezone.now().strftime("%Y-%m-%d %H:%M:%S") + "'"
     if req.user.is_staff:
-        addit = ""
+        condition = ""
     ls = Lesson.objects.raw("select course_lesson.*,'lesson' as type,(DATE(release, 'weekday 5', '-7 days')) "
                             "as date_id from course_lesson inner join course_tag on course_tag.course_id"
                             "=course_lesson.id INNER join main_tag on course_tag.tag_id=main_tag.id and "
-                            "main_tag.name='" + tag + "' " + addit + " order by release")
+                            "main_tag.name='" + tag + "' " + condition + " order by release")
     qs = Quiz.objects.raw("select quiz_quiz.*,'quiz' as type,quiz_quiz.start as release,quiz_quiz.end "
                           "as drop_off_date, (DATE(quiz_quiz.start, 'weekday 5', '-7 days')) as date_id "
                           "from quiz_quiz inner join quiz_tag on quiz_tag.quiz_id=quiz_quiz.id INNER join "
                           "main_tag on quiz_tag.tag_id=main_tag.id and main_tag.name="
-                          "'" + tag + "' " + addit + " order by release")
+                          "'" + tag + "' " + condition + " order by release")
 
     ls = [row for row in ls] + [row for row in qs]
+    for i in ls:
+        i.release = i.release.replace(tzinfo=None)
     ls.sort(key=lambda x: x.release)
     return render(req, "content/syllabus.html", {
         'lesson_groups': getGroups(ls),

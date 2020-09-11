@@ -47,7 +47,7 @@ h2 {
 }
 
 .styled-table thead tr {
-    background-color: #3030d0;
+    background-color: #0067EB;
     color: #ffffff;
     text-align: right;
 }
@@ -71,7 +71,7 @@ h2 {
 }
 
 .styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
+    border-bottom: 2px solid #0067EB;
 }
 
 .styled-table tbody tr.active-row {
@@ -79,7 +79,10 @@ h2 {
     color: #009879;
 }
 
-
+.row-content:hover td {
+    background: none repeat scroll 0 0 #d0d0e0;
+    color: #000000;
+}
 
 .styled-table a {
   border-bottom: 1px solid transparent;
@@ -92,6 +95,7 @@ h2 {
   border-color: #eee;
   color: #000;
 }
+
 
 
 
@@ -146,13 +150,14 @@ h2 {
         link.appendChild(linkText);
         link.title = "هفته‌ی "+parseInt(j+1);
         link.setAttribute("style", "color: #ffffff;text-align: right;");
-        row.setAttribute("style", "background-color: #5090c0;color: #ffffff;text-align: right;");
+        row.setAttribute("style", "background-color: #0067EB;color: #ffffff;text-align: right;");
         var date_str=first_day.getFullYear()+"-"+(first_day.getMonth()+ 1)+"-"+first_day.getDate();
         link.href = "/content/date/"+date_str;
         title_cell.appendChild(link);
         for(var i=0;i<lessons.length;i++){
             var release_str=lessons[i]["release"].getFullYear()+"-"+(lessons[i]["release"].getMonth()+ 1)+"-"+lessons[i]["release"].getDate();
             var row = table.insertRow(table.rows.length);
+            row.setAttribute("class", "row-content");
             var title_cell = row.insertCell(0);
             var link = document.createElement('a');
             var linkText = document.createTextNode(lessons[i]["title"]);
@@ -174,6 +179,7 @@ h2 {
         }
     }
     console.log(lesson_groups.length);
+
 
 
 </script>
