@@ -8,8 +8,14 @@
 <table id="syllabus" class="styled-table" dir="rtl">
 </table></div>
 <script>
+    const options_m_d = {
+        month: 'long', day: 'numeric'
+    };
     const options = {
         year: 'numeric', month: 'long', day: 'numeric'
+    };
+    const options_y = {
+        year: 'numeric'
     };
     const options_just_weekday = {
         weekday: 'long'
@@ -45,15 +51,19 @@
         var title_cell = row.insertCell(0);
         var first_day=new Date((new Date(lesson_groups[j][0]["date_id"]))
         .setDate(new Date(lesson_groups[j][0]["date_id"]).getDate()+1))
-        row.insertCell(1).innerHTML=first_day.toLocaleString('fa-IR', options_complete);
-        row.insertCell(2);
-        row.insertCell(3);
+        var first_day_str=first_day.toLocaleString('fa-IR', options_m_d);
+        var last_day_str=new Date((new Date(lesson_groups[j][0]["date_id"]))
+        .setDate(new Date(lesson_groups[j][0]["date_id"]).getDate()+7)).toLocaleString('fa-IR', options_m_d);
+
+        row.insertCell(1).innerHTML="از "+first_day_str;
+        row.insertCell(2).innerHTML="تا "+last_day_str;
+        row.insertCell(3);//.innerHTML="سال "+first_day.toLocaleString('fa-IR', options_y);
         var link = document.createElement('a');
-        var linkText = document.createTextNode("هفته‌ی "+parseInt(j+1));
+        var linkText = document.createTextNode("هفته‌ی "+parseInt(j+1));//first_day_str+" الی " +last_day_str);
         link.appendChild(linkText);
         link.title = "هفته‌ی "+parseInt(j+1);
         link.setAttribute("style", "color: #ffffff;text-align: right;");
-        row.setAttribute("style", "background-color: #0067EB;color: #ffffff;text-align: right;");
+        row.setAttribute("style", "background-color: #00479B;color: #ffffff;text-align: right;");
         var date_str=first_day.getFullYear()+"-"+(first_day.getMonth()+ 1)+"-"+first_day.getDate();
         link.href = "/content/date/"+date_str;
         title_cell.appendChild(link);
