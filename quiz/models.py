@@ -12,6 +12,9 @@ class Quiz(models.Model):
     start = models.DateTimeField(default=datetime.now)
     end = models.DateTimeField(default=datetime.now)
 
+    class Meta:
+        ordering = ["start"]
+
     def __str__(self):
         return self.name
 
@@ -25,7 +28,7 @@ class Collection(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
     desc = models.TextField(blank=True)
-    picture_url=models.URLField(default="http://uupload.ir/files/e799_comb.png")
+    picture_url = models.URLField(default="http://uupload.ir/files/e799_comb.png")
     students = models.ForeignKey(StudentGroup, blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -36,14 +39,13 @@ class CollectionQuiz(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     multiple = models.FloatField(default=1)
-    order = models.IntegerField()
     expectedScore = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.collection.name + " " + str(self.order)
+        return self.collection.name + " " + str(self.id)
 
     class Meta:
-        ordering = ["order"]
+        ordering = ["quiz"]
 
 
 class Question(models.Model):

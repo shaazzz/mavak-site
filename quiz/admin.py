@@ -24,6 +24,7 @@ class CollectionAdmin(admin.ModelAdmin):
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
     inlines = [
+        CollectionQuizInline,
         QuestionInline,
         TagInline,
     ]
