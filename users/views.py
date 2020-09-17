@@ -178,11 +178,11 @@ def profile(req, student_id):
         'users_ojhandle.student_id=users_student.id '
         'AND users_ojhandle.judge="CF" where users_student.id=' + str(student_id))
 
-    groups = StudentGroup.objects.raw('SELECT quiz_collection.* FROM quiz_collection INNER JOIN users_studentgroup '
-                                      'ON quiz_collection.students_id=users_studentgroup.id INNER JOIN '
+    groups = StudentGroup.objects.raw('SELECT users_collection.* FROM users_collection INNER JOIN users_studentgroup '
+                                      'ON users_collection.students_id=users_studentgroup.id INNER JOIN '
                                       'users_studentgroup_students on users_studentgroup_students.studentgroup_id='
                                       'users_studentgroup.id  and users_studentgroup_students.student_id=' +
-                                      str(student_id) + ' group by quiz_collection.name')
+                                      str(student_id) + ' group by users_collection.name')
     dore = "دهم"
     if stu.dore == 2:
         dore = "نهم"
