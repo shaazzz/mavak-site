@@ -65,7 +65,7 @@
         link.setAttribute("style", "color: #ffffff;text-align: right;");
         row.setAttribute("style", "background-color: #00479B;color: #ffffff;text-align: right;");
         var date_str=first_day.getFullYear()+"-"+(first_day.getMonth()+ 1)+"-"+first_day.getDate();
-        link.href = "/content/date/"+date_str+"/{{ tag }}";
+        link.href = "/content/date/"+date_str+"/{{ collection }}";
         title_cell.appendChild(link);
         for(var i=0;i<lessons.length;i++){
             var release_str=lessons[i]["release"].getFullYear()+"-"+(lessons[i]["release"].getMonth()+ 1)+"-"+lessons[i]["release"].getDate();
@@ -77,7 +77,7 @@
             link.appendChild(linkText);
             link.title = lessons[i]["title"];
             if(lessons[i]["type"]=="lesson"){
-                link.href = "/content/date/"+release_str+"/{{ tag }}/"+lessons[i]["name"]+"/";
+                link.href = "/content/date/"+release_str+"/{{ collection }}/"+lessons[i]["name"]+"/";
             }else{
                 link.href = "/quiz/"+lessons[i].name
             }

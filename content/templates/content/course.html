@@ -13,7 +13,7 @@
             <ul>
                 {% for l in lessons %}
                 <li>
-                    <a href="{{l.name}}/">{{l.title}}</a>
+                    <a href="{{l.lesson.name}}/">{{l.lesson.title}}</a>
                 </li>
                 {% endfor %}
             </ul>
@@ -26,7 +26,7 @@
             <ul>
                 {% for q in quizzes %}
                 <li>
-                    <a href="/quiz/{{q.name}}/">{{q.title}}</a>
+                    <a href="/quiz/{{collection}}/{{q.quiz.name}}/">{{q.quiz.title}}</a>
                 </li>
                 {% endfor %}
             </ul>
@@ -38,11 +38,11 @@
 
     {% if prev %}
     <a class="btn btn-primary" style="width:15%;left: 70%;font-size:2.5vmin;bottom: 10px;top:20px;"
-       href="../../{{ prev }}/{{ tag }}/">روز قبل</a>
+       href="../../{{ prev }}/{{ collection }}/">روز قبل</a>
     {% endif %}
     {% if next %}
     <a class="btn btn-primary" style="width:15%;position: relative; right: 70%;top:0px;font-size:2.5vmin;bottom: 10px;"
-       href="../../{{ next }}/{{ tag }}/">روز بعد</a>
+       href="../../{{ next }}/{{ collection }}/">روز بعد</a>
     {% endif %}
 </div>
 

@@ -1,19 +1,15 @@
+from datetime import datetime
+
 from django.db import models
 
 from main.models import Tag
-from users.models import Student, StudentGroup
-from datetime import datetime
+from users.models import Student, Collection
 
 
 class Quiz(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
     desc = models.TextField(default="")
-    start = models.DateTimeField(default=datetime.now)
-    end = models.DateTimeField(default=datetime.now)
-
-    class Meta:
-        ordering = ["start"]
 
     def __str__(self):
         return self.name
@@ -24,28 +20,19 @@ class Tag(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
 
 
-class Collection(models.Model):
-    name = models.CharField(max_length=50)
-    title = models.CharField(max_length=250)
-    desc = models.TextField(blank=True)
-    picture_url = models.URLField(default="http://uupload.ir/files/e799_comb.png")
-    students = models.ForeignKey(StudentGroup, blank=True, null=True, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-
 class CollectionQuiz(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     multiple = models.FloatField(default=1)
     expectedScore = models.IntegerField(default=0)
+    start = models.DateTimeField(default=datetime.now)
+    end = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
-        return self.collection.name + " " + str(self.id)
+        return self.collection.name + " " + str(self.quiz.name)
 
     class Meta:
-        ordering = ["quiz"]
+        ordering = ["start"]
 
 
 class Question(models.Model):

@@ -18,7 +18,7 @@
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
         hour: 'numeric', minute: 'numeric', second: 'numeric',
       };
-      const azmoon = new Date('{{ quiz.start|date:"Y-m-d H:i:s" }}');
+      const azmoon = new Date('{{ coll_quiz.start|date:"Y-m-d H:i:s" }}');
       document.getElementById('azmoon').innerText = azmoon.toLocaleString('fa-IR', options);
       const now = new Date('{{ current|date:"Y-m-d H:i:s" }}');
       document.getElementById('now').innerText = now.toLocaleString('fa-IR', options);

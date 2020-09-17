@@ -1,4 +1,7 @@
 django==3.0.8
-markdown2
+markdown2~=2.3.9
 django-next-prev
 
+
+requests~=2.22.0
+django-nested-admin~=3.3.2

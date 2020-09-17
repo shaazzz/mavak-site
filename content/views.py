@@ -1,20 +1,23 @@
 from datetime import timedelta
 
-from django.http import JsonResponse, HttpResponseNotFound
-from django.shortcuts import render, get_object_or_404, redirect
-
-from course.models import Course, Lesson
-from markdown2 import markdown
-from comment.json import json_of_root
-from next_prev import prev_in_order, next_in_order
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from markdown2 import markdown
 
-from quiz.models import Quiz
+from comment.json import json_of_root
+from course.models import Course, Lesson, CollectionLesson
+from quiz.models import Quiz, CollectionQuiz
+from users.models import Collection
 
 
 def todayCourseView(req):
-    return redirect('/content/date/' + str(timezone.now().year) + '-' + str(timezone.now().month) + '-' + str(
-        timezone.now().day) + '/all/')
+    collections = Collection.objects.all()
+    return render(req, "content/collections.html", {
+        'pref': '/content/date/' + str(timezone.now().year) + '-' + str(timezone.now().month) + '-' + str(
+            timezone.now().day),
+        'collections': collections,
+    })
 
 
 def getGroups(rows):
@@ -32,38 +35,26 @@ def getGroups(rows):
     return groups
 
 
-def syllabusView(req):
-    addit = "where release<'" + timezone.now().strftime("%Y-%m-%d %H:%M:%S") + "'"
-    if req.user.is_staff:
-        addit = ""
-    ls = Lesson.objects.raw("select *,'lesson' as type,(DATE(release, 'weekday 5', '-7 days')) "
-                            "as date_id from course_lesson " + addit +
-                            " order by release")
-    qs = Quiz.objects.raw("select *,'quiz' as type,quiz_quiz.start as release,quiz_quiz.end as drop_off_date,"
-                          "(DATE(quiz_quiz.start, 'weekday 5', '-7 days')) as date_id from quiz_quiz " + addit +
-                          " order by release")
-
-    ls = [row for row in ls] + [row for row in qs]
-    ls.sort(key=lambda x: x.date_id)
-    return render(req, "content/syllabus.html", {
-        'lesson_groups': getGroups(ls),
-        'tag': "all",
-    })
-
-
-def syllabusWithTagView(req, tag):
-    condition = "where release<'" + timezone.now().strftime("%Y-%m-%d %H:%M:%S") + "'"
+def syllabusCollectionView(req, collection):
+    condition = "and release<'" + timezone.now().strftime("%Y-%m-%d %H:%M:%S") + "'"
     if req.user.is_staff:
         condition = ""
-    ls = Lesson.objects.raw("select course_lesson.*,'lesson' as type,(DATE(release, 'weekday 5', '-7 days')) "
-                            "as date_id from course_lesson inner join course_tag on course_tag.course_id"
-                            "=course_lesson.course_id INNER join main_tag on course_tag.tag_id=main_tag.id and "
-                            "main_tag.name='" + tag + "' " + condition + " order by release")
-    qs = Quiz.objects.raw("select quiz_quiz.*,'quiz' as type,quiz_quiz.start as release,quiz_quiz.end "
-                          "as drop_off_date, (DATE(quiz_quiz.start, 'weekday 5', '-7 days')) as date_id "
-                          "from quiz_quiz inner join quiz_tag on quiz_tag.quiz_id=quiz_quiz.id INNER join "
-                          "main_tag on quiz_tag.tag_id=main_tag.id and main_tag.name="
-                          "'" + tag + "' " + condition + " order by release")
+    ls = Lesson.objects.raw("select course_lesson.*,'lesson' as type, course_collectionlesson.start as release, "
+                            "quiz_collectionquiz.end as drop_off_date,"
+                            "(DATE(course_collectionlesson.start, 'weekday 5', '-7 days')) "
+                            "as date_id from course_collectionlesson "
+                            "inner join course_lesson on course_lesson.id=course_collectionlesson.lesson_id "
+                            "inner join users_collection on course_collectionlesson.collection_id="
+                            "users_collection.id inner join course_tag on course_tag.course_id"
+                            "=course_lesson.course_id INNER join main_tag on course_tag.tag_id=main_tag.id"
+                            " where users_collection.name='" + collection + "'" + condition + " order by release")
+    qs = Quiz.objects.raw("select quiz_quiz.*,'quiz' as type,quiz_collectionquiz.start as release,"
+                          "quiz_collectionquiz.end as drop_off_date, (DATE(quiz_collectionquiz.start,"
+                          " 'weekday 5', '-7 days')) as date_id from quiz_collectionquiz INNER join quiz_quiz"
+                          " on quiz_quiz.id=quiz_collectionquiz.quiz_id INNER join users_collection on "
+                          "quiz_collectionquiz.collection_id=users_collection.id inner join quiz_tag on "
+                          "quiz_tag.quiz_id=quiz_quiz.id INNER join main_tag on quiz_tag.tag_id=main_tag.id"
+                          " where users_collection.name='" + collection + "' " + condition + "order by release")
 
     ls = [row for row in ls] + [row for row in qs]
     for i in ls:
@@ -71,17 +62,18 @@ def syllabusWithTagView(req, tag):
     ls.sort(key=lambda x: x.release)
     return render(req, "content/syllabus.html", {
         'lesson_groups': getGroups(ls),
-        'tag': tag,
+        'collection': collection,
     })
 
 
-def courseView(req, date, tag="all"):
+def courseView(req, date, collection):
     if date.today() < date and not req.user.is_staff:
         return render(req, "content/not_started.html", {
             'start_date': date,
             'current': timezone.now(),
         })
     query_date = date + timedelta(days=1)
+    '''
     if tag != "all":
         ls = Lesson.objects.raw("SELECT * from course_lesson  inner join course_tag on course_tag.course_id="
                                 "course_lesson.course_id inner join main_tag on main_tag.id=course_tag.tag_id "
@@ -93,8 +85,15 @@ def courseView(req, date, tag="all"):
                               "quiz_quiz.start<='" + str(query_date) + "' and quiz_quiz.end>'" + str(date) +
                               "' and main_tag.name='" + tag + "'")
     else:
-        ls = Lesson.objects.filter(release__lt=query_date, drop_off_date__gt=date)
+        ls = Lesson.objects.filter(release__lt=query_date, drop_off_date__gt=date).values_list('pub_date')
         qs = Quiz.objects.filter(start__lte=query_date, end__gt=date)
+
+'''
+    ls = CollectionLesson.objects.filter(
+        collection__name=collection, start__lt=query_date, end__gt=date)
+    qs = CollectionQuiz.objects.filter(
+        collection__name=collection, start__lt=query_date, end__gt=date)
+    print(ls)
     next_date = date + timedelta(days=1)
     nxt = str(next_date.year) + '-' + str(next_date.month) + '-' + str(next_date.day)
     prev_date = date + timedelta(days=-1)
@@ -104,47 +103,33 @@ def courseView(req, date, tag="all"):
         'lessons': ls,
         'next': nxt,
         'prev': prv,
-        'tag': tag,
+        'collection': collection,
         'quizzes': qs,
     })
 
 
-def lessonView(req, date, lesson, tag="all"):
+def lessonView(req, date, lesson, collection):
     if date.today() < date and not req.user.is_staff:
         return JsonResponse({'ok': False, 'reason': 'anonymous'})
 
     query_date = date + timedelta(days=1)
-    if tag != "all":
-        lessons = [les for les in
-                   Lesson.objects.raw("SELECT * from course_lesson  inner join course_tag on course_tag.course_id="
-                                      "course_lesson.course_id inner join main_tag on main_tag.id=course_tag.tag_id "
-                                      "where course_lesson.release<'" + str(query_date) +
-                                      "' and course_lesson.drop_off_date>'" + str(date) +
-                                      "' and main_tag.name='" + tag + "'")]
-        l = Lesson.objects.raw("SELECT * from course_lesson  inner join course_tag on course_tag.course_id="
-                               "course_lesson.course_id inner join main_tag on main_tag.id=course_tag.tag_id "
-                               "where course_lesson.release<'" + str(query_date) +
-                               "' and course_lesson.drop_off_date>'" + str(date) +
-                               "' and main_tag.name='" + tag + "' and course_lesson.name='" + lesson + "' group by course_lesson.name")
-        if len(l) != 1:
-            return HttpResponseNotFound('<h1>این درس پیدا نشد</h1>')
-        else:
-            l = l[0]
-    else:
-        lessons = [les for les in Lesson.objects.filter(release__lt=query_date, drop_off_date__gt=date)]
-        l = get_object_or_404(Lesson, name=lesson, release__lt=query_date, drop_off_date__gt=date)
-    c = get_object_or_404(Course, id=l.course_id)
+
+    lessons = [lss for lss in CollectionLesson.objects.filter(
+        collection__name=collection, start__lt=query_date, end__gt=date)]
+    l = get_object_or_404(CollectionLesson, collection__name=collection, start__lt=query_date,
+                          end__gt=date, lesson__name=lesson)
+    c = get_object_or_404(Course, id=l.lesson.course_id)
     next, prev = None, None
     if len(lessons) > lessons.index(l) + 1:
-        next = lessons[lessons.index(l) + 1]
+        next = lessons[lessons.index(l) + 1].lesson.name
     if lessons.index(l) > 0:
-        prev = lessons[lessons.index(l) - 1]
+        prev = lessons[lessons.index(l) - 1].lesson.name
     return render(req, "content/lesson.html", {
         'lesson': l,
-        'title': l.title,
-        'content': markdown(l.text),
+        'title': l.lesson.title,
+        'content': markdown(l.lesson.text),
         'is_staff': req.user.is_staff,
-        'tag': tag,
+        'collection': collection,
         'next': next,
         'prev': prev,
         'comment': json_of_root('/courses/' + c.name + '/' + lesson, req.user),

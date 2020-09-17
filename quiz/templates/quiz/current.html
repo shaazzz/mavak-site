@@ -92,7 +92,7 @@
     if (mode === 'current') {
       const timediv = document.createElement('li');
       timediv.className = 'nav-link active';
-      const azmoon = new Date('{{ quiz.end|date:"Y-m-d H:i:s" }}');
+      const azmoon = new Date('{{ coll_quiz.end|date:"Y-m-d H:i:s" }}');
       const lag = new Date() - new Date('{{ current|date:"Y-m-d H:i:s" }}');
       const calcTime = () => {
         const ms = azmoon - new Date() + lag;

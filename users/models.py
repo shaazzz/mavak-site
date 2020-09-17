@@ -1,6 +1,7 @@
-from django.db import models
-from django.contrib.auth.models import User
 import uuid
+
+from django.contrib.auth.models import User
+from django.db import models
 
 from main.models import Tag
 
@@ -27,6 +28,17 @@ class StudentGroup(models.Model):
     title = models.CharField(max_length=250)
     desc = models.TextField(blank=True)
     students = models.ManyToManyField(Student)
+
+    def __str__(self):
+        return self.name
+
+
+class Collection(models.Model):
+    name = models.CharField(max_length=50)
+    title = models.CharField(max_length=250)
+    desc = models.TextField(blank=True)
+    picture_url = models.URLField(default="http://uupload.ir/files/e799_comb.png")
+    students = models.ForeignKey(StudentGroup, blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

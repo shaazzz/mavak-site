@@ -1,18 +1,18 @@
+import copy
+from json import dumps, loads
+
+from django.db.models import Sum, Q
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from markdown2 import markdown
 
 from comment.json import json_of_root
-from .models import Quiz, Question, Answer, Secret, Collection, CollectionQuiz, RateColor
+from users.models import Collection
 from users.models import Student, OJHandle
-from django.utils import timezone
-from django.http import JsonResponse
-from json import dumps, loads
-from django.db.models import Sum, Q, Window, F
-from django.db.models.functions import Rank
-from .oj.codeforces import judge as judgeCF
+from .models import Question, Answer, Secret, CollectionQuiz, RateColor
 from .oj.atcoder import judge as judgeAT
-from django.core.serializers.json import DjangoJSONEncoder
-import copy
+from .oj.codeforces import judge as judgeCF
 
 
 def get_answer(qu, stu):
@@ -42,15 +42,16 @@ def json_of_problems(qs, stu):
     } for x in qs]))
 
 
-def checkedView(req, name, user):
-    if (not req.user.is_staff):
+def checkedView(req, collection, name, user):
+    if not req.user.is_staff:
         return JsonResponse({'ok': False, 'reason': 'anonymous'})
     yaroo = get_object_or_404(Student, user__username=user)
-    q = get_object_or_404(Quiz, name=name)
     ans = loads(req.POST['answers'])
+    coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
+    q = coll_quiz.quiz
     for x in ans:
         ano = get_object_or_404(
-            Answer, student=yaroo, question__id=x['id']
+            Answer, student=yaroo, question__id=x['id'], question__quiz=q
         )
         ano.grade = x['grade']
         ano.grademsg = x['grademsg']
@@ -58,13 +59,14 @@ def checkedView(req, name, user):
     return JsonResponse({'ok': True})
 
 
-def submitView(req, name):
-    q = get_object_or_404(Quiz, name=name)
+def submitView(req, collection, name):
+    coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
+    q = coll_quiz.quiz
     if req.user.is_anonymous:
         return JsonResponse({'ok': False, 'reason': 'anonymous'})
-    if q.start > timezone.now():
+    if coll_quiz.start > timezone.now():
         return JsonResponse({'ok': False, 'reason': 'not started'})
-    if q.end < timezone.now():
+    if coll_quiz.end < timezone.now():
         return JsonResponse({'ok': False, 'reason': 'finished'})
     stu = get_object_or_404(Student, user=req.user)
     Answer.objects.filter(question__quiz=q, student=stu).delete()
@@ -76,7 +78,7 @@ def submitView(req, name):
 
 
 def getLastRates(name):
-    q = get_object_or_404(Collection, name=name)
+    col = get_object_or_404(Collection, name=name)
     stu = Student.objects.raw(
         'SELECT * FROM   (SELECT 0 as rate, quiz_answer.student_id, quiz_collectionquiz.expectedScore, '
         'quiz_collectionquiz.id as id, SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, '
@@ -85,10 +87,11 @@ def getLastRates(name):
         'cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " ریتینگ") as desc FROM quiz_answer '
         'INNER JOIN quiz_question ON question_id=quiz_question.id INNER JOIN quiz_quiz ON '
         'quiz_question.quiz_id=quiz_quiz.id INNER join users_studentgroup_students on '
-        'users_studentgroup_students.student_id=quiz_answer.student_id INNER JOIN quiz_collection '
-        'on quiz_collection.students_id=users_studentgroup_students.studentgroup_id '
-        'INNER JOIN quiz_collectionquiz ON quiz_quiz.id=quiz_collectionquiz.quiz_id '
-        'WHERE quiz_collection.id=' + str(q.id) +
+        'users_studentgroup_students.student_id=quiz_answer.student_id INNER JOIN users_collection '
+        'on users_collection.students_id=users_studentgroup_students.studentgroup_id '
+        'INNER JOIN quiz_collectionquiz ON quiz_quiz.id=quiz_collectionquiz.quiz_id and quiz_collectionquiz.end<="'
+        + str(timezone.now()) +
+        '" WHERE users_collection.id=' + str(col.id) +
         ' GROUP BY quiz_collectionquiz.id, quiz_answer.student_id ORDER BY id) WHERE nomre > 0;'
     )
     quz = CollectionQuiz.objects.raw('SELECT *, '
@@ -99,13 +102,14 @@ def getLastRates(name):
                                      'INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
                                      'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
                                      'WHERE quiz_collectionquiz.collection_id='
-                                     + str(q.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id')
+                                     + str(col.id) + ' and quiz_collectionquiz.end<="' + str(
+        timezone.now()) + '" GROUP BY quiz_collectionquiz.id ORDER BY id')
     students = Student.objects.raw("SELECT users_student.id from users_student "
                                    "INNER join users_studentgroup_students on"
                                    " users_studentgroup_students.student_id=users_student.id "
-                                   "INNER join quiz_collection on "
-                                   "quiz_collection.students_id=users_studentgroup_students.studentgroup_id "
-                                   "where quiz_collection.id=" + str(q.id))
+                                   "INNER join users_collection on "
+                                   "users_collection.students_id=users_studentgroup_students.studentgroup_id "
+                                   "where users_collection.id=" + str(col.id))
     rt = {}
     data = []
     for pers in students:
@@ -125,26 +129,28 @@ def getLastRates(name):
 
 
 def collectionScoreBoardView(req, name):
-    q = get_object_or_404(Collection, name=name)
+    col = get_object_or_404(Collection, name=name)
     stu = Student.objects.raw(
         'SELECT * FROM '
         ' (SELECT quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) as nomre FROM quiz_answer'
         ' INNER JOIN quiz_question ON quiz_answer.question_id=quiz_question.id'
-        ' INNER join quiz_collectionquiz on quiz_collectionquiz.quiz_id=quiz_question.quiz_id'
-        ' INNER join quiz_collection on quiz_collection.id=quiz_collectionquiz.collection_id'
+        ' INNER join quiz_collectionquiz on quiz_collectionquiz.quiz_id=quiz_question.quiz_id and '
+        'quiz_collectionquiz.end<="' + str(timezone.now()) +
+        '" INNER join users_collection on users_collection.id=quiz_collectionquiz.collection_id'
         ' INNER join users_studentgroup_students on quiz_answer.student_id=users_studentgroup_students.student_id '
         ' INNER join users_studentgroup on users_studentgroup_students.studentgroup_id=users_studentgroup.id'
-        ' and quiz_collection.students_id=users_studentgroup.id'
-        ' WHERE quiz_collection.id=' + str(
-            q.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
+        ' and users_collection.students_id=users_studentgroup.id'
+        ' WHERE users_collection.id=' + str(
+            col.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
     acc = Student.objects.raw(
         'SELECT * FROM '
         ' (SELECT users_ojhandle.handle, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) '
         ' as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id '
         'INNER JOIN users_ojhandle ON users_ojhandle.student_id=quiz_answer.student_id AND users_ojhandle.judge="CF" '
-        'INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
-        'WHERE quiz_collectionquiz.collection_id=' + str(
-            q.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
+        'INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id and '
+        'quiz_collectionquiz.end<="' + str(timezone.now()) +
+        '" WHERE quiz_collectionquiz.collection_id=' + str(
+            col.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
     rate_colors = RateColor.objects.raw('SELECT * from quiz_ratecolor')
 
     rt = getLastRates(name)
@@ -163,8 +169,8 @@ def collectionScoreBoardView(req, name):
     return render(req, "quiz/ranking.html", {
         'students': new_stu,
         'cf_accounts': acc,
-        'title': q.title,
-        "collection_name": q.name,
+        'title': col.title,
+        "collection_name": col.name,
     })
 
 
@@ -181,7 +187,7 @@ def next_rate(prev_rate, expected_score, grade, max_grade):
 
 
 def collectionProfileView(req, name, user):
-    q = get_object_or_404(Collection, name=name)
+    col = get_object_or_404(Collection, name=name)
     yaroo = get_object_or_404(Student, id=int(user))
     stu = Student.objects.raw(
         'SELECT * FROM   (SELECT 0 as rate, quiz_collectionquiz.expectedScore, quiz_collectionquiz.id as id, '
@@ -191,8 +197,9 @@ def collectionProfileView(req, name, user):
         'INNER JOIN quiz_question ON question_id=quiz_question.id '
         'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
         'INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
-        'WHERE quiz_collectionquiz.collection_id=' + str(
-            q.id) + ' and student_id=' + str(
+        'and quiz_collectionquiz.end<="' + str(timezone.now()) +
+        '" WHERE quiz_collectionquiz.collection_id=' + str(
+            col.id) + ' and student_id=' + str(
             yaroo.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id) WHERE nomre > 0;')
     quz = CollectionQuiz.objects.raw('SELECT *, '
                                      '(quiz_quiz.title || " | 0/" || cast(SUM(mxgrade * quiz_collectionquiz.multiple) '
@@ -201,7 +208,7 @@ def collectionProfileView(req, name, user):
                                      'INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
                                      'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
                                      'WHERE quiz_collectionquiz.collection_id='
-                                     + str(q.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id')
+                                     + str(col.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id')
     acc = Student.objects.raw(
         'SELECT * FROM '
         ' (SELECT users_ojhandle.handle, quiz_collectionquiz.expectedScore, quiz_answer.student_id as id, '
@@ -210,8 +217,9 @@ def collectionProfileView(req, name, user):
         'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
         'INNER JOIN users_ojhandle ON users_ojhandle.student_id=quiz_answer.student_id AND users_ojhandle.judge="CF" '
         'INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
-        'WHERE quiz_collectionquiz.collection_id=' + str(
-            q.id) + ' and quiz_answer.student_id=' + str(
+        'and quiz_collectionquiz.end<="' + str(timezone.now()) +
+        '" WHERE quiz_collectionquiz.collection_id=' + str(
+            col.id) + ' and quiz_answer.student_id=' + str(
             yaroo.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
 
     rate_colors = RateColor.objects.raw('SELECT * from quiz_ratecolor')
@@ -252,8 +260,9 @@ def collectionProfileView(req, name, user):
     })
 
 
-def scoreBoardView(req, name):
-    q = get_object_or_404(Quiz, name=name)
+def scoreBoardView(req, collection, name):
+    coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
+    q = coll_quiz.quiz
     if not req.user.is_staff:
         return redirect("/users/login")
     stu = Student.objects.annotate(
@@ -264,18 +273,18 @@ def scoreBoardView(req, name):
     })
 
 
-def pickAnswerFromJson(req, name):
-    if (not req.user.is_staff):
+def pickAnswerFromJson(req, collection, name):
+    if not req.user.is_staff:
         return redirect("/users/login")
     if req.method == 'GET':
         return render(req, "quiz/pickjson.html")
     n = req.POST['order']
-    qu = get_object_or_404(Question, quiz__name=name, order=n)
+    coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
+    qu = get_object_or_404(Question, quiz=coll_quiz.quiz, order=n)
     data = loads(req.POST['answer'])
     Answer.objects.filter(question=qu).delete()
     for x in data:
         try:
-            stu = None
             if qu.text.split("\n")[0] == "ATCODER":
                 stu = OJHandle.objects.get(judge="ATCODER", handle=x['handle']).student
             else:
@@ -301,13 +310,15 @@ def un_correct(s: str):
     return s
 
 
-def autoCheckerView(req, name):
+def autoCheckerView(req, collection, name):
     mode = "strict"
     if "mode" in req.GET:
         mode = req.GET["mode"]
     if not req.user.is_staff:
         return redirect("/users/login")
-    qu = Question.objects.filter(quiz__name=name)
+
+    coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
+    qu = Question.objects.filter(quiz=coll_quiz.quiz)
     for q in qu:
         if q.typ[0] != 'O' or q.typ == 'OJ':
             if q.typ != 'auto':
@@ -329,10 +340,12 @@ def autoCheckerView(req, name):
     return redirect("../scoreboard/")
 
 
-def pickAnswerFromOJView(req, name):
-    if (not req.user.is_staff):
+def pickAnswerFromOJView(req, collection, name):
+    if not req.user.is_staff:
         return redirect("/users/login")
-    qu = Question.objects.filter(quiz__name=name, typ="OJ")
+
+    coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
+    qu = Question.objects.filter(quiz=coll_quiz.quiz, typ="OJ")
     qs = []
     for q in qu:
         if q.text[:2] == "AT":
@@ -405,37 +418,42 @@ def pickAnswerFromOJView(req, name):
     })
 
 
-def checkView(req, name, user):
+def checkView(req, collection, name, user):
     if not req.user.is_staff:
         return redirect("/users/login")
     yaroo = get_object_or_404(Student, user__username=user)
-    q = get_object_or_404(Quiz, name=name)
+    coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
+    q = coll_quiz.quiz
     return render(req, "quiz/current.html", {
         'mode': 'check',
         'quiz': q,
+        'coll_quiz': coll_quiz,
         'current': timezone.now(),
         'problems': json_of_problems(Question.objects.filter(quiz=q), yaroo),
         'user': yaroo.user,
     })
 
 
-def quizView(req, name):
-    q = get_object_or_404(Quiz, name=name)
+def quizView(req, collection, name):
+    coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
+    q = coll_quiz.quiz
     if req.user.is_anonymous:
         return redirect("/users/login")
-    if q.start > timezone.now():
+    if coll_quiz.start > timezone.now():
         return render(req, "quiz/not_started.html", {
             'quiz': q,
+            'coll_quiz': coll_quiz,
             'desc': markdown(q.desc),
             'current': timezone.now(),
         })
     if req.user.is_staff:
-        return redirect("/admin/quiz/quiz/"+str(q.id))
+        return redirect("/admin/quiz/quiz/" + str(q.id))
     stu = get_object_or_404(Student, user=req.user)
-    if q.end < timezone.now():
+    if coll_quiz.end < timezone.now():
         return render(req, "quiz/current.html", {
             'mode': 'visit',
             'quiz': q,
+            'coll_quiz': coll_quiz,
             'desc': markdown(q.desc),
             'current': timezone.now(),
             'problems': json_of_problems(Question.objects.filter(quiz=q), stu),
@@ -445,6 +463,7 @@ def quizView(req, name):
     return render(req, "quiz/current.html", {
         'mode': 'current',
         'quiz': q,
+        'coll_quiz': coll_quiz,
         'desc': markdown(q.desc),
         'current': timezone.now(),
         'problems': json_of_problems(Question.objects.filter(quiz=q), stu),
