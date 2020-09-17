@@ -22,6 +22,8 @@ urlpatterns = [
     path('syllabus/', views.syllabusView, name='syllabusView'),
     path('syllabus/<tag>/', views.syllabusWithTagView, name='syllabusWithTagView'),
     path('today/', views.todayCourseView, name='todayCourseView'),
-    path('date/<yyyy:date>/', views.courseView, name='courseView'),
-    path('date/<yyyy:date>/<lesson>/', views.lessonView, name='lessonView'),
+    path('date/<yyyy:date>/all/', views.courseView, name='courseView'),
+    path('date/<yyyy:date>/all/<lesson>/', views.lessonView, name='lessonView'),
+    path('date/<yyyy:date>/<tag>/', views.courseView, name='courseView'),
+    path('date/<yyyy:date>/<tag>/<lesson>/', views.lessonView, name='lessonView'),
 ]

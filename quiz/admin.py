@@ -14,6 +14,10 @@ class TagInline(admin.StackedInline):
     model = Tag
 
 
+class QuizInline(admin.StackedInline):
+    model = Quiz
+
+
 @admin.register(Collection)
 class CollectionAdmin(admin.ModelAdmin):
     inlines = [
