@@ -47,14 +47,16 @@ def syllabusCollectionView(req, collection):
                             "inner join users_collection on course_collectionlesson.collection_id="
                             "users_collection.id inner join course_tag on course_tag.course_id"
                             "=course_lesson.course_id INNER join main_tag on course_tag.tag_id=main_tag.id"
-                            " where users_collection.name='" + collection + "'" + condition + " order by release")
+                            " where users_collection.name='" + collection + "'" + condition + " group by course_lesson"
+                                                                                              ".id order by release")
     qs = Quiz.objects.raw("select quiz_quiz.*,'quiz' as type,quiz_collectionquiz.start as release,"
                           "quiz_collectionquiz.end as drop_off_date, (DATE(quiz_collectionquiz.start,"
                           " 'weekday 5', '-7 days')) as date_id from quiz_collectionquiz INNER join quiz_quiz"
                           " on quiz_quiz.id=quiz_collectionquiz.quiz_id INNER join users_collection on "
                           "quiz_collectionquiz.collection_id=users_collection.id inner join quiz_tag on "
                           "quiz_tag.quiz_id=quiz_quiz.id INNER join main_tag on quiz_tag.tag_id=main_tag.id"
-                          " where users_collection.name='" + collection + "' " + condition + "order by release")
+                          " where users_collection.name='" + collection + "' " + condition + " group by quiz_quiz.id "
+                                                                                             "order by release")
 
     ls = [row for row in ls] + [row for row in qs]
     for i in ls:
