@@ -40,7 +40,7 @@ def syllabusCollectionView(req, collection):
     if req.user.is_staff:
         condition = ""
     ls = Lesson.objects.raw("select course_lesson.*,'lesson' as type, course_collectionlesson.start as release, "
-                            "quiz_collectionquiz.end as drop_off_date,"
+                            "course_collectionlesson.end as drop_off_date,"
                             "(DATE(course_collectionlesson.start, 'weekday 5', '-7 days')) "
                             "as date_id from course_collectionlesson "
                             "inner join course_lesson on course_lesson.id=course_collectionlesson.lesson_id "
