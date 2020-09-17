@@ -79,7 +79,7 @@
             if(lessons[i]["type"]=="lesson"){
                 link.href = "/content/date/"+release_str+"/{{ collection }}/"+lessons[i]["name"]+"/";
             }else{
-                link.href = "/quiz/"+lessons[i].name
+                link.href = "/quiz/{{ collection }}/"+lessons[i].name
             }
             title_cell.appendChild(link);
             row.insertCell(1).innerHTML=lessons[i]["release"].toLocaleString('fa-IR', options_just_weekday);
