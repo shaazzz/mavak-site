@@ -22,7 +22,7 @@ class Tag(models.Model):
 
 class CollectionQuiz(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
-    collection_2 = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     multiple = models.FloatField(default=1)
     expectedScore = models.IntegerField(default=0)
     start = models.DateTimeField(default=datetime.now)
