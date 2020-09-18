@@ -458,7 +458,7 @@ def quizView(req, collection, name):
             'current': timezone.now(),
             'problems': json_of_problems(Question.objects.filter(quiz=q), stu),
             'user': stu.user,
-            'comment': json_of_root('/quiz/' + name + '/', req.user),
+            'comment': json_of_root('/quiz/' + collection + "/" + name + '/', req.user),
         })
     return render(req, "quiz/current.html", {
         'mode': 'current',
