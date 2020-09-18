@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
 
-from .models import Student, OJHandle, StudentGroup, SupporterTag
+from course.admin import CollectionLessonInline
+from quiz.admin import CollectionQuizInline
+from .models import Student, OJHandle, StudentGroup, SupporterTag, Collection
 
 
 class OJHandleInline(admin.StackedInline):
@@ -26,3 +27,10 @@ class StudentAdmin(admin.ModelAdmin):
 @admin.register(StudentGroup)
 class StudentGroupAdmin(admin.ModelAdmin):
     filter_horizontal = ('students',)
+
+
+@admin.register(Collection)
+class CollectionAdmin(admin.ModelAdmin):
+    inlines = [
+        CollectionQuizInline, CollectionLessonInline,
+    ]

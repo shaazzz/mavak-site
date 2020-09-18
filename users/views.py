@@ -9,14 +9,14 @@ from django.db.models import Max, Count
 
 
 def agreementView(req):
-    if (req.user.is_anonymous):
+    if req.user.is_anonymous:
         return redirect("/users/login")
     stu = get_object_or_404(Student, user=req.user)
-    if (stu.verified < 1):
+    if stu.verified < 1:
         return render(req, "users/rejected.html")
-    if (stu.verified > 1):
+    if stu.verified > 1:
         return redirect("/users/me")
-    if (req.method == 'GET'):
+    if req.method == 'GET':
         return render(req, "users/agreement.html")
     print(req.FILES)
     if not 'shenasname' in req.FILES:
@@ -35,7 +35,7 @@ def is_valid_iran_code(input):
 
     check = int(input[9])
     s = sum([int(input[x]) * (10 - x) for x in range(9)]) % 11
-    return (s < 2 and check == s) or (s >= 2 and check + s == 11)
+    return (2 > s == check) or (s >= 2 and check + s == 11)
 
 
 persiandigit = '۱۲۳۴۵۶۷۸۹۰١٢٣٤٥٦٧٨٩٠'
@@ -44,7 +44,7 @@ translation_table = str.maketrans(persiandigit, englishdigit)
 
 
 def createAccountStudent(req):
-    if (req.method == 'GET'):
+    if req.method == 'GET':
         return render(req, 'users/createAccountStudent.html')
     nam = req.POST['nam']
     famil = req.POST['famil']

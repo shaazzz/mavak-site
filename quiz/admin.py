@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Quiz, Question, Secret, Collection, CollectionQuiz, Answer, RateColor, Tag
+from .models import Quiz, Question, Secret, CollectionQuiz, Answer, RateColor, Tag
 
 
 class QuestionInline(admin.StackedInline):
@@ -16,13 +16,6 @@ class TagInline(admin.StackedInline):
 
 class QuizInline(admin.StackedInline):
     model = Quiz
-
-
-@admin.register(Collection)
-class CollectionAdmin(admin.ModelAdmin):
-    inlines = [
-        CollectionQuizInline,
-    ]
 
 
 @admin.register(Quiz)
