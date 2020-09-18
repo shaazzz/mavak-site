@@ -1,0 +1,17 @@
+python3 manage.py showmigrations
+python3 manage.py migrate --fake comment zero
+python3 manage.py migrate --fake content zero
+python3 manage.py migrate --fake course zero
+python3 manage.py migrate --fake main zero
+python3 manage.py migrate --fake quiz zero
+python3 manage.py migrate --fake sessions zero
+python3 manage.py migrate --fake text zero
+python3 manage.py migrate --fake users zero
+python3 manage.py migrate --fake admin zero
+python3 manage.py migrate --fake auth zero
+python3 manage.py migrate --fake contenttypes zero
+find . -path "*/migrations/*.py" -delete
+find . -path "*/migrations/*.pyc"  -delete
+python3 manage.py makemigrations
+python3 manage.py migrate --fake-initial
+
