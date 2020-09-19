@@ -2,15 +2,20 @@
 
 {% block content %}
 
-<div class="container">
-    <h1>{{ title }}</h1>
-    <ol>
-        {% for l in lessons %}
-        <li>
-            <a href="{{l.name}}">{{l.title}}</a>
-        </li>
-        {% endfor %}
-    </ol>
-</div>
+{% load static %}
+<link href="{% static 'main/profile.css' %}" rel="stylesheet">
 
+<div class="box">
+    <ul class="directory-list">
+        <li class="folder">{{ title }}
+            <ul>
+                {% for l in lessons %}
+                <li>
+                    <a href="{{l.name}}">{{l.title}}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+</div>
 {% endblock %}

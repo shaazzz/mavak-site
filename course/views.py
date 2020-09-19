@@ -28,3 +28,10 @@ def lessonView(req, name, lesson):
         'prev': prev,
         'comment': json_of_root('/courses/' + name + '/' + lesson, req.user),
     })
+
+
+def allCoursesView(req):
+    cs = Course.objects.all()
+    return render(req, "course/all_courses.html", {
+        'courses': cs,
+    })
