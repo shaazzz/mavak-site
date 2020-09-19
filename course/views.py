@@ -1,3 +1,4 @@
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from markdown2 import markdown
 from next_prev import prev_in_order, next_in_order
@@ -31,6 +32,8 @@ def lessonView(req, name, lesson):
 
 
 def allCoursesView(req):
+    if not req.user.is_staff:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
     cs = Course.objects.all()
     return render(req, "course/all_courses.html", {
         'courses': cs,
