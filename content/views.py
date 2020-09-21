@@ -35,6 +35,14 @@ def getGroups(rows):
     return groups
 
 
+def syllabusView(req):
+    collections = Collection.objects.all()
+    return render(req, "content/collections.html", {
+        'pref': '/content/syllabus',
+        'collections': collections,
+    })
+
+
 def syllabusCollectionView(req, collection):
     condition = "and release<'" + timezone.now().strftime("%Y-%m-%d %H:%M:%S") + "'"
     if req.user.is_staff:

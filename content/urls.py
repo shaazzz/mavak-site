@@ -19,6 +19,7 @@ register_converter(DateConverter, 'yyyy')
 
 urlpatterns = [
     path('', views.todayCourseView, name='todayCourseView'),
+    path('syllabus/', views.syllabusView, name='syllabusWithTagView'),
     path('syllabus/<collection>/', views.syllabusCollectionView, name='syllabusWithTagView'),
     path('today/', views.todayCourseView, name='todayCourseView'),
     path('date/<yyyy:date>/<collection>/', views.courseView, name='courseView'),

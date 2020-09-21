@@ -1,0 +1,21 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+{% load static %}
+<link href="{% static 'main/profile.css' %}" rel="stylesheet">
+
+<div class="box">
+    <ul class="directory-list">
+        <li class="folder">همه کورس‌ها
+            <ul>
+                {% for c in collections %}
+                <li class="folder">
+                    <a style="font-weight:normal" href="{{pref}}/{{c.name}}">{{c.title}}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+</div>
+{% endblock %}
