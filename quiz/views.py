@@ -14,6 +14,7 @@ from .models import Question, Answer, Secret, CollectionQuiz, RateColor
 from .oj.CodeforcesCrawl import add_friends
 from .oj.CodeforcesCrawl import judge as judgeCRAWLCF
 from .oj.atcoder import judge as judgeAT
+from .oj.codeforces import judge as judgeCF
 
 
 def get_answer(qu, stu):
@@ -385,7 +386,7 @@ def pickAnswerFromOJView(req, collection, name):
         if q.text[:2] == "CF":
             try:
                 secret = Secret.objects.get(key="CF_API").value
-                data = judgeCRAWLCF(secret, q.text[3:], q.mxgrade)
+                data = judgeCF(secret, q.text[3:], q.mxgrade)
                 ignored = []
                 evaled = 0
                 for x in data:
