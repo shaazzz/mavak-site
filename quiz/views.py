@@ -425,7 +425,6 @@ def pickAnswerFromOJView(req, collection, name):
                 evaled = 0
                 print(data)
                 for x in data:
-                    print(x['handle'])
                     try:
                         stu = OJHandle.objects.get(judge="CF", handle=x['handle']).student
                         Answer.objects.filter(question=q, student=stu).delete()

@@ -185,7 +185,7 @@ class CodeforcesAPI:
         rnk = 0
         while True:
             page += 1
-            clink = link + "page/" + str(page) + "/"
+            clink = link + "/page/" + str(page) + "/"
             if mode == "edu":
                 clink = link + "?page=" + str(page) + "&friends=true"
             result = self.request(clink, {})
@@ -205,7 +205,7 @@ class CodeforcesAPI:
                 rank = participant[0]['text'].strip()
                 if len(rank) > 0:
                     rnk += 1
-                    if rnk != int(rank):
+                    if user_id in scoreboard:
                         return scoreboard
                 scoreboard[user_id] = {}
                 index = 0
