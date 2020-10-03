@@ -544,8 +544,9 @@ def addCFFriends(req):
         return JsonResponse({'ok': False, 'reason': 'anonymous'})
     try:
         handles = [ojh.handle for ojh in OJHandle.objects.filter(judge="CF")]
+        print(handles)
         secret = Secret.objects.get(key="CF_LOGIN").value
         add_friends(secret, handles)
-        return JsonResponse({'ok': True})
+        return JsonResponse({'ok': True, "handles": handles})
     except Exception as e:
         return JsonResponse({'ok': False, "reason": str(e)})

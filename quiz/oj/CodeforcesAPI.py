@@ -154,7 +154,7 @@ class CodeforcesAPI:
             "russianRegistrationConfirmation": "",
             "_tta": "428"
         }, False, False)
-
+    '''
     # naghes
     def get_participates(self, contest_id):
         result = self.request('gymRegistrants/' + str(contest_id), {})
@@ -162,7 +162,6 @@ class CodeforcesAPI:
         class_name = "registrants"
         nodes = tree.xpath("//*[contains(concat(' ', normalize-space(@class), ' '), ' " + class_name + " ')]")
         print(nodes)
-        '''
         $table_doc = new
         DOMDocument();
         $cloned = $nodes[0]->cloneNode(TRUE);
@@ -177,7 +176,7 @@ class CodeforcesAPI:
             users_id.append(trim(user_id->nodeValue));
         }
         return users_id
-        '''
+    '''
 
     def get_scoreboard_helper(self, link):
         page = 0
@@ -221,13 +220,14 @@ class CodeforcesAPI:
 
     def add_friend(self, handle):
         body = self.req.request(self.url + "profile/" + handle, req_type="get")
-        x = re.search(r'friendUserId="(.+)"', body)
+        x = re.search(r'friendUserId="(.+?)"', body)
         if x is None:
             raise Exception("friendUserId not found", body)
         user_id = x.group(1)
         result = self.request("data/friend", {
             "friendUserId": user_id,
-            "isAdd": True
+            "isAdd": "true"
         })
         if result != "{\"success\":\"true\"}":
             raise Exception("can't add friend ", handle)
+        print(handle,user_id, "added to admin friends")
