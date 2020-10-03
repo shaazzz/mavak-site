@@ -50,7 +50,7 @@ def get_scores(scoreboard, total_score):
         users.append({
             'handle': user.lower(),
             "rank": index,
-            'total_points': total_score * points / len(user),
+            'total_points': total_score * points / len(scoreboard[user]),
         })
     return users
 
@@ -207,6 +207,8 @@ class CodeforcesAPI:
                     rnk += 1
                     if user_id in scoreboard:
                         return scoreboard
+                else:
+                    continue
                 scoreboard[user_id] = {}
                 index = 0
                 for column in participant:
