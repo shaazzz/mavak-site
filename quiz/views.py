@@ -415,42 +415,42 @@ def pickAnswerFromOJView(req, collection, name):
                     "error": str(e),
                 })
         if q.text.split()[0] == "CRAWLCF":
-            #try:
-            secret = Secret.objects.get(key="CF_LOGIN").value
-            mode = "private"
-            if len(q.text.split()) > 2:
-                mode=q.text.split()[2].lower()
-            data = judgeCRAWLCF(secret, q.text.split()[1], q.mxgrade, mode)
-            ignored = []
-            evaled = 0
-            print(data)
-            for x in data:
-                print(x['handle'])
-                try:
-                    stu = OJHandle.objects.get(judge="CF", handle=x['handle']).student
-                    Answer.objects.filter(question=q, student=stu).delete()
-                    Answer.objects.create(
-                        question=q,
-                        student=stu,
-                        text=".",
-                        grade=x['total_points'],
-                        grademsg="تصحیح با داوری خارجی"
-                    )
-                    evaled += 1
-                except Exception as e:
-                    ignored.append(str(e))
-            qs.append({
-                "order": q.order,
-                "subtyp": "کد فرسز",
-                "evaled": evaled,
-                "ignored": ignored,
-            })
-            '''except Exception as e:
+            try:
+                secret = Secret.objects.get(key="CF_LOGIN").value
+                mode = "private"
+                if len(q.text.split()) > 2:
+                    mode=q.text.split()[2].lower()
+                data = judgeCRAWLCF(secret, q.text.split()[1], q.mxgrade, mode)
+                ignored = []
+                evaled = 0
+                print(data)
+                for x in data:
+                    print(x['handle'])
+                    try:
+                        stu = OJHandle.objects.get(judge="CF", handle=x['handle']).student
+                        Answer.objects.filter(question=q, student=stu).delete()
+                        Answer.objects.create(
+                            question=q,
+                            student=stu,
+                            text=".",
+                            grade=x['total_points'],
+                            grademsg="تصحیح با داوری خارجی"
+                        )
+                        evaled += 1
+                    except Exception as e:
+                        ignored.append(str(e))
+                qs.append({
+                    "order": q.order,
+                    "subtyp": "کد فرسز",
+                    "evaled": evaled,
+                    "ignored": ignored,
+                })
+            except Exception as e:
                 qs.append({
                     "order": q.order,
                     "subtyp": "کدفورسز خزش",
                     "error": str(e.args),
-                })'''
+                })
     return render(req, "quiz/oj.html", {
         "questions": qs,
     })
