@@ -154,6 +154,7 @@ class CodeforcesAPI:
             "russianRegistrationConfirmation": "",
             "_tta": "428"
         }, False, False)
+
     '''
     # naghes
     def get_participates(self, contest_id):
@@ -178,15 +179,16 @@ class CodeforcesAPI:
         return users_id
     '''
 
-    def get_scoreboard_helper(self, link):
+    def get_scoreboard_helper(self, link, mode="private"):
         page = 0
-
         scoreboard = {}
         rnk = 0
         while True:
             page += 1
-            result = self.request(link + "page/" + str(page),
-                                  {})
+            clink = link + "page/" + str(page) + "/"
+            if mode == "edu":
+                clink = link + "?page" + str(page) + "&friends=true"
+            result = self.request(clink, {})
             root = LH.fromstring(result)
             class_name = "standings"
             table = root.xpath("//table[contains(concat(' ', normalize-space(@class), ' '), ' " + class_name + " ')]")[
@@ -199,6 +201,7 @@ class CodeforcesAPI:
                 if len(participant) < 2:
                     continue
                 user_id = participant[1]['text'].strip()
+                print(user_id)
                 rank = participant[0]['text'].strip()
                 if len(rank) > 0:
                     rnk += 1
@@ -230,4 +233,4 @@ class CodeforcesAPI:
         })
         if result != "{\"success\":\"true\"}":
             raise Exception("can't add friend ", handle)
-        print(handle,user_id, "added to admin friends")
+        print(handle, user_id, "added to admin friends")
