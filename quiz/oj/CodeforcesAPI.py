@@ -187,7 +187,7 @@ class CodeforcesAPI:
             page += 1
             clink = link + "page/" + str(page) + "/"
             if mode == "edu":
-                clink = link + "?page" + str(page) + "&friends=true"
+                clink = link + "?page=" + str(page) + "&friends=true"
             result = self.request(clink, {})
             root = LH.fromstring(result)
             class_name = "standings"
