@@ -9,7 +9,6 @@ class Course(models.Model):
     link = "ویرایش"
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
-    desc = models.TextField(default="", null=True, blank=True)
 
     def __str__(self):
         return self.name
