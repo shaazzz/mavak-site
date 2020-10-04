@@ -1,15 +1,15 @@
-from datetime import datetime
-
 from django.db import models
+from django_jalali.db import models as jmodels
 
 from main.models import Tag
 from users.models import Student, Collection
 
 
 class Quiz(models.Model):
+    link = "ویرایش"
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
-    desc = models.TextField(default="")
+    desc = models.TextField(default=None, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -25,8 +25,8 @@ class CollectionQuiz(models.Model):
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     multiple = models.FloatField(default=1)
     expectedScore = models.IntegerField(default=0)
-    start = models.DateTimeField(default=datetime.now)
-    end = models.DateTimeField(default=datetime.now)
+    start = jmodels.jDateTimeField()
+    end = jmodels.jDateTimeField()
 
     def __str__(self):
         return self.collection.name + " " + str(self.quiz.name)
@@ -55,12 +55,18 @@ class Answer(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     text = models.TextField()
     grade = models.IntegerField()
-    grademsg = models.TextField()
+    grademsg = models.CharField(max_length=200)
+
+    def __str__(self):
+        return str(self.question) + " " + str(self.student) + " score: " + str(self.grade)
 
 
 class Secret(models.Model):
     key = models.CharField(max_length=50)
     value = models.TextField()
+
+    def __str__(self):
+        return self.key
 
 
 class RateColor(models.Model):

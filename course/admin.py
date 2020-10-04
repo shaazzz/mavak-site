@@ -23,6 +23,9 @@ class LessonInline(nested_admin.NestedStackedInline):
 
 @admin.register(Course)
 class CourseAdmin(nested_admin.NestedModelAdmin):
+    list_display = ('link', 'name', 'title')
+    list_display_links = ("link",)
+    list_editable = ('title', 'name')
     inlines = [
         LessonInline,
         TagInline,

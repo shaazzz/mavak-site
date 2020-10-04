@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import Quiz, Question, Secret, CollectionQuiz, Answer, RateColor, Tag
 
 
@@ -20,6 +21,9 @@ class QuizInline(admin.StackedInline):
 
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
+    list_display = ('link', 'name', 'title')
+    list_display_links = ("link",)
+    list_editable = ('title', 'name')
     inlines = [
         CollectionQuizInline,
         QuestionInline,
@@ -34,7 +38,9 @@ class SecretAdmin(admin.ModelAdmin):
 
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
-    pass
+    ordering = ('question',)
+    list_display = ('question', 'student', 'text', 'grade', 'grademsg')
+    list_editable = ('grade', 'grademsg')
 
 
 @admin.register(RateColor)

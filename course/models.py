@@ -1,12 +1,12 @@
-from datetime import datetime
-
 from django.db import models
+from django_jalali.db import models as jmodels
 
 from main.models import Tag
 from users.models import Collection
 
 
 class Course(models.Model):
+    link = "ویرایش"
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
 
@@ -39,8 +39,8 @@ class Lesson(models.Model):
 class CollectionLesson(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
-    start = models.DateTimeField(default=datetime.now)
-    end = models.DateTimeField(default=datetime.now)
+    start = jmodels.jDateTimeField()
+    end = jmodels.jDateTimeField()
 
     def __str__(self):
         return self.collection.name + " " + str(self.lesson.name)
