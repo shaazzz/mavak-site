@@ -12,7 +12,7 @@ from users.models import Collection
 
 
 def todayCourseView(req):
-    collections = Collection.objects.filter(is_public=True)
+    collections = Collection.objects.all()
     return render(req, "content/collections.html", {
         'pref': '/content/date/' + str(timezone.now().year) + '-' + str(timezone.now().month) + '-' + str(
             timezone.now().day),
@@ -36,7 +36,7 @@ def getGroups(rows):
 
 
 def syllabusView(req):
-    collections = Collection.objects.filter(is_public=True)
+    collections = Collection.objects.all()
     return render(req, "content/collections.html", {
         'pref': '/content/syllabus',
         'collections': collections,

@@ -39,7 +39,7 @@ class Collection(models.Model):
     desc = models.TextField(blank=True)
     picture_url = models.URLField(default="http://uupload.ir/files/e799_comb.png")
     students = models.ForeignKey(StudentGroup, blank=True, null=True, on_delete=models.CASCADE)
-    is_public = models.BooleanField(default=False)
+    #is_public = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

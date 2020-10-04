@@ -31,8 +31,8 @@ class StudentGroupAdmin(admin.ModelAdmin):
 
 @admin.register(Collection)
 class CollectionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'title', 'is_public', 'desc', 'picture_url', 'students')
-    list_editable = ('title', 'desc', 'picture_url', 'students', 'is_public')
+    list_display = ('name', 'title', 'desc', 'picture_url', 'students')
+    list_editable = ('title', 'desc', 'picture_url', 'students')
     inlines = [
         CollectionQuizInline, CollectionLessonInline,
     ]
