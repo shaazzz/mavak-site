@@ -11,6 +11,8 @@ from comment.json import json_of_root
 from users.models import Collection
 from users.models import Student, OJHandle
 from .models import Question, Answer, Secret, CollectionQuiz, RateColor
+from .oj.CodeforcesCrawl import add_friends
+from .oj.CodeforcesCrawl import judge as judgeCRAWLCF
 from .oj.atcoder import judge as judgeAT
 from .oj.codeforces import judge as judgeCF
 
@@ -413,6 +415,42 @@ def pickAnswerFromOJView(req, collection, name):
                     "subtyp": "کد فرسز",
                     "error": str(e),
                 })
+        if q.text.split()[0] == "CRAWLCF":
+            try:
+                secret = Secret.objects.get(key="CF_LOGIN").value
+                mode = "private"
+                if len(q.text.split()) > 2:
+                    mode=q.text.split()[2].lower()
+                data = judgeCRAWLCF(secret, q.text.split()[1], q.mxgrade, mode)
+                ignored = []
+                evaled = 0
+                print(data)
+                for x in data:
+                    try:
+                        stu = OJHandle.objects.get(judge="CF", handle=x['handle']).student
+                        Answer.objects.filter(question=q, student=stu).delete()
+                        Answer.objects.create(
+                            question=q,
+                            student=stu,
+                            text=".",
+                            grade=x['total_points'],
+                            grademsg="تصحیح با داوری خارجی"
+                        )
+                        evaled += 1
+                    except Exception as e:
+                        ignored.append(str(e))
+                qs.append({
+                    "order": q.order,
+                    "subtyp": "کد فرسز",
+                    "evaled": evaled,
+                    "ignored": ignored,
+                })
+            except Exception as e:
+                qs.append({
+                    "order": q.order,
+                    "subtyp": "کدفورسز خزش",
+                    "error": str(e.args),
+                })
     return render(req, "quiz/oj.html", {
         "questions": qs,
     })
@@ -469,3 +507,16 @@ def quizView(req, collection, name):
         'problems': json_of_problems(Question.objects.filter(quiz=q), stu),
         'user': stu.user,
     })
+
+
+def addCFFriends(req):
+    if not req.user.is_staff:
+        return JsonResponse({'ok': False, 'reason': 'anonymous'})
+    try:
+        handles = [ojh.handle for ojh in OJHandle.objects.filter(judge="CF")]
+        print(handles)
+        secret = Secret.objects.get(key="CF_LOGIN").value
+        add_friends(secret, handles)
+        return JsonResponse({'ok': True, "handles": handles})
+    except Exception as e:
+        return JsonResponse({'ok': False, "reason": str(e)})

@@ -2,15 +2,22 @@
 
 {% block content %}
 
-<div class="container">
-    <h1>گروه‌ها</h1>
-    <ol>
-        {% for c in collections %}
-        <li>
-            <a href="{{pref}}/{{c.name}}">{{c.title}}</a>
+{% load static %}
+<link href="{% static 'main/profile.css' %}" rel="stylesheet">
+
+<div class="box">
+    <ul class="directory-list">
+        <li class="folder">گروه‌ها
+            <ul>
+                {% for c in collections %}
+                <li class="folder">
+                    <a href="{{pref}}/{{c.name}}">{{c.title}}</a>
+                </li>
+                {% endfor %}
+            </ul>
         </li>
-        {% endfor %}
-    </ol>
+
+    </ul>
 </div>
 
 {% endblock %}

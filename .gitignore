@@ -4,6 +4,7 @@
 *.pyc
 __pycache__/
 local_settings.py
+quiz/pj/cookies.txt
 
 .env
 db.sqlite3

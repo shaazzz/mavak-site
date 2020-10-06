@@ -32,8 +32,8 @@ def lessonView(req, name, lesson):
 
 
 def allCoursesView(req):
-    if not req.user.is_staff:
-        return HttpResponseNotFound('<h1>Page not found</h1>')
+    #if not req.user.is_staff:
+    #    return HttpResponseNotFound('<h1>Page not found</h1>')
     cs = Course.objects.all()
     return render(req, "course/all_courses.html", {
         'courses': cs,
