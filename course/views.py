@@ -1,10 +1,12 @@
-from django.http import HttpResponse, HttpResponseNotFound
+import re
+
+from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from markdown2 import markdown
 from next_prev import prev_in_order, next_in_order
-from main.markdown import markdown
 
 from comment.json import json_of_root
+from main.markdown import markdown
 from .models import Course, Lesson
 
 
@@ -15,6 +17,23 @@ def courseView(req, name):
         'title': c.title,
         'lessons': l,
     })
+
+
+def cleanContents(req):
+    if not req.user.is_staff:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+    ls = Lesson.objects.all()
+    for l in ls:
+        x = l.text
+        l.text = re.sub(r'<style>[\s\S]+video[\s\S]+style>\s*', r"", l.text)
+        l.text = re.sub(
+            r'<div.+<script type="text\/JavaScript" src="https:\/\/www\.aparat\.com\/embed\/(.{5})[\S]+'
+            r'ipt>\s*<\/div>\s*(<br>)*',
+            r"% aparat.\1 %", l.text)
+        if x != l.text:
+            print(l.text)
+        l.save()
+    return JsonResponse({"ok": "true"})
 
 
 def lessonView(req, name, lesson):
@@ -33,7 +52,7 @@ def lessonView(req, name, lesson):
 
 
 def allCoursesView(req):
-    #if not req.user.is_staff:
+    # if not req.user.is_staff:
     #    return HttpResponseNotFound('<h1>Page not found</h1>')
     cs = Course.objects.all()
     return render(req, "course/all_courses.html", {
