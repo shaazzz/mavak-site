@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from markdown2 import markdown
 from next_prev import prev_in_order, next_in_order
+from main.markdown import markdown
 
 from comment.json import json_of_root
 from .models import Course, Lesson

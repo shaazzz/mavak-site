@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from text.models import Text
-from markdown2 import markdown
+from main.markdown import markdown
 
 
 def index(req):

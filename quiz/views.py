@@ -5,7 +5,7 @@ from django.db.models import Sum, Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from markdown2 import markdown
+from main.markdown import markdown
 
 from comment.json import json_of_root
 from users.models import Collection
