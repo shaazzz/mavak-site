@@ -31,9 +31,9 @@
     <script src="https://unpkg.com/jalali-moment/dist/jalali-moment.browser.js"></script>
     <script>
     const pDate = (inp) => {
-      console.log(inp);
+      //console.log(inp);
       const res = moment(inp, "jYYYY-jMM-jDD hh:mm:ss").toDate();
-      console.log(res);
+      //console.log(res);
       return res;
     };
     const userCode = (()=>{
@@ -99,7 +99,7 @@
       const timediv = document.createElement('li');
       timediv.className = 'nav-link active';
       const azmoon = pDate('{{ coll_quiz.end|date:"Y-m-d H:i:s" }}');
-      const lag = new Date() - pDate('{{ current|date:"Y-m-d H:i:s" }}');
+      const lag = new Date() - new Date('{{ current|date:"Y-m-d H:i:s" }}');
       const calcTime = () => {
         const ms = azmoon - new Date() + lag;
         const s = Math.floor(ms / 1000);
