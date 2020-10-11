@@ -105,13 +105,17 @@
         const s = Math.floor(ms / 1000);
         const m = Math.floor(s / 60);
         const h = Math.floor(m / 60);
-        if (h === 0) {
-          if (m === 0) {
-            return `زمان باقیمانده: ${s % 60} ثانیه`;
+        const d = Math.floor(h / 24);
+        if (d === 0) {
+          if (h === 0) {
+            if (m === 0) {
+              return `زمان باقیمانده: ${s % 60} ثانیه`;
+            }
+            return `زمان باقیمانده: ${m % 60} دقیقه ${s % 60} ثانیه`;
           }
-          return `زمان باقیمانده: ${m % 60} دقیقه ${s % 60} ثانیه`;
+          return `زمان باقیمانده: ${h} ساعت ${m % 60} دقیقه ${s % 60} ثانیه`;
         }
-        return `زمان باقیمانده: ${h} ساعت ${m % 60} دقیقه ${s % 60} ثانیه`;
+        return `زمان باقیمانده: ${d} روز ${h % 24} ساعت ${m % 60} دقیقه ${s % 60} ثانیه`;
       };
       timediv.innerText = calcTime();
       navbar.appendChild(timediv);
