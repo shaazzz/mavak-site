@@ -31,7 +31,10 @@
     <script src="https://unpkg.com/jalali-moment/dist/jalali-moment.browser.js"></script>
     <script>
     const pDate = (inp) => {
-      return moment(inp, "jYYYY-jMM-jDD hh:mm:ss").toDate();
+      console.log(inp);
+      const res = moment(inp, "jYYYY-jMM-jDD hh:mm:ss").toDate();
+      console.log(res);
+      return res;
     };
     const userCode = (()=>{
       const username = '{{ user.username }}';
