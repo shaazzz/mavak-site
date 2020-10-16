@@ -62,6 +62,12 @@ def uploadVideo(req, name):
             ]
         })
     name = req.POST['name']
+    ls = [lll for lll in Lesson.objects.filter(course=c, name=name)]
+    if len(ls) > 0:
+        return render(req, 'course/uploadVideo.html', {
+            'error': 'error',
+            'error_desc': "این درس قبلا آپلود شده است!",
+        })
     title = req.POST['title']
     videoLink = req.POST['videoLink']
     up = urlparse(videoLink)
@@ -71,7 +77,7 @@ def uploadVideo(req, name):
         urllib.request.urlretrieve(videoLink, filename)
     except Exception as e:
         return render(req, 'course/uploadVideo.html', {
-            'error': 'login_error',
+            'error': 'error',
             'error_desc': str(e),
         })
     reqHandler = ReqHandler()
@@ -85,7 +91,7 @@ def uploadVideo(req, name):
     response = json.loads(text)
     if response['login']['type'] == 'error':
         return render(req, 'course/uploadVideo.html', {
-            'error': 'login_error',
+            'error': 'error',
             'error_desc': response['login']['value'],
         })
     login_token = response['login']["ltoken"]
@@ -98,13 +104,14 @@ def uploadVideo(req, name):
     frm_id = json.loads(text)["uploadform"]["frm-id"]
     response = json.loads(os.popen('curl -F "frm-id=' + str(
         frm_id) + '" -F "data[title]=' + title + '" -F "data[category]=3" -F "video=@\"' + filename + '\"" ' + url).read())
-    uid = response['uploadpost']['uid']
+
     os.system("rm -rf tmp_upload/")
     if response['uploadpost']['type'] == 'error':
         return render(req, 'course/uploadVideo.html', {
-            'error': 'login_error',
-            'error_desc': response['login']['value'],
+            'error': 'error',
+            'error_desc': response['uploadpost']['text'],
         })
+    uid = response['uploadpost']['uid']
     l = Lesson.objects.create(course=c, name=name, title=title, text="% aparat." + uid + " %", order=len(lessons) + 1)
     return render(req, 'course/uploadVideo.html', {
         'course': c,
