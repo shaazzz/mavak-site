@@ -135,8 +135,8 @@ def lessonView(req, name, lesson):
     c = get_object_or_404(Course, name=name)
     l = get_object_or_404(Lesson, course=c, name=lesson)
     lessons = Lesson.objects.filter(course=c)
-    next = next_in_order(l, qs=lessons)
-    prev = prev_in_order(l, qs=lessons)
+    next = next_in_order(l, qs=lessons).name
+    prev = prev_in_order(l, qs=lessons).name
     return render(req, "course/lesson.html", {
         'title': l.title,
         'content': markdown(l.text),
