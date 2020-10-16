@@ -1,6 +1,7 @@
-import requests
 import pickle
 from os import path
+
+import requests
 
 
 class ReqHandler:
@@ -20,5 +21,18 @@ class ReqHandler:
             req = requests.post(url, params=parameters)
         else:
             raise Exception("invalid request type")
+        html_doc = req.text
+        return html_doc
+
+    def aparatRequest(self, method, parameters=None, data=None, url=None):
+        link = "https://www.aparat.com/etc/api/" + method + "/"
+        if url is not None:
+            link = url
+        else:
+            for key, val in parameters.items():
+                link += key + "/" + val + "/"
+            parameters = {}
+        print(link, parameters, data)
+        req = requests.post(link, files=data)
         html_doc = req.text
         return html_doc
