@@ -54,7 +54,7 @@ def uploadVideo(req, name):
             'form_name': c.name + str(len(lessons) + 1),
             'form_title': c.title + " " + str(len(lessons) + 1),
             'start_time': '00:00:00',
-            'finish_time': '1000:00:00',
+            'finish_time': 'until_end',
             'form_all_tags': [
                 'المپیاد کامپیوتر',
                 'کامپیوتر',
@@ -136,7 +136,7 @@ def uploadVideo(req, name):
         'form_name': l.name,
         'form_title': l.title,
         'start_time': '00:00:00',
-        'finish_time': '1000:00:00',
+        'finish_time': 'until_end',
         'videoLink': videoLink,
         'form_all_tags': [
             'المپیاد کامپیوتر',
