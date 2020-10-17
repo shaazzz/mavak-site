@@ -71,7 +71,7 @@ def uploadVideo(req, name):
             'error_desc': "این درس قبلا آپلود شده است!",
         })
     title = req.POST['title']
-    start_time = req.POST['start_time'].stpi
+    start_time = req.POST['start_time']
     finish_time = req.POST['finish_time']
     if finish_time == "until_end":
         finish_time = ""
