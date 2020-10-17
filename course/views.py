@@ -71,8 +71,12 @@ def uploadVideo(req, name):
             'error_desc': "این درس قبلا آپلود شده است!",
         })
     title = req.POST['title']
-    start_time = req.POST['start_time']
+    start_time = req.POST['start_time'].stpi
     finish_time = req.POST['finish_time']
+    if finish_time == "until_end":
+        finish_time = ""
+    else:
+        finish_time = "-t " + finish_time
     videoLink = req.POST['videoLink']
     up = urlparse(videoLink)
     os.system("mkdir tmp_upload")
@@ -87,7 +91,7 @@ def uploadVideo(req, name):
 
     cut_filename = 'cut-' + str(filename)
     if os.system('ffmpeg -i ' + filename +
-                 ' -ss ' + start_time + ' -t ' + finish_time + ' -c copy ' + cut_filename) != 0:
+                 ' -ss ' + start_time + ' ' + finish_time + ' -c copy ' + cut_filename) != 0:
         return render(req, 'course/uploadVideo.html', {
             'error': 'error',
             'error_desc': "خطا در برش فیلم",
