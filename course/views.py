@@ -90,7 +90,7 @@ def uploadVideo(req, name):
             'error_desc': str(e),
         })
 
-    if os.system('ffmpeg -i ' + filename +
+    if os.system('ffmpeg -y -i ' + filename +
                  ' -ss ' + start_time + ' ' + finish_time + ' -c copy ' + cut_filename) != 0:
         return render(req, 'course/uploadVideo.html', {
             'error': 'error',
