@@ -81,6 +81,7 @@ def uploadVideo(req, name):
     up = urlparse(videoLink)
     os.system("mkdir tmp_upload")
     filename = "tmp_upload/" + os.path.basename(up.path)
+    cut_filename = "tmp_upload/cut-" + os.path.basename(up.path)
     try:
         urllib.request.urlretrieve(videoLink, filename)
     except Exception as e:
@@ -89,7 +90,6 @@ def uploadVideo(req, name):
             'error_desc': str(e),
         })
 
-    cut_filename = 'cut-' + str(filename)
     if os.system('ffmpeg -i ' + filename +
                  ' -ss ' + start_time + ' ' + finish_time + ' -c copy ' + cut_filename) != 0:
         return render(req, 'course/uploadVideo.html', {
