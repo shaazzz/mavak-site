@@ -14,15 +14,59 @@
                 <input type="hidden" name="root" value="{{root}}">
                 <fieldset>
                     <label for="exampleFormControlTextarea1">متن خود را در اینجا بنویسید</label>
-                    <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>                  
+                    <textarea name="text" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                     <input name="private" type="checkbox" class="form-check-input" id="exampleCheck1">
                     <br>
-                    <label class="form-check-label" for="exampleCheck1">فقط برای ادمین ها قابل مشاهده باشد (برای پاسخ به سوالات از این گزینه استفاده کنید)</label>
+                    <label class="form-check-label" for="exampleCheck1">فقط برای ادمین ها قابل مشاهده باشد (برای پاسخ به
+                        سوالات از این گزینه استفاده کنید)</label>
                 </fieldset>
                 <button type="submit" class="btn btn-success btn-block">ثبت</button>
             </form>
         </div>
     </div>
+    <div dir="auto" style="margin-bottom: 20px; padding: 25px; background-color: rgb(233, 233, 233);">
+        <h4>
+            برای استفاده از فرمت markdown از دستورالعمل های زیر استفاده کنید.
+        </h4>
+        <br>
+            این یک **<span style="font-weight: bold;">
+            متن bold شده
+        </span>** است.
+        <br><br>
+
+        <div>نحوه لینک دادن:</div>
+        <div dir="ltr">[پرسیدن سوال](http://stackoverflow.com)</div>
+        <div>نتیجه</div>
+        <div dir="ltr"><a href="http://stackoverflow.com">پرسیدن سوال</a></div>
+        <br>
+
+        <p>نحوه نمایش تصویر:</p>
+        <p dir="ltr">
+            ![شاززز](https://shaazzz.ir/logo.png)
+        </p>
+        <div>نتیجه</div>
+        <div dir="ltr">
+            <img src="https://shaazzz.ir/logo.png" width="200px" height="auto">
+        </div>
+        <br>
+
+        <p>نحوه نوشتن عبارت ریاضی:<br>
+        <div dir="ltr">\$\$ P(E) = {n \choose k} p^k (1-p)^{n - k} \$\$
+        </div>
+        نتیجه:
+         <div dir="ltr">$$ P(E) = {n \choose k} p^k (1-p)^{n - k} $$
+        </div>
+        <p>
+        <div>
+            برای ارسال کد از سایت
+            <a href="https://paste.ubuntu.com">paste.ubuntu.com</a>
+            استفاده کنید.
+        </div>
+        <p>نحوه نوشتن موارد:<br>
+        1. مورد اول<br>2. مورد دوم</p>
+        <p>و یا:
+            <br>+ مورد اول
+            <br>+ مورد دوم</p></div>
 </div>
 
 {% endblock %}
