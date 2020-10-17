@@ -28,6 +28,17 @@
                                        required="" value="{{form_url}}">
                             </div>
                             <div class="form-group">
+                                زمان شروع:
+                                <input type="text" name="start_time" placeholder="زمان شروع" class="form-control"
+                                       required="" value="{{start_time}}">
+                                <br>
+                                زمان پایان:
+                                اگر میخواهید کل فیلم آپلود شود زمان پایان را 1000 ساعت قرار دهید
+                                <br>
+                                <input type="text" name="finish_time" placeholder="زمان پایان" class="form-control"
+                                       required="" value="{{finish_time}}">
+                            </div>
+                            <div class="form-group">
                                 {% for tag in form_all_tags %}
                                 <input type="checkbox" name="tag" id="tag{{ forloop.counter }}" value="{{tag}}" checked>
                                 <label for="tag{{ forloop.counter }}">{{ tag }}</label>

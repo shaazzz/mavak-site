@@ -53,6 +53,8 @@ def uploadVideo(req, name):
             'course': c,
             'form_name': c.name + str(len(lessons) + 1),
             'form_title': c.title + " " + str(len(lessons) + 1),
+            'start_time': '00:00:00',
+            'finish_time': '1000:00:00',
             'form_all_tags': [
                 'المپیاد کامپیوتر',
                 'کامپیوتر',
@@ -69,6 +71,8 @@ def uploadVideo(req, name):
             'error_desc': "این درس قبلا آپلود شده است!",
         })
     title = req.POST['title']
+    start_time = req.POST['start_time']
+    finish_time = req.POST['finish_time']
     videoLink = req.POST['videoLink']
     up = urlparse(videoLink)
     os.system("mkdir tmp_upload")
@@ -80,6 +84,15 @@ def uploadVideo(req, name):
             'error': 'error',
             'error_desc': str(e),
         })
+
+    cut_filename = 'cut-' + str(filename)
+    if os.system('ffmpeg -i ' + filename +
+                 ' -ss ' + start_time + ' -t ' + finish_time + ' -c copy ' + cut_filename) != 0:
+        return render(req, 'course/uploadVideo.html', {
+            'error': 'error',
+            'error_desc': "خطا در برش فیلم",
+        })
+
     reqHandler = ReqHandler()
     secret = json.loads(Secret.objects.get(key="APARAT_LOGIN").value)
 
@@ -103,7 +116,8 @@ def uploadVideo(req, name):
     url = json.loads(text)["uploadform"]['formAction']
     frm_id = json.loads(text)["uploadform"]["frm-id"]
     response = json.loads(os.popen('curl -F "frm-id=' + str(
-        frm_id) + '" -F "data[title]=' + title + '" -F "data[category]=3" -F "video=@\"' + filename + '\"" ' + url).read())
+        frm_id) + '" -F "data[title]=' + title + '" -F "data[category]=3" '
+                                                 '-F "video=@\"' + cut_filename + '\"" ' + url).read())
 
     os.system("rm -rf tmp_upload/")
     if response['uploadpost']['type'] == 'error':
@@ -117,6 +131,8 @@ def uploadVideo(req, name):
         'course': c,
         'form_name': l.name,
         'form_title': l.title,
+        'start_time': '00:00:00',
+        'finish_time': '1000:00:00',
         'videoLink': videoLink,
         'form_all_tags': [
             'المپیاد کامپیوتر',
