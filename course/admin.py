@@ -18,6 +18,10 @@ class CollectionLessonForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CollectionLessonForm, self).__init__(*args, **kwargs)
+        self.fields['start'] = SplitJalaliDateTimeField(
+            widget=AdminSplitJalaliDateTime
+            # required, for decompress DatetimeField to JalaliDateField and JalaliTimeField
+        )
         self.fields['date'] = JalaliDateField(  # date format is  "yyyy-mm-dd"
             widget=AdminJalaliDateWidget  # optional, to use default datepicker
         )
