@@ -14,7 +14,7 @@ class CollectionQuizForm(forms.ModelForm):
         model = CollectionQuiz
         exclude = ()
         widgets = {
-            "quiz": SearchableSelect(many=False, model='quiz.quiz', search_field='title', limit=10),
+            "quiz": SearchableSelect(many=False, model='quiz.Quiz', search_field='title', limit=10),
         }
 
 

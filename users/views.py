@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
+import re
+
 from django.contrib.auth import authenticate, login as dlogin
 from django.contrib.auth.models import User
-import re
+from django.db.models import Max, Count
+from django.shortcuts import render, redirect, get_object_or_404
 
 from quiz.models import Quiz
 from .models import Student, Org, StudentGroup
-from django.db.models import Max, Count
 
 
 def agreementView(req):
