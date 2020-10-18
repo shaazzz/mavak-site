@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from jalali_date.admin import StackedInlineJalaliMixin
 from jalali_date.widgets import AdminSplitJalaliDateTime
 from searchableselect.widgets import SearchableSelect
 
@@ -21,7 +22,7 @@ class CollectionQuizForm(forms.ModelForm):
         }
 
 
-class CollectionQuizInline(admin.StackedInline):
+class CollectionQuizInline(StackedInlineJalaliMixin, admin.StackedInline):
     model = CollectionQuiz
     form = CollectionQuizForm
 
