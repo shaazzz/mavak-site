@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles import views
@@ -22,19 +23,20 @@ from django.urls import path, include
 from quiz import views as quiz_views
 from users import views as users_views
 
-urlpatterns = [path('^searchableselect/', include('searchableselect.urls')),
-               path('admin/', admin.site.urls),
-               path('users/', include('users.urls')),
-               path('texts/', include('text.urls')),
-               path('courses/', include('course.urls')),
-               path('content/', include('content.urls')),
-               path('quiz/', include('quiz.urls')),
-               path('comments/', include('comment.urls')),
-               path('static/', views.serve),
-               path('media/', views.serve),
-               path('', include('main.urls')),
-               path('ranking/<name>/', quiz_views.collectionScoreBoardView, name='collectionScoreBoardView'),
-               path('profile/<name>/<user>/', quiz_views.collectionProfileView, name='collectionProfileView'),
-               path('profile/', users_views.my_profile, name='my_profile'),
-               path('profile/<student_id>', users_views.profile, name='profile'),
-               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns = [
+                  url('^searchableselect/', include('searchableselect.urls')),
+                  path('admin/', admin.site.urls),
+                  path('users/', include('users.urls')),
+                  path('texts/', include('text.urls')),
+                  path('courses/', include('course.urls')),
+                  path('content/', include('content.urls')),
+                  path('quiz/', include('quiz.urls')),
+                  path('comments/', include('comment.urls')),
+                  path('static/', views.serve),
+                  path('media/', views.serve),
+                  path('', include('main.urls')),
+                  path('ranking/<name>/', quiz_views.collectionScoreBoardView, name='collectionScoreBoardView'),
+                  path('profile/<name>/<user>/', quiz_views.collectionProfileView, name='collectionProfileView'),
+                  path('profile/', users_views.my_profile, name='my_profile'),
+                  path('profile/<student_id>', users_views.profile, name='profile'),
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
