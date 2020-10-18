@@ -20,7 +20,7 @@ class Student(models.Model):
     shenasname = models.ImageField(upload_to=get_file_path, default=None, blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return str(self.user.username)+" "+str(self.user.first_name)+" "+str(self.user.last_name)
 
 
 class StudentGroup(models.Model):

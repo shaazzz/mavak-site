@@ -12,7 +12,7 @@ class Quiz(models.Model):
     desc = models.TextField(default=None, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return str(self.title) + ' ' + str(self.name)
 
 
 class Tag(models.Model):

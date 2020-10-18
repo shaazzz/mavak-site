@@ -1,11 +1,23 @@
 import nested_admin
+from django import forms
 from django.contrib import admin
+from searchableselect.widgets import SearchableSelect
 
 from .models import Course, Lesson, Tag, CollectionLesson
 
 
+class CollectionLessonForm(forms.ModelForm):
+    class Meta:
+        model = CollectionLesson
+        exclude = ()
+        widgets = {
+            "lesson": SearchableSelect(many=False, model='course.lesson', search_field='title', limit=10),
+        }
+
+
 class CollectionLessonInline(admin.StackedInline):
     model = CollectionLesson
+    form = CollectionLessonForm
 
 
 class TagInline(nested_admin.NestedStackedInline):
