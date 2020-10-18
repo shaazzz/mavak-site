@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from jalali_date.widgets import AdminSplitJalaliDateTime
 from searchableselect.widgets import SearchableSelect
 
 from .models import Quiz, Question, Secret, CollectionQuiz, Answer, RateColor, Tag
@@ -15,6 +16,8 @@ class CollectionQuizForm(forms.ModelForm):
         exclude = ()
         widgets = {
             "quiz": SearchableSelect(many=False, model='quiz.Quiz', search_field='title', limit=10),
+            "start": AdminSplitJalaliDateTime(),
+            "end": AdminSplitJalaliDateTime()
         }
 
 

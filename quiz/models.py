@@ -1,5 +1,6 @@
+import datetime
+
 from django.db import models
-from django_jalali.db import models as jmodels
 
 from main.models import Tag
 from users.models import Student, Collection
@@ -25,8 +26,8 @@ class CollectionQuiz(models.Model):
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     multiple = models.FloatField(default=1)
     expectedScore = models.IntegerField(default=0)
-    start = jmodels.jDateTimeField()
-    end = jmodels.jDateTimeField()
+    start = models.DateTimeField(default=datetime.datetime.now().replace(hour=8, minute=0, second=0, microsecond=0))
+    end = models.DateTimeField(default=datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0))
 
     def __str__(self):
         return self.collection.name + " " + str(self.quiz.name)

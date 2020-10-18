@@ -1,3 +1,5 @@
+import datetime
+
 import jdatetime
 from django.db import models
 from django_jalali.db import models as jmodels
@@ -40,8 +42,8 @@ class Lesson(models.Model):
 class CollectionLesson(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
-    start = jmodels.jDateTimeField(default=jdatetime.datetime.now().replace(hour=8, minute=0, second=0, microsecond=0))
-    end = jmodels.jDateTimeField(default=jdatetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0))
+    start = models.DateTimeField(default=datetime.datetime.now().replace(hour=8, minute=0, second=0, microsecond=0))
+    end = models.DateTimeField(default=datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0))
 
     def __str__(self):
         return self.collection.name + " " + str(self.lesson.name)
