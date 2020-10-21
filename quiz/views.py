@@ -433,7 +433,6 @@ def pickAnswerFromOJView(req, collection, name):
                 data = judgeCRAWLCF(secret, q.text.split()[1], q.mxgrade, mode, pl, pr)
                 ignored = []
                 evaled = 0
-                print(data)
                 for x in data:
                     try:
                         stu = OJHandle.objects.get(judge="CF", handle=x['handle']).student
@@ -458,6 +457,42 @@ def pickAnswerFromOJView(req, collection, name):
                 qs.append({
                     "order": q.order,
                     "subtyp": "کدفورسز خزش",
+                    "error": str(e.args),
+                })
+
+        if q.text.split()[0] == "VJ":
+            try:
+                pl = 1
+                pr = 1000000
+                if len(q.text.split()) > 2:
+                    pl, pr = int(q.text.split()[1]), int(q.text.split()[2])
+                data = judgeCRAWLCF(q.text.split()[0][3:], q.mxgrade, pl, pr)
+                ignored = []
+                evaled = 0
+                for x in data:
+                    try:
+                        stu = OJHandle.objects.get(judge="VJ", handle=x['handle']).student
+                        Answer.objects.filter(question=q, student=stu).delete()
+                        Answer.objects.create(
+                            question=q,
+                            student=stu,
+                            text=".",
+                            grade=x['total_points'],
+                            grademsg="تصحیح با داوری خارجی"
+                        )
+                        evaled += 1
+                    except Exception as e:
+                        ignored.append(str(e))
+                qs.append({
+                    "order": q.order,
+                    "subtyp": "ویجاج",
+                    "evaled": evaled,
+                    "ignored": ignored,
+                })
+            except Exception as e:
+                qs.append({
+                    "order": q.order,
+                    "subtyp": "ویجاج",
                     "error": str(e.args),
                 })
     return render(req, "quiz/oj.html", {
