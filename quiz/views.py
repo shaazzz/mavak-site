@@ -15,6 +15,7 @@ from .oj.CodeforcesCrawl import add_friends
 from .oj.CodeforcesCrawl import judge as judgeCRAWLCF
 from .oj.atcoder import judge as judgeAT
 from .oj.codeforces import judge as judgeCF
+from .oj.VJudgeAPI import judge as judgeVJ
 
 
 def get_answer(qu, stu):
@@ -459,14 +460,13 @@ def pickAnswerFromOJView(req, collection, name):
                     "subtyp": "کدفورسز خزش",
                     "error": str(e.args),
                 })
-
-        if q.text.split()[0] == "VJ":
+        if q.text.split()[0][0:2] == "VJ":
             try:
                 pl = 1
                 pr = 1000000
                 if len(q.text.split()) > 2:
                     pl, pr = int(q.text.split()[1]), int(q.text.split()[2])
-                data = judgeCRAWLCF(q.text.split()[0][3:], q.mxgrade, pl, pr)
+                data = judgeVJ(q.text.split()[0][3:], q.mxgrade, pl, pr)
                 ignored = []
                 evaled = 0
                 for x in data:
