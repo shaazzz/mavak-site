@@ -5,9 +5,9 @@ from django.db.models import Sum, Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from main.markdown import markdown
 
 from comment.json import json_of_root
+from main.markdown import markdown
 from users.models import Collection
 from users.models import Student, OJHandle
 from .models import Question, Answer, Secret, CollectionQuiz, RateColor
@@ -385,8 +385,13 @@ def pickAnswerFromOJView(req, collection, name):
                 })
         if q.text[:2] == "CF":
             try:
+                first_line = q.text.split()[0]
+                pl = 1
+                pr = 1000000
+                if len(q.text.split()) > 1:
+                    pl, pr = [int(x) for x in q.text[len(first_line):].split()]
                 secret = Secret.objects.get(key="CF_API").value
-                data = judgeCF(secret, q.text[3:], q.mxgrade)
+                data = judgeCF(secret, first_line[3:], q.mxgrade, pl, pr)
                 ignored = []
                 evaled = 0
                 for x in data:
@@ -420,8 +425,12 @@ def pickAnswerFromOJView(req, collection, name):
                 secret = Secret.objects.get(key="CF_LOGIN").value
                 mode = "private"
                 if len(q.text.split()) > 2:
-                    mode=q.text.split()[2].lower()
-                data = judgeCRAWLCF(secret, q.text.split()[1], q.mxgrade, mode)
+                    mode = q.text.split()[2].lower()
+                pl = 1
+                pr = 1000000
+                if len(q.text.split()) > 4:
+                    pl, pr = int(q.text.split()[3]), int(q.text.split()[4])
+                data = judgeCRAWLCF(secret, q.text.split()[1], q.mxgrade, mode, pl, pr)
                 ignored = []
                 evaled = 0
                 print(data)

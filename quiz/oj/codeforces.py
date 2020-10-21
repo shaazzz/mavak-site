@@ -2,7 +2,6 @@ import hashlib
 import json
 import random
 import time
-from collections import OrderedDict
 from urllib.parse import urlencode
 
 from .ReqHandler import ReqHandler
@@ -28,23 +27,30 @@ class CodeforcesApi:
         data = random_string + "/" + method_name + "?" + urlencode(params) + "#" + self.keys["apiSecret"]
         params['apiSig'] = random_string + hashlib.sha512(data.encode('utf-8')).hexdigest()
         result = json.loads(self.req.request("https://codeforces.com/api/" + method_name, parameters=params))
+        print(result)
         if result["status"] != "OK":
             raise Exception("return status is not ok")
         return result['result']
 
 
-def judge(secrets, contestId, total_score):
+def judge(secrets, contestId, total_score, pl=1, pr=100000):
     cfApi = CodeforcesApi(secrets)
     result = cfApi.request("contest.standings",
-                           {"contestId": contestId, "showUnofficial": "false"})
-
-    problem_score = total_score / len(result['problems'])
+                           {"contestId": contestId, "showUnofficial": "true"})
+    problem_cnt = min(len(result['problems']), pr) - pl + 1
+    problem_score = total_score / problem_cnt
 
     users = []
     for user in result['rows']:
+        score = 0
+        index = 0
+        for problem in user["problemResults"]:
+            index += 1
+            if pl <= index <= pr:
+                score += problem['points']
         users.append({
             'handle': user['party']['members'][0]['handle'].lower(),
             "rank": user['rank'],
-            'total_points': user['points'] * problem_score,
+            'total_points': score * problem_score,
         })
     return users

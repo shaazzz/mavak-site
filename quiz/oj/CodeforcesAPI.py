@@ -38,19 +38,23 @@ def get_placeholder_from_body(body, name):
     return x.group(1)
 
 
-def get_scores(scoreboard, total_score):
+def get_scores(scoreboard, total_score, pl=1, pr=100000):
     users = []
     index = 0
     for user in scoreboard:
         index += 1
         points = 0
+        ind_col = 1
         for col in scoreboard[user]:
-            if scoreboard[user][col]:
+            if pl <= ind_col <= pr and scoreboard[user][col]:
                 points += 1
+            ind_col += 1
+
+        problem_cnt = min(len(scoreboard[user]), pr) - pl + 1
         users.append({
             'handle': user.lower(),
             "rank": index,
-            'total_points': total_score * points / len(scoreboard[user]),
+            'total_points': total_score * points / problem_cnt,
         })
     return users
 
@@ -200,15 +204,14 @@ class CodeforcesAPI:
             for participant in data:
                 if len(participant) < 2:
                     continue
-                user_id = participant[1]['text'].strip()
-                print(user_id)
+                user_id = participant[1]['text'].replace("*", "").strip()
                 rank = participant[0]['text'].strip()
-                if len(rank) > 0:
+                if not user_id.startswith("Accepted"):
                     rnk += 1
                     if user_id in scoreboard:
                         return scoreboard
                 else:
-                    continue
+                    break
                 scoreboard[user_id] = {}
                 index = 0
                 for column in participant:
