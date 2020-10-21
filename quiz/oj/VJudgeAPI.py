@@ -27,7 +27,7 @@ def judge(contest_id, total_score, pl=1, pr=1000000):
     for row in result['submissions']:
         if ids[row[0]] not in scoreboard:
             scoreboard[ids[row[0]]] = []
-        if pl <= row[1] <= pr:
+        if pl <= row[1] + 1 <= pr:
             if row[2] == 1 and row[1] not in scoreboard[ids[row[0]]]:
                 scoreboard[ids[row[0]]].append(row[1])
     for user, problems in scoreboard.items():
