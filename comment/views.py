@@ -1,6 +1,4 @@
 import json
-import os
-import re
 import time
 
 import requests
@@ -10,7 +8,6 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
-from course.models import Course
 from quiz.models import Secret
 from users.models import OJHandle
 from .models import Comment
@@ -87,6 +84,7 @@ def newView(req):
             private=parent.private,
             sender=req.user,
         )
+    '''
     cmt = Comment.objects.raw('select comment_comment.*, ("@"||replace(GROUP_CONCAT(DISTINCT users_ojhandle.handle),'
                               ' ",", "\n@")) as handles  from comment_comment inner join course_lesson inner join'
                               ' course_course on course_course.id=course_lesson.course_id and comment_comment.root='
@@ -103,7 +101,9 @@ def newView(req):
                   'tag_id=quiz_tag.tag_id  INNER join users_ojhandle on users_supportertag.student_id='
                   'users_ojhandle.student_id and users_ojhandle.judge="TELEGRAM"  where comment_comment.id'
                   '=' + str(cmt.id) + ' group by comment_comment.id')[0]
-    cmt.text += "\n\n" + cmt.handles
+                  
+    '''
+    cmt.text += "\n\n@MikaeelGhorbani\n@hkalbasi"
     sendCommentToTelegram(cmt)
     return redirect(req.POST['root'])
 
