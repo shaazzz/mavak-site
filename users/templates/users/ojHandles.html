@@ -1,0 +1,32 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+{% load static %}
+<link href="{% static 'main/profile.css' %}" rel="stylesheet">
+<div class="box">
+    <div>اکانت‌های شما:
+        {% if success %}
+        <div class="alert" role="alert">
+            اطلاعات ثبت شد!
+        </div>
+        {% endif %}
+        <form id="loginForm" method="post">
+            {% csrf_token %}
+            {% for judge, handle in oj_handles.items %}
+            <div class="form-group">
+                {{judge}}:
+                <br>
+                <input class="form-control" placeholder="handle" name="{{judge}}" type="text" value="{{handle.handle}}">
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-success btn-block">ثبت اطلاعات</button>
+        </form>
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error_desc|safe }}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

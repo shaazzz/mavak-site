@@ -1,12 +1,13 @@
 import re
 
+import requests
 from django.contrib.auth import authenticate, login as dlogin
 from django.contrib.auth.models import User
 from django.db.models import Max, Count
 from django.shortcuts import render, redirect, get_object_or_404
 
 from quiz.models import Quiz
-from .models import Student, Org, StudentGroup
+from .models import Student, Org, StudentGroup, OJHandle
 
 
 def agreementView(req):
@@ -204,3 +205,49 @@ def my_profile(req):
         return me(req)
     stu = get_object_or_404(Student, user_id=req.user.id)
     return profile(req, stu.id)
+
+
+def url_ok(url):
+    r = requests.head(url)
+    return r.status_code == 200
+
+
+def validate_handle(judge, handle):
+    if len(handle) < 3:
+        return False
+    if judge == 'CF':
+        return url_ok("http://codeforces.com/api/user.info?handles=" + handle)
+    return True
+
+
+def accounts(req):
+    if not req.user.is_authenticated:
+        return redirect('/users/login')
+    if req.user.is_staff:
+        return redirect('/profile')
+    stu = get_object_or_404(Student, user_id=req.user.id)
+    handles = {"CF": None, "VJ": None, "atcoder": None}
+    success = False
+    error = False
+    error_desc = ""
+    if req.method == 'POST':
+        for h in handles:
+            handles[h] = req.POST[h].lower()
+            if not validate_handle(h, handles[h]):
+                error = True
+                error_desc += "مقدار {} برای {} صحیح نیست<br>".format(handles[h], h)
+                continue
+            OJHandle.objects.filter(judge=h, student=stu).delete()
+            OJHandle.objects.create(judge=h, student=stu, handle=handles[h])
+        if not error:
+            success = True
+    for h in handles:
+        handles[h] = OJHandle.objects.filter(judge=h, student=stu).first()
+        if handles[h] is None:
+            handles[h] = ""
+    return render(req, 'users/ojHandles.html', {
+        'oj_handles': handles,
+        "error": error,
+        "success": success,
+        "error_desc": error_desc
+    })
