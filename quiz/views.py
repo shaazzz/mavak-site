@@ -13,9 +13,9 @@ from users.models import Student, OJHandle
 from .models import Question, Answer, Secret, CollectionQuiz, RateColor
 from .oj.CodeforcesCrawl import add_friends
 from .oj.CodeforcesCrawl import judge as judgeCRAWLCF
+from .oj.VJudgeAPI import judge as judgeVJ
 from .oj.atcoder import judge as judgeAT
 from .oj.codeforces import judge as judgeCF
-from .oj.VJudgeAPI import judge as judgeVJ
 
 
 def get_answer(qu, stu):
@@ -529,7 +529,7 @@ def quizView(req, collection, name):
             'current': timezone.now(),
         })
     if req.user.is_staff:
-        return redirect("/admin/quiz/quiz/" + str(q.id))
+        return redirect("/quiz/{}/{}/scoreboard".format(collection, name))
     stu = get_object_or_404(Student, user=req.user)
     if coll_quiz.end < timezone.now():
         return render(req, "quiz/current.html", {
