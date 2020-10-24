@@ -226,7 +226,7 @@ def accounts(req):
     if req.user.is_staff:
         return redirect('/profile')
     stu = get_object_or_404(Student, user_id=req.user.id)
-    handles = {"CF": None, "VJ": None, "atcoder": None}
+    handles = {"CF": None, "VJ": None, "ATCODER": None}
     success = False
     error = False
     error_desc = ""
