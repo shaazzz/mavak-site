@@ -10,7 +10,7 @@ from comment.json import json_of_root
 from main.markdown import markdown
 from users.models import Collection
 from users.models import Student, OJHandle
-from .models import Question, Answer, Secret, CollectionQuiz, RateColor
+from .models import Question, Answer, Secret, CollectionQuiz, RateColor, Quiz
 from .oj.CodeforcesCrawl import add_friends
 from .oj.OJHandler import getView as OJGetView
 from .oj.OJHandler import pick
@@ -374,19 +374,23 @@ def checkView(req, collection, name, user):
 
 
 def quizView(req, collection, name):
+    # is_staff  condition is necessary!!!!!! important !!!!!!!!!!!!!!!
+    if collection == 'admin' and req.user.is_staff:
+        stu = get_object_or_404(Student, id=1)
+        q = get_object_or_404(Quiz, name=name)
+        return render(req, "quiz/current.html", {
+            'mode': 'visit',
+            'quiz': q,
+            'desc': markdown(q.desc),
+            'current': timezone.now(),
+            'problems': json_of_problems(Question.objects.filter(quiz=q), stu),
+            'user': stu.user,
+            'comment': json_of_root('/quiz/' + collection + "/" + name + '/', req.user),
+        })
     coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
     q = coll_quiz.quiz
     if req.user.is_anonymous:
         return redirect("/users/login")
-    if coll_quiz.start > timezone.now():
-        return render(req, "quiz/not_started.html", {
-            'quiz': q,
-            'coll_quiz': coll_quiz,
-            'desc': markdown(q.desc),
-            'current': timezone.now(),
-        })
-    if req.user.is_staff:
-        return redirect("/quiz/{}/{}/scoreboard".format(collection, name))
     stu = get_object_or_404(Student, user=req.user)
     if coll_quiz.end < timezone.now():
         return render(req, "quiz/current.html", {
@@ -399,6 +403,15 @@ def quizView(req, collection, name):
             'user': stu.user,
             'comment': json_of_root('/quiz/' + collection + "/" + name + '/', req.user),
         })
+    if coll_quiz.start > timezone.now():
+        return render(req, "quiz/not_started.html", {
+            'quiz': q,
+            'coll_quiz': coll_quiz,
+            'desc': markdown(q.desc),
+            'current': timezone.now(),
+        })
+    if req.user.is_staff:
+        return redirect("/quiz/{}/{}/scoreboard".format(collection, name))
     return render(req, "quiz/current.html", {
         'mode': 'current',
         'quiz': q,
