@@ -209,6 +209,9 @@ class CodeforcesCrawl(Judge):
                 ' ثبت کنید'
         text += '<br><a href="https://codeforces.com/group/{}/join">ثبت‌نام در گروه Codeforces</a>'.format(group)
         text += '<br><a href="https://codeforces.com/{}">لینک Contest</a>'.format(contestLink)
+        if len(q.text.split()) > 4:
+            pl, pr = int(q.text.split()[3]), int(q.text.split()[4])
+            text += '<br> سوالات {} تا {} این کانتست رو بزنید'.format(pl, pr)
         return text
 
     def pickAnswer(self, q: Question):
