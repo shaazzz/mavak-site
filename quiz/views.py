@@ -12,7 +12,8 @@ from users.models import Collection
 from users.models import Student, OJHandle
 from .models import Question, Answer, Secret, CollectionQuiz, RateColor
 from .oj.CodeforcesCrawl import add_friends
-from .oj.PickAnswer import pick
+from .oj.OJHandler import getView as OJGetView
+from .oj.OJHandler import pick
 
 
 def get_answer(qu, stu):
@@ -34,7 +35,7 @@ def get_answer(qu, stu):
 def json_of_problems(qs, stu):
     return dumps(dumps([{
         'id': x.id,
-        'text': x.text,
+        'text': x.text if x.typ != "OJ" else OJGetView(x),
         'mxgrade': x.mxgrade,
         'order': x.order,
         'typ': x.typ,
