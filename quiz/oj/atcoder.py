@@ -1,9 +1,8 @@
 import urllib.parse
 import urllib.request
-from os import system, name
+
 
 def judge(users, problem_ids, total_score):
-
     problem_score = total_score / len(problem_ids)
     output = []
 

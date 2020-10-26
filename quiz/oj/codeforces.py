@@ -27,7 +27,6 @@ class CodeforcesApi:
         data = random_string + "/" + method_name + "?" + urlencode(params) + "#" + self.keys["apiSecret"]
         params['apiSig'] = random_string + hashlib.sha512(data.encode('utf-8')).hexdigest()
         result = json.loads(self.req.request("https://codeforces.com/api/" + method_name, parameters=params))
-        print(result)
         if result["status"] != "OK":
             raise Exception("return status is not ok")
         return result['result']
