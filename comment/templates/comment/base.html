@@ -27,7 +27,7 @@
             body.className = 'card-body';
             r.appendChild(body);
             const content = document.createElement('p');
-            content.innerText = c.text;
+            content.innerHTML = c.text;
             body.appendChild(content);
             if (c.children) {
                 const myChild = document.createElement('div');

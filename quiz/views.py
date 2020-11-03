@@ -391,6 +391,8 @@ def quizView(req, collection, name):
     q = coll_quiz.quiz
     if req.user.is_anonymous:
         return redirect("/users/login")
+    if req.user.is_staff:
+        return redirect("/quiz/{}/{}/scoreboard".format(collection, name))
     stu = get_object_or_404(Student, user=req.user)
     if coll_quiz.end < timezone.now():
         return render(req, "quiz/current.html", {
@@ -410,8 +412,6 @@ def quizView(req, collection, name):
             'desc': markdown(q.desc),
             'current': timezone.now(),
         })
-    if req.user.is_staff:
-        return redirect("/quiz/{}/{}/scoreboard".format(collection, name))
     return render(req, "quiz/current.html", {
         'mode': 'current',
         'quiz': q,

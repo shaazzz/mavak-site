@@ -211,7 +211,7 @@
       const text = document.createElement('p');
       if (p.typ === 'text' || p.typ === 'auto' || p.typ === 'textnocheck' || p.typ === 'OJ') {
         text.innerHTML = p.text;
-      } else if (p.typ.match(/O[0-9]/)) {
+      } else if (p.typ.match(/t[0-9]/)) {
         const oc = Number(p.typ.slice(1));
         const matn = p.text.split("\n").slice(0, -oc).join("\n");
         text.innerHTML = matn;
