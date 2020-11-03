@@ -52,7 +52,7 @@ def createAccountStudent(req):
     famil = req.POST['famil']
     kodemelli = req.POST['kodemelli'].translate(translation_table)
     ostan = req.POST['ostan']
-    dore = req.POST['dore']
+    #dore = req.POST['dore']
     shomare = req.POST['shomare'].translate(translation_table)
     password = req.POST['password']
     email = req.POST['email']
@@ -67,7 +67,7 @@ def createAccountStudent(req):
         user.last_name = famil
         user.save()
         dlogin(req, user)
-        Student.objects.create(user=user, ostan=ostan, dore=dore, shomare=shomare)
+        Student.objects.create(user=user, ostan=ostan, dore=1, shomare=shomare)
         return redirect('/users/me')
     except:
         return render(req, 'users/createAccountStudent.html', {
