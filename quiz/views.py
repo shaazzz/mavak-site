@@ -71,7 +71,6 @@ def submitView(req, collection, name):
         return JsonResponse({'ok': False, 'reason': 'finished'})
     stu = get_object_or_404(Student, user=req.user)
     Answer.objects.filter(question__quiz=q, student=stu).delete()
-    print(req.POST['answers'])
     ans = loads(req.POST['answers'])
     for x in ans:
         ques = get_object_or_404(Question, id=x['id'])
