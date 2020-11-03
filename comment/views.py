@@ -41,7 +41,8 @@ def sendMessageToTelegram(s):
     url = "https://api.telegram.org/bot" + token + "/sendMessage"
     params = {
         "chat_id": chat_id,
-        'text': s
+        'text': s,
+        "parse_mode": "MarkdownV2"
     }
     x = requests.post(url, data=params)
 
