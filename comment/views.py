@@ -45,6 +45,7 @@ def sendMessageToTelegram(s):
         "parse_mode": "MarkdownV2"
     }
     x = requests.post(url, data=params)
+    print(x)
 
 
 def sendCommentToTelegram(comment):
