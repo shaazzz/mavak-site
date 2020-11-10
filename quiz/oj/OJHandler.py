@@ -52,6 +52,7 @@ class GeeksForGeeks(Judge):
             for x in data:
                 try:
                     stu = OJHandle.objects.get(judge="GEEKSFORGEEKS", handle=x['handle']).student
+                    Answer.objects.filter(question=q, student=stu).delete()
                     Answer.objects.create(
                         question=q,
                         student=stu,
