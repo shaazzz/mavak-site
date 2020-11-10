@@ -233,6 +233,7 @@ class CodeforcesCrawl(Judge):
             evaled = 0
             for x in data:
                 try:
+                    print(x['handle'])
                     stu = OJHandle.objects.get(judge="CF", handle=x['handle']).student
                     Answer.objects.filter(question=q, student=stu).delete()
                     Answer.objects.create(
@@ -244,6 +245,7 @@ class CodeforcesCrawl(Judge):
                     )
                     evaled += 1
                 except Exception as e:
+                    print(str(e))
                     ignored.append(str(e))
             qs.append({
                 "order": q.order,
@@ -252,6 +254,7 @@ class CodeforcesCrawl(Judge):
                 "ignored": ignored,
             })
         except Exception as e:
+            print(str(e))
             qs.append({
                 "order": q.order,
                 "subtyp": "کدفورسز خزش",

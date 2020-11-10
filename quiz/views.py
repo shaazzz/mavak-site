@@ -205,11 +205,13 @@ def collectionProfileView(req, name, user):
     quz = CollectionQuiz.objects.raw('SELECT *, '
                                      '(quiz_quiz.title || " | 0/" || cast(SUM(mxgrade * quiz_collectionquiz.multiple) '
                                      'as text) || " امتیاز") '
-                                     'as desc, quiz_collectionquiz.expectedScore, SUM(multiple*mxgrade) as maxgrade FROM quiz_collectionquiz '
+                                     'as desc, quiz_collectionquiz.expectedScore, SUM(multiple*mxgrade) '
+                                     'as maxgrade FROM quiz_collectionquiz '
                                      'INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id '
                                      'INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
                                      'WHERE quiz_collectionquiz.collection_id='
-                                     + str(col.id) + ' GROUP BY quiz_collectionquiz.id ORDER BY id')
+                                     + str(col.id) + ' and quiz_collectionquiz.end<="' + str(timezone.now()) +
+                                     '" GROUP BY quiz_collectionquiz.id ORDER BY id')
     acc = Student.objects.raw(
         'SELECT * FROM '
         ' (SELECT users_ojhandle.handle, quiz_collectionquiz.expectedScore, quiz_answer.student_id as id, '
