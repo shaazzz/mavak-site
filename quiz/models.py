@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 
+from course.models import Course
 from main.models import Tag
 from users.models import Student, Collection
 
@@ -11,6 +12,7 @@ class Quiz(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
     desc = models.TextField(default=None, blank=True, null=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL)
 
     def __str__(self):
         return str(self.title) + ' ' + str(self.name)
