@@ -153,6 +153,10 @@ STATIC_ROOT = '/var/www/mavak/static/'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/var/www/mavak/media/'
+STATICFILES_DIRS = (
+    # location of your application, should not be public web accessible 
+    '/root/mavak-site/main/static',
+)
 #'/var/www/mavak/media/'
 
 LOGGING = {
