@@ -1,0 +1,58 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card" style="margin-bottom: 20px">
+        <div class="card-header">اضافه کردن مدل
+        </div>
+        <div class="card-body">
+            <p>
+                از این قسمت میتوانید مدل جدید به صورت json اضافه کنید
+            </p>
+            <div class="row">
+                <div class="col-md-12">
+                            مثال
+                            <pre>
+    {
+        "type":"quiz",
+        "fields":{
+            "name": "...",
+            "title": "...",
+            "desc":"..."
+        },
+        "children":[
+            {
+                "type":"question",
+                "fields":{"text": "soal1", "order": 1, "typ": "t5", "hint": "2", "mxgrade": 4}
+            },{
+                "type":"question",
+                "fields":{"text": "soal2", "order": 2, "typ": "t5", "hint": "3", "mxgrade": 4}
+            }
+        ]
+    }
+                            </pre>
+                    <form id="inputForm" action="/add_model/" method="post">
+                        {% csrf_token %}
+                        <fieldset>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <textarea type="text" name="json" placeholder="json input" class="form-control"
+                                              required=""></textarea>
+                                </div>
+                            </div>
+                            {% if error == "bad" %}
+                            <div class="alert alert-danger" role="alert">
+                                اطلاعات شما با واقعیت مطابقت ندارد.
+                            </div>
+                            {% endif %}
+                            <button type="submit" class="btn btn-success btn-block">ثبت</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

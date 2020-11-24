@@ -351,9 +351,7 @@ def pickAnswerFromOJView(req, collection, name):
     qu = Question.objects.filter(quiz=coll_quiz.quiz, typ="OJ")
     qs = []
     for q in qu:
-        response = pick(q)
-        if response:
-            qs += response
+        pick(q.id)
     return render(req, "quiz/oj.html", {
         "questions": qs,
     })
