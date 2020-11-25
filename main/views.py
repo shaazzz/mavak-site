@@ -45,7 +45,10 @@ def add_model(req):
     if req.method == 'GET':
         return render(req, 'main/add_model.html')
     json_input = json.loads(req.POST['json'])
-    assert "type" in json_input
+
+    if isinstance(json_input, list):
+        add_model_rec(json_input)
+        return JsonResponse({"ok": True})
     return redirect("/get_model?type={}&id={}".format(str(json_input['type']), str(add_model_rec(json_input))))
 
 
