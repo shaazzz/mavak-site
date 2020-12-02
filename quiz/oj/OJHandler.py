@@ -323,15 +323,15 @@ class VJudge(Judge):
         return qs
 
 
-#@background
+@background
 def pick(q_id):
-    print("Hi")
     q = Question.objects.get(id=q_id)
     for cls in Judge.__subclasses__():
         response = cls().pickAnswer(q)
         if response:
             with open("tasks.log", "a") as f:
-                f.write(datetime.now().strftime('%m/%d/%Y') + ":" + str(q.id) + json.dumps(response))
+                f.write(
+                    "?: ?\ndata:?\n\n\n?".format(datetime.now().strftime('%m/%d/%Y'), str(q.id), json.dumps(response)))
             return response
 
 
