@@ -331,7 +331,7 @@ def pick(q_id):
         if response:
             with open("tasks.log", "a") as f:
                 f.write(
-                    "?: ?\ndata:?\n\n\n?".format(datetime.now().strftime('%m/%d/%Y'), str(q.id), json.dumps(response)))
+                    "{}: {}\ndata:{}\n\n\n{}".format(datetime.now().strftime('%m/%d/%Y'), str(q.id), json.dumps(response)))
             return response
 
 
