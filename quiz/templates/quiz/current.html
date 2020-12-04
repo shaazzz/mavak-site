@@ -243,6 +243,7 @@
               odiv.appendChild(label);
               odiv.appendChild(document.createElement('br'));
             });
+            if (mode === 'current') {
             const btn = document.createElement('button');
             btn.innerText="پاک کردن انتخاب";
             btn.onclick= function() {
@@ -253,6 +254,7 @@
                 console.log("deleted"+p.order);
             };
             odiv.appendChild(btn);
+            }
         }
       } else {
         const el = document.createElement('textarea');
