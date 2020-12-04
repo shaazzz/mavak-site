@@ -3,33 +3,41 @@
 {% block content %}
 
 <div class="container">
-  <div class="card" style="margin-bottom: 20px">
-    <div class="card-header">ورود
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-12">
-          <form id="loginForm" action="/users/login/" method="post">
-            {% csrf_token %}
-            <fieldset>
-              <div class="form-group">
-                <input class="form-control" placeholder="شناسه کاربری (کدملی)" name="username" type="text" required="">
-              </div>
-              <div class="form-group">
-                <input class="form-control" placeholder="رمز عبور" name="password" type="password" required="">
-              </div>
-              {% if error == "yes" %}
-              <div class="alert alert-danger" role="alert">
-                اطلاعات وارد شده صحیح نیست
-              </div>
-              {% endif %}
-              <button type="submit" class="btn btn-success btn-block">ورود</button>
-            </fieldset>
-          </form>
+    <div class="card" style="margin-bottom: 20px">
+        <div class="card-header">ورود
         </div>
-      </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <form id="loginForm" action="/users/login/" method="post">
+                        {% csrf_token %}
+                        <fieldset>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="شناسه کاربری (کدملی)" name="username"
+                                       type="text" required="">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" placeholder="رمز عبور" name="password" type="password"
+                                       required="">
+                            </div>
+                            {% if error == "yes" %}
+                            <div class="alert alert-danger" role="alert">
+                                اطلاعات وارد شده صحیح نیست
+                            </div>
+                            {% endif %}
+                            <button type="submit" class="btn btn-success btn-block">ورود</button>
+                        </fieldset>
+                    </form>
+                    <a href="/users/createAccount/student/">
+                        <button class="btn btn-sm btn-block">ثبت‌نام در ماواک</button>
+                    </a>
+                    <a href="/texts/links/">
+                        <button class="btn btn-sm btn-block">لینک های پر استفاده</button>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 {% endblock %}
