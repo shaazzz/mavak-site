@@ -243,6 +243,16 @@
               odiv.appendChild(label);
               odiv.appendChild(document.createElement('br'));
             });
+            const btn = document.createElement('button');
+            btn.innerText="پاک کردن انتخاب";
+            btn.onclick= function() {
+                const radios1 = document.getElementsByName('ansname' + p.order);
+                for (var i = 0, length = radios1.length; i < length; i++) {
+                  radios1[i].checked=false;
+                }
+                console.log("deleted"+p.order);
+            };
+            odiv.appendChild(btn);
         }
       } else {
         const el = document.createElement('textarea');
