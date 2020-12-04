@@ -324,13 +324,17 @@ def autoCheckerView(req, collection, name):
     qu = Question.objects.filter(quiz=coll_quiz.quiz)
     for q in qu:
         if q.typ[0] != 'O' or q.typ == 'OJ':
-            if q.typ != 'auto':
+            if q.typ != 'auto' and q.typ[0] != 't':
                 continue
         hint_reg = ""
         for c in q.hint.strip():
             hint_reg += '[,]{0,1}' + c
-        Answer.objects.filter(question=q).update(grade=0, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
+        gr = 0
+        if q.typ[0] == 't':
+            gr = -1
+        Answer.objects.filter(question=q).update(grade=-1, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
         if mode == "strict":
+
             Answer.objects.filter(question=q, text__regex=r'^[ \n]*(' + hint_reg + '|' + un_correct(
                 q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(grade=q.mxgrade)
         else:
