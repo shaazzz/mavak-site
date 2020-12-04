@@ -3,10 +3,10 @@ from datetime import timedelta
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from main.markdown import markdown
 
 from comment.json import json_of_root
 from course.models import Course, Lesson, CollectionLesson
+from main.markdown import markdown
 from quiz.models import Quiz, CollectionQuiz
 from users.models import Collection
 
@@ -63,8 +63,8 @@ def syllabusCollectionView(req, collection):
                           " on quiz_quiz.id=quiz_collectionquiz.quiz_id INNER join users_collection on "
                           "quiz_collectionquiz.collection_id=users_collection.id inner join quiz_tag on "
                           "quiz_tag.quiz_id=quiz_quiz.id INNER join main_tag on quiz_tag.tag_id=main_tag.id"
-                          " where users_collection.name='" + collection + "' " + condition + " group by quiz_quiz.id "
-                                                                                             "order by release")
+                          " where users_collection.name='" + collection + "' " + "" + " group by quiz_quiz.id "
+                                                                                      "order by release")
 
     ls = [row for row in ls] + [row for row in qs]
     for i in ls:
