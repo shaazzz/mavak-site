@@ -5,6 +5,7 @@ import re
 import urllib.request
 from urllib.parse import urlparse
 
+from background_task import background
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from markdown2 import markdown
@@ -43,6 +44,65 @@ def cleanContents(req):
     return JsonResponse({"ok": "true"})
 
 
+@background
+def upload_Helper(name, data):
+    c = get_object_or_404(Course, name=name)
+    lessons = Lesson.objects.filter(course=c)
+    name = data['name']
+    title = data['title']
+    start_time = data['start_time']
+    finish_time = data['finish_time']
+    videoLink = data['videoLink']
+    ls = [lll for lll in Lesson.objects.filter(course=c, name=name)]
+    if len(ls) > 0:
+        raise Exception("این درس قبلا آپلود شده است!")
+
+    if finish_time == "until_end":
+        finish_time = ""
+    else:
+        finish_time = "-t " + finish_time
+    up = urlparse(videoLink)
+    os.system("mkdir tmp_upload")
+    filename = "tmp_upload/" + os.path.basename(up.path)
+    cut_filename = "tmp_upload/cut-" + os.path.basename(up.path)
+
+    urllib.request.urlretrieve(videoLink, filename)
+
+    if os.system('ffmpeg -y -i ' + filename +
+                 ' -ss ' + start_time + ' ' + finish_time + ' -c copy ' + cut_filename) != 0:
+        raise Exception("خطا در برش فیلم!")
+
+    reqHandler = ReqHandler()
+    secret = json.loads(Secret.objects.get(key="APARAT_LOGIN").value)
+
+    text = reqHandler.aparatRequest("login", {
+        "luser": secret["aparat_username"],
+        "lpass": hashlib.sha1(
+            hashlib.md5(secret["aparat_password"].encode('utf-8')).hexdigest().encode('utf-8')).hexdigest(),
+    })
+    response = json.loads(text)
+    if response['login']['type'] == 'error':
+        raise Exception(response['login']['value'])
+    login_token = response['login']["ltoken"]
+
+    text = reqHandler.aparatRequest("uploadform", {
+        "luser": secret["aparat_username"],
+        "ltoken": login_token
+    })
+    url = json.loads(text)["uploadform"]['formAction']
+    frm_id = json.loads(text)["uploadform"]["frm-id"]
+    response = json.loads(os.popen('curl -F "frm-id=' + str(
+        frm_id) + '" -F "data[title]=' + title + '" -F "data[category]=3" '
+                                                 '-F "video=@\"' + cut_filename + '\"" ' + url).read())
+
+    os.system("rm -rf tmp_upload/")
+    if response['uploadpost']['type'] == 'error':
+        raise Exception(response['uploadpost']['text'])
+    uid = response['uploadpost']['uid']
+    l = Lesson.objects.create(course=c, name=name, title=title, text="% aparat." + uid + " %", order=len(lessons) + 1)
+    return "Success"
+
+
 def uploadVideo(req, name):
     if not req.user.is_staff:
         return HttpResponseNotFound('<h1>Page not found</h1>')
@@ -63,78 +123,15 @@ def uploadVideo(req, name):
                 'ترکیبیات',
             ]
         })
+    upload_Helper(name, req.POST)
     name = req.POST['name']
-    ls = [lll for lll in Lesson.objects.filter(course=c, name=name)]
-    if len(ls) > 0:
-        return render(req, 'course/uploadVideo.html', {
-            'error': 'error',
-            'error_desc': "این درس قبلا آپلود شده است!",
-        })
     title = req.POST['title']
-    start_time = req.POST['start_time']
-    finish_time = req.POST['finish_time']
-    if finish_time == "until_end":
-        finish_time = ""
-    else:
-        finish_time = "-t " + finish_time
     videoLink = req.POST['videoLink']
-    up = urlparse(videoLink)
-    os.system("mkdir tmp_upload")
-    filename = "tmp_upload/" + os.path.basename(up.path)
-    cut_filename = "tmp_upload/cut-" + os.path.basename(up.path)
-    try:
-        urllib.request.urlretrieve(videoLink, filename)
-    except Exception as e:
-        return render(req, 'course/uploadVideo.html', {
-            'error': 'error',
-            'error_desc': str(e),
-        })
 
-    if os.system('ffmpeg -y -i ' + filename +
-                 ' -ss ' + start_time + ' ' + finish_time + ' -c copy ' + cut_filename) != 0:
-        return render(req, 'course/uploadVideo.html', {
-            'error': 'error',
-            'error_desc': "خطا در برش فیلم",
-        })
-
-    reqHandler = ReqHandler()
-    secret = json.loads(Secret.objects.get(key="APARAT_LOGIN").value)
-
-    text = reqHandler.aparatRequest("login", {
-        "luser": secret["aparat_username"],
-        "lpass": hashlib.sha1(
-            hashlib.md5(secret["aparat_password"].encode('utf-8')).hexdigest().encode('utf-8')).hexdigest(),
-    })
-    response = json.loads(text)
-    if response['login']['type'] == 'error':
-        return render(req, 'course/uploadVideo.html', {
-            'error': 'error',
-            'error_desc': response['login']['value'],
-        })
-    login_token = response['login']["ltoken"]
-
-    text = reqHandler.aparatRequest("uploadform", {
-        "luser": secret["aparat_username"],
-        "ltoken": login_token
-    })
-    url = json.loads(text)["uploadform"]['formAction']
-    frm_id = json.loads(text)["uploadform"]["frm-id"]
-    response = json.loads(os.popen('curl -F "frm-id=' + str(
-        frm_id) + '" -F "data[title]=' + title + '" -F "data[category]=3" '
-                                                 '-F "video=@\"' + cut_filename + '\"" ' + url).read())
-
-    os.system("rm -rf tmp_upload/")
-    if response['uploadpost']['type'] == 'error':
-        return render(req, 'course/uploadVideo.html', {
-            'error': 'error',
-            'error_desc': response['uploadpost']['text'],
-        })
-    uid = response['uploadpost']['uid']
-    l = Lesson.objects.create(course=c, name=name, title=title, text="% aparat." + uid + " %", order=len(lessons) + 1)
     return render(req, 'course/uploadVideo.html', {
         'course': c,
-        'form_name': l.name,
-        'form_title': l.title,
+        'form_name': name,
+        'form_title': title,
         'start_time': '00:00:00',
         'finish_time': 'until_end',
         'videoLink': videoLink,
@@ -146,8 +143,11 @@ def uploadVideo(req, name):
             'ترکیبیات',
         ],
         "success": True,
-        "success_desc": "<a href=\"../" + l.name + "\">" + l.title + "</a>\n"
-                                                                     "با موفقیت آپلود شد"
+        "success_desc": "<a href=\"../" + name + "\">" + title + "</a>\n"
+                                                                 "با موفقیت در صف آپلود قرار گرفت،"
+                                                                 " تا مدتی دیگر این صفحه در"
+                                                                 " دسترس قرار میگیرد اگر این اتفاق نیفتاد در صفحه"
+                                                                 " ادمین قسمت task ها مشکل پیش آمده را بررسی کنید"
     })
 
 
