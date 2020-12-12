@@ -1,5 +1,7 @@
 import json
 
+from background_task import background
+
 from quiz.oj.CodeforcesAPI import CodeforcesAPI, get_scores
 
 
@@ -10,6 +12,7 @@ def judge(secrets, link, total_score, mode="private", pl=1, pr=100000):
     return result
 
 
+@background
 def add_friends(secrets, handles):
     secrets = json.loads(secrets)
     cfApi = CodeforcesAPI(secrets)

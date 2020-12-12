@@ -331,7 +331,7 @@ def autoCheckerView(req, collection, name):
             hint_reg += '[,]{0,1}' + c
         gr = 0
         if q.typ[0] == 't':
-            gr = -1
+            graddCFFriends = -1
         Answer.objects.filter(question=q).update(grade=-1, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
         if mode == "strict":
 
