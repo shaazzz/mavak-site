@@ -54,8 +54,8 @@ def syllabusCollectionView(req, collection):
                             "inner join course_lesson on course_lesson.id=course_collectionlesson.lesson_id "
                             "inner join users_collection on course_collectionlesson.collection_id="
                             "users_collection.id"
-                            " where users_collection.name='" + collection + "'" + condition + " group by course_lesson"
-                                                                                              ".id order by release")
+                            " where users_collection.name='" + collection + "' " + condition + " group by course_lesson"
+                                                                                               ".id order by release")
     qs = Quiz.objects.raw("select quiz_quiz.*,'quiz' as type,quiz_collectionquiz.start as release,"
                           "quiz_collectionquiz.end as drop_off_date, (DATE(quiz_collectionquiz.start,"
                           " 'weekday 5', '-7 days')) as date_id from quiz_collectionquiz INNER join quiz_quiz"

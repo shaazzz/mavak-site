@@ -3,8 +3,10 @@ import re
 from datetime import datetime
 
 from background_task import background
+from django.db.models import Q
+from django.utils import timezone
 
-from quiz.models import Question, Answer, Secret
+from quiz.models import Question, Answer, Secret, CollectionQuiz
 from users.models import OJHandle
 from .CodeforcesCrawl import judge as judgeCRAWLCF
 from .GeeksForGeeks import judge as judgeGeeks
@@ -341,3 +343,11 @@ def getView(q: Question):
         response = cls().getView(q)
         if response:
             return response
+
+
+def autoPicker():
+    now = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    qs = CollectionQuiz.objects.filter(Q(end__lt=timezone.now()) & (Q(quiz__last_oj_update__isnull=True) | Q(
+        quiz__last_oj_update__lt=timezone.now())))
+    print(len(qs))
