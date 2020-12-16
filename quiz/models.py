@@ -11,7 +11,7 @@ class Quiz(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=250)
     desc = models.TextField(default=None, blank=True, null=True)
-    last_oj_update = models.DateTimeField(null=True)
+    last_oj_update = models.DateTimeField(default=None, null=True)
 
     def __str__(self):
         return str(self.title) + ' ' + str(self.name)

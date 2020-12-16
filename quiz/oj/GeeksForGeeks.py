@@ -16,11 +16,17 @@ def get_problems(user):
     return problems
 
 
+last_res = {}
+
+
 def judge(users, problem_ids, total_score):
+    global last_res
     problem_score = total_score / len(problem_ids)
     output = []
     for user in users:
-        problems = set(get_problems(user)).intersection(problem_ids)
+        if user not in last_res:
+            last_res[user] = get_problems(user)
+        problems = set(last_res[user]).intersection(problem_ids)
         output.append({
             "handle": user,
             "total_points": len(problems) * problem_score

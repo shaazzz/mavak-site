@@ -5,10 +5,16 @@ from django.http import JsonResponse, HttpResponseNotFound
 from django.shortcuts import redirect, get_object_or_404, render
 
 from quiz.models import Question, Quiz
+from quiz.oj.OJHandler import autoPicker
 
 
 def index(req):
     return redirect("/users/me")
+
+
+def update_oj(req):
+    autoPicker()
+    return JsonResponse({"ok": True})
 
 
 def get_model(req):

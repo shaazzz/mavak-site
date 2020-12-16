@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 
 from background_task import background
-from django.db.models import Q
+from django.db.models import Q, F
 from django.utils import timezone
 
 from quiz.models import Question, Answer, Secret, CollectionQuiz
@@ -328,6 +328,7 @@ class VJudge(Judge):
 @background
 def pick(q_id):
     q = Question.objects.get(id=q_id)
+    print("fetching result of :'" + q.text + "' from " + q.quiz.name)
     for cls in Judge.__subclasses__():
         response = cls().pickAnswer(q)
         if response:
@@ -335,6 +336,8 @@ def pick(q_id):
                 f.write(
                     "{}: {}\ndata:{}\n\n\n".format(datetime.now().strftime('%m/%d/%Y'), str(q.id),
                                                    json.dumps(response)))
+            q.quiz.last_oj_update = timezone.now()
+            q.quiz.save()
             return response
 
 
@@ -345,9 +348,12 @@ def getView(q: Question):
             return response
 
 
+@background
 def autoPicker():
-    now = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
-
     qs = CollectionQuiz.objects.filter(Q(end__lt=timezone.now()) & (Q(quiz__last_oj_update__isnull=True) | Q(
-        quiz__last_oj_update__lt=timezone.now())))
-    print(len(qs))
+        quiz__last_oj_update__lt=F('end'))))
+    ls = list({x.quiz for x in qs})
+    for quiz in ls:
+        qu = Question.objects.filter(quiz=quiz, typ="OJ")
+        for qe in qu:
+            pick(qe.id)
