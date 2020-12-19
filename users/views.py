@@ -173,7 +173,7 @@ def profile(req, student_id):
                           '(SELECT quiz_quiz.id as qid, SUM(grade) as nomre FROM quiz_quiz '
                           'INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_quiz.id '
                           'INNER join quiz_answer on quiz_answer.question_id=quiz_question.id '
-                          'and quiz_answer.student_id=' + student_id +
+                          'and quiz_answer.student_id=' + str(student_id) +
                           ' GROUP by quiz_quiz.id ORDER BY qid) '
                           'INNER JOIN quiz_quiz ON quiz_quiz.id=qid '
                           'INNER JOIN quiz_question ON quiz_question.quiz_id=qid '
