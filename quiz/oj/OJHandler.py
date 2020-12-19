@@ -109,11 +109,10 @@ class Codeforces(Judge):
             pl = 1
             pr = 1000000
             justOfficial = False
-            if len(q.text.split()) > 1:
+            if len(q.text.split()) > 1 and len(q.text[len(first_line):].split()) > 1:
                 pl, pr = [int(x) for x in q.text[len(first_line):].split()[:2]]
-                if len(q.text[len(first_line):].split()) > 2:
-                    if q.text[len(first_line):].split()[2].lower() == "official":
-                        justOfficial = True
+            if q.text.find("official") != -1:
+                justOfficial = True
             secret = Secret.objects.get(key="CF_API").value
             data = judgeCF(secret, first_line[3:], q.mxgrade, pl, pr, justOfficial)
             ignored = []
