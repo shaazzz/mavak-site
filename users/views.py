@@ -52,7 +52,7 @@ def createAccountStudent(req):
     famil = req.POST['famil']
     kodemelli = req.POST['kodemelli'].translate(translation_table)
     ostan = req.POST['ostan']
-    #dore = req.POST['dore']
+    # dore = req.POST['dore']
     shomare = req.POST['shomare'].translate(translation_table)
     password = req.POST['password']
     email = req.POST['email']
@@ -167,14 +167,17 @@ def profile(req, student_id):
     stu = get_object_or_404(Student, id=student_id)
     if req.user.is_authenticated and req.user.id == stu.user_id:
         self_profile = True
-    qs = Quiz.objects.raw('SELECT * FROM (SELECT quiz_quiz.id as id,'
-                          ' SUM(mxgrade) as maxgrade, SUM(grade) as nomre,'
-                          ' (quiz_quiz.title || " | " || cast(SUM(grade) as text) || "/" ||'
-                          ' cast(SUM(mxgrade) as text) || " امتیاز") as desc  FROM quiz_answer'
-                          ' INNER JOIN quiz_question ON question_id=quiz_question.id'
-                          ' INNER JOIN quiz_quiz ON quiz_question.quiz_id=quiz_quiz.id '
-                          ' WHERE student_id=' + str(
-        student_id) + ' GROUP BY quiz_quiz.id ORDER BY id) WHERE nomre > 0;')
+    qs = Quiz.objects.raw('SELECT qid as id, nomre,(SUM(quiz_question.mxgrade)) as maxgrade, '
+                          '(quiz_quiz.title || " | " || cast(nomre as text) || "/" || '
+                          'cast(SUM(mxgrade) as text) || " امتیاز") as desc FROM '
+                          '(SELECT quiz_quiz.id as qid, SUM(grade) as nomre FROM quiz_quiz '
+                          'INNER JOIN quiz_question ON quiz_question.quiz_id=quiz_quiz.id '
+                          'INNER join quiz_answer on quiz_answer.question_id=quiz_question.id '
+                          'and quiz_answer.student_id=' + student_id +
+                          ' GROUP by quiz_quiz.id ORDER BY qid) '
+                          'INNER JOIN quiz_quiz ON quiz_quiz.id=qid '
+                          'INNER JOIN quiz_question ON quiz_question.quiz_id=qid '
+                          'WHERE nomre > 0 GROUP by qid')
     acc = Student.objects.raw(
         'SELECT users_ojhandle.handle,* FROM users_student INNER JOIN users_ojhandle ON '
         'users_ojhandle.student_id=users_student.id '

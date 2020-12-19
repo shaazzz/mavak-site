@@ -12,7 +12,7 @@ from users.models import Collection
 from users.models import Student, OJHandle
 from .models import Question, Answer, Secret, CollectionQuiz, RateColor, Quiz
 from .oj.CodeforcesCrawl import add_friends
-from .oj.OJHandler import getView as OJGetView, autoPicker
+from .oj.OJHandler import getView as OJGetView, autoPicker, autoCheckerHandler
 from .oj.OJHandler import pick
 
 
@@ -143,6 +143,7 @@ def collectionScoreBoardView(req, name):
         ' and users_collection.students_id=users_studentgroup.id'
         ' WHERE users_collection.id=' + str(
             col.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
+
     acc = Student.objects.raw(
         'SELECT * FROM '
         ' (SELECT users_ojhandle.handle, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) '
@@ -152,6 +153,7 @@ def collectionScoreBoardView(req, name):
         'quiz_collectionquiz.end<="' + str(timezone.now()) +
         '" WHERE quiz_collectionquiz.collection_id=' + str(
             col.id) + ' GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
+
     rate_colors = RateColor.objects.raw('SELECT * from quiz_ratecolor')
 
     rt = getLastRates(name)
@@ -191,7 +193,8 @@ def collectionProfileView(req, name, user):
     col = get_object_or_404(Collection, name=name)
     yaroo = get_object_or_404(Student, id=int(user))
     stu = Student.objects.raw(
-        'SELECT * FROM   (SELECT 0 as rate, quiz_collectionquiz.expectedScore, quiz_collectionquiz.id as id, '
+        'SELECT * FROM   (SELECT 0 as rate, quiz_quiz.title as title, '
+        'quiz_collectionquiz.expectedScore, quiz_collectionquiz.id as id, '
         'SUM(mxgrade*quiz_collectionquiz.multiple) as maxgrade, SUM(grade * quiz_collectionquiz.multiple) as nomre,'
         ' (quiz_quiz.title || " | " || cast(SUM(grade * quiz_collectionquiz.multiple) as text) || "/" || '
         'cast(SUM(mxgrade * quiz_collectionquiz.multiple) as text) || " امتیاز") as desc  FROM quiz_answer '
@@ -233,6 +236,8 @@ def collectionProfileView(req, name, user):
     for qu in quz:
         for pers in stu:
             if pers.id == qu.id:
+                pers.maxgrade = qu.maxgrade
+                pers.desc = pers.title + ' | ' + str(pers.nomre) + '/' + str(pers.maxgrade) + " امتیاز"
                 rt = next_rate(rt, pers.expectedScore, pers.nomre, pers.maxgrade)
                 pers.rate = rt
                 sum_nomre += pers.nomre
@@ -306,13 +311,6 @@ def pickAnswerFromJson(req, collection, name):
     return redirect("../scoreboard/")
 
 
-def un_correct(s: str):
-    new = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
-    old = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    for i in range(10):
-        s = s.replace(old[i], new[i])
-    return s
-
 
 def autoCheckerView(req, collection, name):
     mode = "strict"
@@ -322,29 +320,7 @@ def autoCheckerView(req, collection, name):
         return redirect("/users/login")
 
     coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
-    qu = Question.objects.filter(quiz=coll_quiz.quiz)
-    for q in qu:
-        if q.typ[0] != 'O' or q.typ == 'OJ':
-            if q.typ != 'auto' and q.typ[0] != 't':
-                continue
-        hint_reg = ""
-        for c in q.hint.strip():
-            hint_reg += '[,]{0,1}' + c
-        gr = 0
-        if q.typ[0] == 't':
-            graddCFFriends = -1
-        Answer.objects.filter(question=q).update(grade=-1, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
-        if mode == "strict":
-
-            Answer.objects.filter(question=q, text__regex=r'^[ \n]*(' + hint_reg + '|' + un_correct(
-                q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(grade=q.mxgrade)
-        else:
-            Answer.objects.filter(question=q,
-                                  text__regex=r'^[ \n]*(' + hint_reg + '|' + un_correct(
-                                      q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(
-                grade=q.mxgrade)
-            Answer.objects.filter(question=q, text__regex=r'^[ \n]*(' + hint_reg + '|' + un_correct(
-                q.hint.strip()) + ')[ \n]*$').update(grade=(q.mxgrade + 1) / 2)
+    autoCheckerHandler(coll_quiz.quiz, mode)
     return redirect("../scoreboard/")
 
 

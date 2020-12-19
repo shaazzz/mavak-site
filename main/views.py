@@ -13,6 +13,8 @@ def index(req):
 
 
 def update_oj(req):
+    if not req.user.is_staff:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
     autoPicker()
     return JsonResponse({"ok": True})
 

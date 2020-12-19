@@ -348,12 +348,48 @@ def getView(q: Question):
             return response
 
 
+def un_correct(s: str):
+    new = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
+    old = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    for i in range(10):
+        s = s.replace(old[i], new[i])
+    return s
+
+
+@background
+def autoCheckerHandler(qid, mode):
+    qu = Question.objects.filter(quiz=qid)
+    for q in qu:
+        if q.typ[0] != 't' and q.typ != "auto":
+            continue
+        q.quiz.last_oj_update = timezone.now()
+        q.quiz.save()
+        hint_reg = ""
+        for c in q.hint.strip():
+            hint_reg += '[,]{0,1}' + c
+        gr = 0
+        if q.typ[0] == 't':
+            gr = -1
+        Answer.objects.filter(question=q).update(grade=gr, grademsg="تصحیح خودکار. پاسخ صحیح:" + q.hint)
+        if mode == "strict":
+            Answer.objects.filter(question=q, text__regex=r'^[ \n]*(' + hint_reg + '|' + un_correct(
+                q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(grade=q.mxgrade)
+        else:
+            Answer.objects.filter(question=q,
+                                  text__regex=r'^[ \n]*(' + hint_reg + '|' + un_correct(
+                                      q.hint.strip()) + ')([^0123456789۰۱۲۳۴۵۶۷۸۹](.*[\n]*)*)*$').update(
+                grade=q.mxgrade)
+            Answer.objects.filter(question=q, text__regex=r'^[ \n]*(' + hint_reg + '|' + un_correct(
+                q.hint.strip()) + ')[ \n]*$').update(grade=(q.mxgrade + 1) / 2)
+
+
 @background
 def autoPicker():
     qs = CollectionQuiz.objects.filter(Q(end__lt=timezone.now()) & (Q(quiz__last_oj_update__isnull=True) | Q(
         quiz__last_oj_update__lt=F('end'))))
     ls = list({x.quiz for x in qs})
     for quiz in ls:
+        autoCheckerHandler(quiz.id, "strict")
         qu = Question.objects.filter(quiz=quiz, typ="OJ")
         for qe in qu:
             pick(qe.id)
