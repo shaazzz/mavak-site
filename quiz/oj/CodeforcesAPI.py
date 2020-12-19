@@ -205,6 +205,8 @@ class CodeforcesAPI:
                 if len(participant) < 2:
                     continue
                 user_id = participant[1]['text'].replace("*", "").strip()
+                if user_id.find("\r\n") != -1:
+                    user_id = user_id[:user_id.find("\r\n")]
                 rank = participant[0]['text'].strip()
                 if not user_id.startswith("Accepted"):
                     rnk += 1
@@ -212,7 +214,8 @@ class CodeforcesAPI:
                         return scoreboard
                 else:
                     break
-                scoreboard[user_id] = {}
+                if user_id in scoreboard:
+                    scoreboard[user_id] = {}
                 index = 0
                 for column in participant:
                     if "problemid" in column["att"]:

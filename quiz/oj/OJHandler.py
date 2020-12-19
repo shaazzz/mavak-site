@@ -108,10 +108,14 @@ class Codeforces(Judge):
             first_line = q.text.split()[0]
             pl = 1
             pr = 1000000
+            justOfficial = False
             if len(q.text.split()) > 1:
-                pl, pr = [int(x) for x in q.text[len(first_line):].split()]
+                pl, pr = [int(x) for x in q.text[len(first_line):].split()[:2]]
+                if len(q.text[len(first_line):].split()) > 2:
+                    if q.text[len(first_line):].split()[2].lower() == "official":
+                        justOfficial = True
             secret = Secret.objects.get(key="CF_API").value
-            data = judgeCF(secret, first_line[3:], q.mxgrade, pl, pr)
+            data = judgeCF(secret, first_line[3:], q.mxgrade, pl, pr, justOfficial)
             ignored = []
             evaled = 0
             for x in data:

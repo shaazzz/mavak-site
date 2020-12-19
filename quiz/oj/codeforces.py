@@ -32,10 +32,13 @@ class CodeforcesApi:
         return result['result']
 
 
-def judge(secrets, contestId, total_score, pl=1, pr=100000):
+def judge(secrets, contestId, total_score, pl=1, pr=100000, justOfficial=False):
     cfApi = CodeforcesApi(secrets)
+    showUnofficial = "true"
+    if justOfficial:
+        showUnofficial = "false"
     result = cfApi.request("contest.standings",
-                           {"contestId": contestId, "showUnofficial": "true"})
+                           {"contestId": contestId, "showUnofficial": showUnofficial})
     problem_cnt = min(len(result['problems']), pr) - pl + 1
     problem_score = total_score / problem_cnt
 
