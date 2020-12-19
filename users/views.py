@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login as dlogin
 from django.contrib.auth.models import User
 from django.db.models import Max, Count
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 
 from quiz.models import Quiz
 from .models import Student, Org, StudentGroup, OJHandle
@@ -119,6 +120,27 @@ def me(req):
         })
     return render(req, 'users/me.html', {
         'user': req.user,
+    })
+
+
+def studentGroupView(req, name):
+    student_group = get_object_or_404(StudentGroup, name=name)
+    students = student_group.students.all()
+
+    acc = Student.objects.raw(
+        'SELECT * FROM '
+        ' (SELECT users_ojhandle.handle, quiz_answer.student_id as id, SUM(grade * quiz_collectionquiz.multiple) '
+        ' as nomre FROM quiz_answer INNER JOIN quiz_question ON question_id=quiz_question.id '
+        'INNER JOIN users_ojhandle ON users_ojhandle.student_id=quiz_answer.student_id AND users_ojhandle.judge="CF" '
+        'INNER JOIN quiz_collectionquiz ON quiz_question.quiz_id=quiz_collectionquiz.quiz_id and '
+        'quiz_collectionquiz.end<="' + str(timezone.now()) +
+        '" GROUP BY quiz_answer.student_id ORDER BY nomre DESC) WHERE nomre > 0;')
+
+    return render(req, "users/student_group_list.html", {
+        'students': students,
+        'cf_accounts': acc,
+        'title': student_group.title,
+        "collection_name": student_group.name,
     })
 
 

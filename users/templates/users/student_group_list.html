@@ -1,0 +1,58 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+{% load static %}
+<link href="{% static 'main/profile.css' %}" rel="stylesheet">
+
+<noscript>Sorry, your browser does not support JavaScript!</noscript>
+<script>
+var cf_accounts ="{% for ac in cf_accounts %}{{ ac.handle }};{% endfor %}";
+fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('http://codeforces.com/api/user.info?handles='+cf_accounts)}`).then(response => {
+	if (response.ok) return response.json()
+		throw new Error('Network response was not ok.')
+}).then(data=> {
+	data = JSON.parse(data.contents);
+	{% for ac in cf_accounts %}
+		if("//userpic.codeforces.com/no-avatar.jpg"!=data["result"][{{ forloop.counter }}-1]["avatar"]){
+		    document.getElementById('image{{ ac.id }}').src="https:"+data["result"][{{ forloop.counter }}-1]["avatar"];
+		}
+	{% endfor %}
+});
+
+
+</script>
+
+<div class="container">
+    <br>
+    <div class="main-div">
+
+        <img onerror="this.style.display='none'"
+             src="http://uupload.ir/files/iyp_untitled.png"
+             style="align-content:center;padding-left:10%;padding-right:10%;width: 100%;min-height:25%;margin:auto;vertical-align:middle;display:inline;">
+        <br><br>
+        <h3 dir="rtl" style="font-size:45px;text-align:center">{{ title }}</h3>
+
+        <table dir='rtl' style='max-witdth:95%;width: 95%;margin: 15px;vertical-align:middle;'>
+            <tr>
+                <th style='font-size:20px;padding: 20px'>نام</th>
+            </tr>
+
+            {% for s in students %}
+            <tr class="ranking-table" style='margin: 100px'>
+                <td dir='auto' style='font-size: 20px;padding: 15px'>
+                    <img id='image{{ s.id }}'
+                         src="http://uupload.ir/files/ae0p_default.png"
+                         style="border-radius: 50%;overflow:hidden;width: 35px;height:35px;vertical-align:middle;display:inline;">
+                    <a href="/profile/{{ s.id }}/"
+                       style='font-size:$fontSize;color: {{ s.user_color.labelColor }};text-decoration: none;margin-left: 3px;margin-right: : 3px'>{{
+                        s.user.get_full_name }}</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

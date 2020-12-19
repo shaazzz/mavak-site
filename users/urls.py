@@ -14,4 +14,5 @@ urlpatterns = [
   path('shomare/', views.shomare, name='shomare'),
   path('shomare/english/', views.shomareEnglish, name='shomareEnglish'),
   path('agreement/', views.agreementView, name='agree'),
+  path('group/<name>', views.studentGroupView, name='studentGroupView'),
 ]
