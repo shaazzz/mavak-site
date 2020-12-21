@@ -12,7 +12,7 @@ from users.models import Collection
 from users.models import Student, OJHandle
 from .models import Question, Answer, Secret, CollectionQuiz, RateColor, Quiz
 from .oj.CodeforcesCrawl import add_friends
-from .oj.OJHandler import getView as OJGetView, autoPicker, autoCheckerHandler
+from .oj.OJHandler import getView as OJGetView, autoCheckerHandler
 from .oj.OJHandler import pick
 
 
@@ -269,7 +269,6 @@ def collectionProfileView(req, name, user):
 
 
 def scoreBoardView(req, collection, name):
-    autoPicker()
     coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
     q = coll_quiz.quiz
     if not req.user.is_staff:
