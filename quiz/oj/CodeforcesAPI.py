@@ -200,7 +200,6 @@ class CodeforcesAPI:
             header = [text(th) for th in table.xpath('//th')]  # 1
             data = [[{"att": td.attrib, "text": text(td)} for td in tr.xpath('td')]
                     for tr in table.xpath('//tr')]  # 2
-
             for participant in data:
                 if len(participant) < 2:
                     continue
@@ -214,7 +213,7 @@ class CodeforcesAPI:
                         return scoreboard
                 else:
                     break
-                if user_id in scoreboard:
+                if user_id not in scoreboard:
                     scoreboard[user_id] = {}
                 index = 0
                 for column in participant:

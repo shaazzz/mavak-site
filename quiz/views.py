@@ -326,7 +326,6 @@ def autoCheckerView(req, collection, name):
 def pickAnswerFromOJView(req, collection, name):
     if not req.user.is_staff:
         return redirect("/users/login")
-
     coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
     qu = Question.objects.filter(quiz=coll_quiz.quiz, typ="OJ")
     qs = []
