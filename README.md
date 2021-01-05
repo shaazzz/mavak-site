@@ -1,4 +1,5 @@
-<div align="auto" style="direction:auto;text-align:auto;">
+
+<div align="right" style="direction:rtl;text-align:right;">
 
 سورس کد سایت 
 https://mavak.shaazzz.ir
@@ -19,11 +20,11 @@ https://mavak.shaazzz.ir
 ماواک توسط داوطلبان اداره می شود و کاملا ناسودبر و عام المنفعه است. بنابراین در هیچ جایی از این برنامه هیچ هزینه ای از شما دریافت نمی شود. این در حالی ست که مدارس برای دانش آموزان خودشان، میلیون ها تومان (جدای از شهریه) برای کلاس های المپیاد دریافت می کنند و موسسات خصوصی، صد ها هزار تومان برای کلاس هایی در بازه زمانی کوتاه یا برای حتی یک آزمون دریافت می کنند. اما ماواک یک برنامه یک ساله کاملا رایگان و کامل (از لحاظ تدریس، تمرین و آزمون) است.
 
 
-## نصب و راه‌اندازی
+## نصب و راه اندازی
 
-## نصب و اجرا برای تست
+#### نصب و اجرا برای تست
 
-run:
+<div align="left" style="direction:ltr;text-align:left;">
 ```
 git clone https://github.com/shaazzz/mavak-site.git
 cd mavak-site
@@ -32,11 +33,12 @@ export DJANGO_SETTINGS_MODULE=mavaksite.settings.development
 python3 manage.py migrate
 python3 manage.py runserver
 ```
+</div>
+در این حالت debug  فعال خواهد بود
 
+#### نصب و اجرا روی سرور
 
-## نصب و اجرا روی سرور
-
-run:
+<div align="left" style="direction:ltr;text-align:left;">
 ```
 git clone https://github.com/shaazzz/mavak-site.git
 cd mavak-site
@@ -45,3 +47,39 @@ export DJANGO_SETTINGS_MODULE=mavaksite.settings.production
 python3 manage.py migrate
 python3 manage.py runserver
 ```
+</div>
+در این حالت debug  غیرفعال خواهد بود
+
+
+## توضیحات پنل ادمین
+ برای استفاده از پنل ادمین ابتدا یک superuser بسازید:
+<div align="left" style="direction:ltr;text-align:left;">
+```
+python3 manage.py createsuperuser
+Username: admin
+Email address: admin@example.com
+Password: **********
+Password (again): *********
+Superuser created successfully.
+
+```
+</div>
+
+سپس وارد لینک 
+https://mavak.shaazzz.ir/admin
+شوید، در حال حاضر پنل ادمین به شکل زیر است:
+
+![file](https://github.com/shaazzz/mavak-site/raw/master/documentation/files/admin-panel.png)
+
+(این قسمت در آینده کامل خواهد شد)
+
+
+## توضیحات استفاده برای کاربران
+
+![file](https://github.com/shaazzz/mavak-site/raw/master/documentation/files/users-login.png)
+
+![file](https://github.com/shaazzz/mavak-site/raw/master/documentation/files/users-create-account-student.png)
+
+![file](https://github.com/shaazzz/mavak-site/raw/master/documentation/files/profile.png)
+
+
