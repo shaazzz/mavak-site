@@ -1,3 +1,5 @@
+<div dir="RTL" align="right" style="direction:rtl;text-align:right;">
+
 # mavak-site
 
 سورس‌کد سایت
