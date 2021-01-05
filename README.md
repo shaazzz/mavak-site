@@ -1,4 +1,4 @@
-<div align="right" style="direction:rtl;text-align:right;">
+<div align="auto" style="direction:auto;text-align:auto;">
 
 سورس کد سایت 
 https://mavak.shaazzz.ir
