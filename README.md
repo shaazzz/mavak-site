@@ -1,6 +1,6 @@
 <div dir="RTL" align="right" style="direction:rtl;text-align:right;">
 
-# https://mavak.shaazzz.ir سورس کد سایت
+mavak.shaazzz.ir سورس کد سایت 
 
 # توضیحات سایت 
 
