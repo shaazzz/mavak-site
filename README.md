@@ -25,6 +25,7 @@ https://mavak.shaazzz.ir
 #### نصب و اجرا برای تست
 
 <div align="left" style="direction:ltr;text-align:left;">
+ 
 ```
 git clone https://github.com/shaazzz/mavak-site.git
 cd mavak-site
@@ -33,12 +34,14 @@ export DJANGO_SETTINGS_MODULE=mavaksite.settings.development
 python3 manage.py migrate
 python3 manage.py runserver
 ```
+ 
 </div>
 در این حالت debug  فعال خواهد بود
 
 #### نصب و اجرا روی سرور
 
 <div align="left" style="direction:ltr;text-align:left;">
+ 
 ```
 git clone https://github.com/shaazzz/mavak-site.git
 cd mavak-site
@@ -47,6 +50,7 @@ export DJANGO_SETTINGS_MODULE=mavaksite.settings.production
 python3 manage.py migrate
 python3 manage.py runserver
 ```
+
 </div>
 در این حالت debug  غیرفعال خواهد بود
 
@@ -54,6 +58,7 @@ python3 manage.py runserver
 ## توضیحات پنل ادمین
  برای استفاده از پنل ادمین ابتدا یک superuser بسازید:
 <div align="left" style="direction:ltr;text-align:left;">
+ 
 ```
 python3 manage.py createsuperuser
 Username: admin
