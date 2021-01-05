@@ -71,7 +71,9 @@ Superuser created successfully.
 </div>
 
 سپس وارد لینک 
+
 https://mavak.shaazzz.ir/admin
+
 شوید، در حال حاضر پنل ادمین به شکل زیر است:
 
 ![file](https://github.com/shaazzz/mavak-site/raw/master/documentation/files/admin-panel.png)
@@ -80,6 +82,8 @@ https://mavak.shaazzz.ir/admin
 
 
 ## توضیحات استفاده برای کاربران
+
+(این قسمت در آینده کامل خواهد شد)
 
 ![file](https://github.com/shaazzz/mavak-site/raw/master/documentation/files/users-login.png)
 
