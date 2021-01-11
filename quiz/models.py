@@ -28,7 +28,10 @@ class CollectionQuiz(models.Model):
     multiple = models.FloatField(default=1)
     expectedScore = models.IntegerField(default=0)
     start = models.DateTimeField(default=datetime.datetime.now().replace(hour=8, minute=0, second=0, microsecond=0))
-    end = models.DateTimeField(default=datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0))
+    end = models.DateTimeField(
+        default=datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0))
+    virtual_end = models.DateTimeField(
+        default=datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0), null=True)
 
     def __str__(self):
         return self.collection.name + " " + str(self.quiz.name)

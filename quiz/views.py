@@ -2,7 +2,7 @@ import copy
 from json import dumps, loads
 
 from django.db.models import Sum, Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 
@@ -58,6 +58,62 @@ def checkedView(req, collection, name, user):
         ano.grademsg = x['grademsg']
         ano.save()
     return JsonResponse({'ok': True})
+
+
+def virtualQuizView(req, collection, name):
+    if req.user.is_anonymous:
+        return redirect("/users/login")
+    if req.user.is_staff:
+        return redirect("/users/login")
+
+    student = get_object_or_404(Student, user=req.user)
+    coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
+    q = coll_quiz.quiz
+    interval = coll_quiz.end - coll_quiz.start
+    error = "no"
+    errorMsg = ""
+    deadline = None
+    if collection.startswith("virtual") or \
+            coll_quiz.virtual_end is None or coll_quiz.virtual_end - interval < timezone.now():
+        error = "yes"
+        errorMsg = "تایم آزمون با تاخیر تمام شده است"
+
+    nomre = sum(map(lambda x: x.grade, Answer.objects.filter(question__quiz=q, student=student)))
+
+    if nomre != 0:
+        error = "yes"
+        errorMsg = "شما قبلا در آزمون شرکت کرده اید!"
+
+    if coll_quiz.virtual_end is None:
+        error = "yes"
+        errorMsg = "برای این آزمون/تمرین امکان شرکت با تاخیر وجود ندارد"
+    else:
+        deadline = coll_quiz.virtual_end - interval
+
+    if error == "yes" or req.method == 'GET':
+        return render(req, 'quiz/virtualView.html', {
+            "error": error,
+            "errorMsg": errorMsg,
+            "now": timezone.now(),
+            "virtual_start_deadline": deadline
+        })
+    if collection.startswith("virtual") or \
+            coll_quiz.virtual_end is None or coll_quiz.virtual_end - interval < timezone.now():
+        return HttpResponse("درخواست مجاز نیست")
+
+    CollectionCnt = Collection.objects.count()
+
+    start_time = timezone.now()
+    end_time = start_time + interval
+    virtual_name = "virtual_" + str(CollectionCnt)
+    virtual_coll = Collection.objects.create(name=virtual_name, title=coll_quiz.collection.title,
+                                             desc="virtual in [" + str(start_time) + ", " + str(end_time) + ")")
+
+    virtual_coll_quiz = CollectionQuiz.objects.create(quiz=q, collection=virtual_coll,
+                                                      multiple=1, expectedScore=0, start=start_time,
+                                                      end=end_time)
+
+    return redirect("/quiz/{}/{}".format(virtual_name, name))
 
 
 def submitView(req, collection, name):
@@ -308,7 +364,6 @@ def pickAnswerFromJson(req, collection, name):
             print(e)
             print(x)
     return redirect("../scoreboard/")
-
 
 
 def autoCheckerView(req, collection, name):

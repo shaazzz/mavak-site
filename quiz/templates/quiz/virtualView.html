@@ -1,0 +1,47 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h1>
+        شرکت در آزمون با تاخیر
+    </h1>
+    <p>
+        اگر مایلید که با تاخیر در آزمون شرکت کنید، بر روی لینک زیر کلیک کنید. توجه داشته باشید اینکار را فقط یک بار در
+        صورتی که در آزمون اصلی شرکت نکرده باشید میتوانید انجام دهید.
+        <br>
+
+        مهلت شرکت در آزمون با تاخیر تا
+        <span id="virtual_start_deadline"></span>
+        است.
+        <br>
+        اکنون
+        <span id="now"></span>
+        است.
+    </p>
+    <script>
+      const options = {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        hour: 'numeric', minute: 'numeric', second: 'numeric',
+      };
+      const azmoon = new Date('{{ virtual_start_deadline|date:"Y-m-d H:i:s" }}');
+      document.getElementById('virtual_start_deadline').innerText = azmoon.toLocaleString('fa-IR', options);
+      const now = new Date('{{ now|date:"Y-m-d H:i:s" }}');
+      document.getElementById('now').innerText = now.toLocaleString('fa-IR', options);
+
+    </script>
+
+    <form action="" enctype="multipart/form-data" id="loginForm" method="post">
+        {% csrf_token %}
+        <fieldset>
+            {% if error == "yes" %}
+            <div class="alert alert-danger" role="alert">
+                {{ errorMsg }}
+            </div>
+            {% else %}
+            <button class="btn btn-success btn-block" type="submit">شروع آزمون</button>
+            {% endif %}
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

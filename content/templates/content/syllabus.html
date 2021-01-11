@@ -84,7 +84,18 @@
             }else{
                 link.href = "/quiz/{{ collection }}/"+lessons[i].name
             }
+
+            if(lessons[i]["type"]!="lesson"){
+                var linkVirtual = document.createElement('a');
+                var linkText2 = document.createTextNode("شرکت در آزمون با تاخیر");
+                linkVirtual.appendChild(linkText2);
+                linkVirtual.title = "شرکت در آزمون با تاخیر";
+                linkVirtual.href = "/quiz/{{ collection }}/"+lessons[i].name+"/virtual"
+            }
+
             title_cell.appendChild(link);
+            title_cell.appendChild(document.createElement("br"));
+            title_cell.appendChild(linkVirtual);
             row.insertCell(1).innerHTML=lessons[i]["release"].toLocaleString('fa-IR', options_just_weekday);
             row.insertCell(2).innerHTML=lessons[i]["drop_off_date"].toLocaleString('fa-IR', options_complete);
             if(lessons[i]["type"]=="lesson"){
