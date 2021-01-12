@@ -87,7 +87,7 @@
 
             if(lessons[i]["type"]!="lesson"){
                 var linkVirtual = document.createElement('a');
-                var linkText2 = document.createTextNode("شرکت در آزمون با تاخیر");
+                var linkText2 = document.createTextNode("شرکت در زمان دیگر");
                 linkVirtual.appendChild(linkText2);
                 linkVirtual.title = "شرکت در آزمون با تاخیر";
                 linkVirtual.href = "/quiz/{{ collection }}/"+lessons[i].name+"/virtual"
