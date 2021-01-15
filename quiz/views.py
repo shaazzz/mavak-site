@@ -374,7 +374,7 @@ def autoCheckerView(req, collection, name):
         return redirect("/users/login")
 
     coll_quiz = get_object_or_404(CollectionQuiz, collection__name=collection, quiz__name=name)
-    autoCheckerHandler(coll_quiz.quiz, mode)
+    autoCheckerHandler(coll_quiz.quiz.id, mode)
     return redirect("../scoreboard/")
 
 
