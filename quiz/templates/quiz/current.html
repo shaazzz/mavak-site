@@ -102,6 +102,7 @@
       const lag = new Date() - new Date('{{ current|date:"Y-m-d H:i:s" }}');
       const calcTime = () => {
         const ms = azmoon - new Date() + lag;
+        if(ms<0) ms=0;
         const s = Math.floor(ms / 1000);
         const m = Math.floor(s / 60);
         const h = Math.floor(m / 60);
