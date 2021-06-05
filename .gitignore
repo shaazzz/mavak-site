@@ -10,3 +10,5 @@ quiz/pj/cookies.txt
 db.sqlite3
 
 static
+.idea/
+venv/

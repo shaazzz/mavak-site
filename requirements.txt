@@ -5,3 +5,9 @@ django-next-prev
 
 requests~=2.22.0
 django-nested-admin~=3.3.2
+django-searchable-select
+django-background-tasks
+django-jalali-date
+django-jalali
+lxml
+Pillow
