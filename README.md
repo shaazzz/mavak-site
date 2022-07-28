@@ -30,7 +30,7 @@ https://mavak.shaazzz.ir
 ```
 git clone https://github.com/shaazzz/mavak-site.git
 cd mavak-site
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 export DJANGO_SETTINGS_MODULE=mavaksite.settings.development
 python3 manage.py migrate
 python3 manage.py runserver
@@ -46,7 +46,7 @@ python3 manage.py runserver
 ```
 git clone https://github.com/shaazzz/mavak-site.git
 cd mavak-site
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 export DJANGO_SETTINGS_MODULE=mavaksite.settings.production
 python3 manage.py migrate
 python3 manage.py runserver
