@@ -1,4 +1,4 @@
-django==3.1.13
+django==3.2.24
 markdown2~=2.3.9
 django-next-prev
 
